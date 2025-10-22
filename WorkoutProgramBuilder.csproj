@@ -21,5 +21,10 @@
     <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
   </PropertyGroup>
 
+  <!-- Start Tailwind CSS watch automatically when running in Debug mode -->
+  <Target Name="StartTailwindWatch" BeforeTargets="Run" Condition="'$(Configuration)' == 'Debug'">
+    <Exec Command="pkill -f 'postcss.*watch' || true" IgnoreExitCode="true" />
+    <Exec Command="npm run dev > /dev/null 2>&amp;1 &amp;" IgnoreExitCode="true" />
+  </Target>
 
 </Project>

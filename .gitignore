@@ -480,3 +480,4 @@ umbraco-package-schema.json
 
 # Media files
 /wwwroot/media/
+/wwwroot/css/globals.css
