@@ -1,0 +1,18 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+	Layout = null;
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="~/css/globals.css" />
+    <title>Test Sida</title>
+</head>
+<body>
+    <div class="text-red-500 bg-black p-4">
+        @Model.Value("testPage")
+    </div>
+</body>
+</html>
+

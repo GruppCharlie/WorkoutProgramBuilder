@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Poppins:wght@100;300;400;500;700;900&display=swap');
+@import "tailwindcss";
+
+@theme {  
+    /* neutral */
+    --color-neutral-50: #f7f7f8;  
+    --color-neutral-100: #eeeef0;  
+    --color-neutral-200: #d9d9de;  
+    --color-neutral-300: #b8b9c1;  
+    --color-neutral-400: #91939f;  
+    --color-neutral-500: #737584;  
+    --color-neutral-600: #5d5e6c;  
+    --color-neutral-700: #4c4d58;  
+    --color-neutral-800: #41414b;  
+    --color-neutral-900: #393941;  
+    --color-neutral-950: #18181b;
+    
+    /* Color Palette - Accents */
+    --color-accent-blue: #2a9ecd;
+    --color-accent-purple: #8373da;
+    --color-accent-yellow: #e49b2b;
+    --color-accent-green: #8fd33e;
+    --color-accent-orange: #f05a25;
+
+    /* shaders */
+    --color-blue-300: #8dcfec;
+    --color-blue-500: #2a9ecd;
+    --color-blue-700: #17658d;
+    --color-blue-950: #0e2838;
+    --color-orange-300: #f7a77a;
+    --color-orange-500: #f05a25;
+    --color-orange-700: #ba2b14;
+    --color-orange-950: #410d09;
+    
+    /* Semantic Colors */
+    --color-primary: var();
+    --color-secondary: var();
+    --color-muted: var();
+    --color-placeholder: var();
+    --color-inverted: var();
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 6px 15px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 6px 20px rgba(0, 0, 0, 0.5);
+    --shadow-card: 0 4px 10px rgba(0, 0, 0, 0.4);
+}

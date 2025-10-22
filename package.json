@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.15",
+    "tailwindcss": "^4.1.15",
+    "postcss": "^8.4.47",
+    "postcss-cli": "^11.0.0",
+    "concurrently": "^9.1.0"
+  },
+  "scripts": {
+    "dev": "postcss css/globals.css -o wwwroot/css/globals.css --watch",
+    "build": "postcss css/globals.css -o wwwroot/css/globals.css",
+    "start": "concurrently \"npm run dev\" \"dotnet run\""
+  }
+}
