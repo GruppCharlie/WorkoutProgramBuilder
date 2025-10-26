@@ -1,0 +1,10 @@
+﻿@inherits UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+
+@{
+    var image = Model?.Content.Value<IPublishedContent>("image")?.Url() ?? null;
+    var imageDescription = Model?.Content.Value<string>("imageDescription") ?? "";
+}
+
+@if (!string.IsNullOrEmpty(image)) {
+    <img src="@image" alt="@imageDescription"/>
+}
