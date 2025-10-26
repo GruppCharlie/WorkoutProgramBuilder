@@ -16,10 +16,19 @@
     <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="72.1.0.3" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\css\main.css" />
+  </ItemGroup>
+
   <PropertyGroup>
     <!-- Razor files are needed for the backoffice to work correctly -->
     <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
   </PropertyGroup>
 
+  <!-- Start Tailwind CSS watch automatically when running in Debug mode -->
+  <Target Name="StartTailwindWatch" BeforeTargets="Run" Condition="'$(Configuration)' == 'Debug'">
+    <Exec Command="pkill -f 'postcss.*watch' || true" IgnoreExitCode="true" />
+    <Exec Command="npm run dev &gt; /dev/null 2&gt;&amp;1 &amp;" IgnoreExitCode="true" />
+  </Target>
 
 </Project>

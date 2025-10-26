@@ -1,0 +1,32 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    Layout = null;
+
+    var pageTitle = Model.Value("pageTitle") ?? Model.Name;
+    var pageDescription = Model.Value("metaDescription");
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="@pageDescription" />
+    <title>@pageTitle</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Poppins:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="/js/tailwind.config.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+</head>
+
+<body class="font-poppins bg-neutral-50 text-neutral-900 leading-relaxed">
+   
+    <main class="container mx-auto px-6 py-10">
+        @RenderBody()
+    </main>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
