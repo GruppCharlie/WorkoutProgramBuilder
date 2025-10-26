@@ -480,3 +480,7 @@ umbraco-package-schema.json
 
 # Media files
 /wwwroot/media/
+/frontend-nextjs/
+
+# Generated Tailwind CSS
+/wwwroot/css/globals.css
