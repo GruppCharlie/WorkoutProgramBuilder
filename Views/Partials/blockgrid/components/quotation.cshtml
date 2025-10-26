@@ -1,0 +1,7 @@
+﻿@{
+    var quotationContent = Model.Content.Value<string>("quotationContent");
+}
+
+@if (!string.IsNullOrEmpty(quotationContent)) {
+    <p>@quotationContent</p>
+}

@@ -1,0 +1,35 @@
+@inherits UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+
+@{
+  var sectionTitle = Model.Content.Value<string>("sectionTitle") ?? "";
+  var sectionId = sectionTitle.ToLower().Trim().Replace(" ", "-");
+  
+  var sectionBackgroundImage = Model.Content.Value<IPublishedContent>("sectionBackgroundImage")?.Url() ?? null;
+  var isHero = sectionTitle.Equals("Hero", StringComparison.OrdinalIgnoreCase);
+}
+
+@if (isHero && !string.IsNullOrEmpty(sectionBackgroundImage))
+{
+  <section id="@sectionId" class="relative min-h-screen w-full overflow-hidden">
+    <img class="absolute inset-0 w-full h-full object-cover" src="@sectionBackgroundImage" alt="@($"{sectionTitle} background image")"/>
+    
+    <div class="relative z-10 container mx-auto px-6 py-20 flex items-center min-h-screen">
+      <div class="max-w-2xl text-white">
+        @await Html.GetBlockGridItemAreasHtmlAsync(Model)
+      </div>
+    </div>
+  </section>
+}
+else
+{
+  <section id="@sectionId" class="py-16">
+    @if (!string.IsNullOrEmpty(sectionBackgroundImage))
+    {
+      <img class="w-full h-auto" src="@sectionBackgroundImage" alt="@($"{sectionTitle} background image")"/>
+    }
+
+    <div class="container mx-auto px-6">
+      @await Html.GetBlockGridItemAreasHtmlAsync(Model)
+    </div>
+  </section>
+}
