@@ -1,0 +1,51 @@
+﻿@using System.Linq
+@using Umbraco.Extensions
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Web.Common.PublishedModels
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@{
+    Layout = "mainLayout.cshtml";
+    ViewBag.Title = Model?.Value<string>("pageTitle") ?? string.Empty;
+
+    var selection = Umbraco.Content(Guid.Parse("0bde7d2b-14a7-4c63-a0a3-db84428b99ff"))
+        ?.ChildrenOfType("articleItemTemplate")
+        ?.Where(x => x.IsVisible())
+        ?? Enumerable.Empty<IPublishedContent>();
+
+    var customHeadline = Model?.Value<string>("customHeadline");
+}
+
+<section id="our-articles">
+    <div class="container">
+        @if (!string.IsNullOrWhiteSpace(customHeadline))
+        {
+            <div class="headline">
+                <h2 class="title">@customHeadline</h2>
+            </div>
+        }
+
+        <div class="articles">
+            @foreach (var item in selection)
+            {
+                var imageUrl = item.Value<MediaWithCrops>("thumbnailImage")?.Url() ?? string.Empty;
+                var preamble = item.Value<string>("preamble") ?? string.Empty;
+
+                <a href="@item.Url()">
+                    <div class="item">
+                        <div class="header">
+                            <h4>@item.Name()</h4>
+                        </div>
+                        <div class="body">
+                            <img src="@imageUrl" alt="@item.Name()" />
+                        </div>
+                        <div class="footer">
+                            <p>@preamble</p>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</section>
