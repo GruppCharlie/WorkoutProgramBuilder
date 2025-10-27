@@ -1,0 +1,41 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Web.Common.PublishedModels
+@using CoreLink = Umbraco.Cms.Core.Models.Link
+
+@{
+    var FooterNode = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "footer");
+
+    var FooterRights = FooterNode?.Value<string>("programBuilderRights") ?? "place";
+
+    var FooterItems = FooterNode?.Value<IEnumerable<CoreLink>>("footerItems") ?? Enumerable.Empty<CoreLink>();
+
+}
+
+<footer class="bg-neutral-200 shadow-sm py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row justify-between items-center">
+
+            <p class="text-sm">@FooterRights</p>
+
+            <div class="flex space-x-4 mt-4 sm:mt-0">
+                @if (FooterItems.Any())
+                {
+                    <ul class="flex flex-col mt-4 space-y-2 px-4 bg-primary">
+                        @foreach (var link in FooterItems)
+                        {
+                            <li>
+                                <a href="@link.Url"
+                                   target="@(string.IsNullOrWhiteSpace(link.Target) ? "_self" : link.Target)"
+                                   class="block px-4 py-2 rounded-md text-neutral-800 hover:bg-primary transition-colors duration-200 font-medium">
+                                    @link.Name
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+
+        </div>
+    </div>
+</footer>
