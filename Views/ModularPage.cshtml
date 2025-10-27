@@ -7,7 +7,7 @@
 
 @if (!string.IsNullOrEmpty(ViewBag.Title))
 {
-    @await Html.PartialAsync("partials/static/breadbrumb.cshtml")
+    @await Html.PartialAsync("partials/static/breadcrumb.cshtml")
 }
 
 @await Html.GetBlockGridHtmlAsync(Model, "layout")
