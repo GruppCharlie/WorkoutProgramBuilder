@@ -1,0 +1,6 @@
+Failed to build Live models.
+Alias "image" is used by types Element:"image", Media:"Image". Aliases have to be unique. One of the aliases must be modified in order to use the ModelsBuilder.
+
+   at Umbraco.Cms.Infrastructure.ModelsBuilder.UmbracoServices.EnsureDistinctAliases(IList`1 typeModels)
+   at Umbraco.Cms.Infrastructure.ModelsBuilder.Building.ModelsGenerator.GenerateModels()
+   at Umbraco.Cms.Infrastructure.ModelsBuilder.AutoModelsNotificationHandler.GenerateModelsIfRequested()
