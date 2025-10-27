@@ -3,7 +3,7 @@
     Layout = null;
 
     var pageTitle = Model.Value("pageTitle") ?? Model.Name;
-    var pageDescription = Model.Value("metaDescription");
+    var pageDescription = Model.Value("metaDescription") ?? "";
 }
 
 <!doctype html>
@@ -22,8 +22,10 @@
 </head>
 
     <body class="font-poppins bg-neutral-50 text-neutral-900 ">
-   
-   /* Header/Nav */
+
+    @await Html.PartialAsync("_Navbar")
+
+
 
     <main class="">
         @RenderBody()
@@ -32,6 +34,6 @@
     /* Footer */
 
     @await RenderSectionAsync("Scripts", required: false)
-    
+    <script src="~/js/navbarscript.js"></script>
     </body>
 </html>
