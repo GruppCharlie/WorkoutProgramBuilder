@@ -18,9 +18,19 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
+	// Mixin Content Type with alias "base"
+	/// <summary>Base</summary>
+	public partial interface IBase : IPublishedContent
+	{
+		/// <summary>MetaDescription</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		string MetaDescription { get; }
+	}
+
 	/// <summary>Base</summary>
 	[PublishedModel("base")]
-	public partial class Base : PublishedContentModel
+	public partial class Base : PublishedContentModel, IBase
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
@@ -55,6 +65,11 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("metaDescription")]
-		public virtual string MetaDescription => this.Value<string>(_publishedValueFallback, "metaDescription");
+		public virtual string MetaDescription => GetMetaDescription(this, _publishedValueFallback);
+
+		/// <summary>Static getter for MetaDescription</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static string GetMetaDescription(IBase that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "metaDescription");
 	}
 }

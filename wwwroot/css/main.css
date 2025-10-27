@@ -46,3 +46,25 @@
     --shadow-xl: 0 6px 20px rgba(0, 0, 0, 0.5);
     --shadow-card: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
+/* Typography */
+#our-articles h1, #our-articles h2, #our-articles h3 {
+    font-family: "Poppins", ui-sans-serif, system-ui;
+}
+#our-articles {
+    font-family: "Manrope", ui-sans-serif, system-ui;
+}
+
+/* Utility: text truncation */
+@utility line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* Stronger border visibility */
+.card,
+article.bg-white.rounded-2xl {
+  border-color: color-mix(in oklab, var(--color-neutral-200) 92%, white);
+}
+
