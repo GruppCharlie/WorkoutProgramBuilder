@@ -1,0 +1,10 @@
+@inherits UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+
+@{
+    var headline = Model.Content.Value<string>("headline");
+}
+
+@if (!string.IsNullOrEmpty(headline))
+{
+    <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">@headline</h1>
+}
