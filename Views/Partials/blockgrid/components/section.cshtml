@@ -13,10 +13,8 @@
   <section id="@sectionId" class="relative min-h-screen w-full overflow-hidden">
     <img class="absolute inset-0 w-full h-full object-cover" src="@sectionBackgroundImage" alt="@($"{sectionTitle} background image")"/>
     
-    <div class="relative z-10 container mx-auto px-6 py-20 flex items-center min-h-screen">
-      <div class="max-w-2xl text-white">
-        @await Html.GetBlockGridItemAreasHtmlAsync(Model)
-      </div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6 py-60 min-h-screen flex">
+      @await Html.GetBlockGridItemAreasHtmlAsync(Model)
     </div>
   </section>
 }
@@ -33,3 +31,4 @@ else
     </div>
   </section>
 }
+

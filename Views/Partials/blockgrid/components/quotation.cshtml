@@ -1,7 +1,12 @@
-﻿@{
+@inherits UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+
+@{
     var quotationContent = Model.Content.Value<string>("quotationContent");
 }
 
-@if (!string.IsNullOrEmpty(quotationContent)) {
-    <p>@quotationContent</p>
+@if (!string.IsNullOrEmpty(quotationContent))
+{
+    <blockquote class="border-l-4 border-gray-300 pl-6 py-2 my-6 italic text-lg md:text-xl text-white/90 leading-relaxed">
+        @quotationContent
+    </blockquote>
 }
