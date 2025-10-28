@@ -2,7 +2,10 @@
 
 @{
     var buttonLinkText = Model.Content.Value<string>("buttonLinkText");
-    var buttonLinkUrl = Model.Content.Value<string>("buttonLinkUrl");
+    
+    var buttonLinkContent = Model.Content.Value<IEnumerable<IPublishedContent>>("buttonLinkUrl")?.FirstOrDefault();
+    var buttonLinkUrl = buttonLinkContent?.Url() ?? Model.Content.Value<string>("buttonLinkUrl") ?? "#";
+    
     var buttonVariant = Model.Content.Value<string>("buttonVariant")?.ToLower() ?? "primary";
     
     var baseClasses = "inline-block px-6 py-4 rounded-lg font-semibold no-underline transition-all duration-200";
