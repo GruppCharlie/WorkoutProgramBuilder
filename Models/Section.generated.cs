@@ -50,12 +50,28 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
+		/// Section Background Color
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("sectionBackgroundColor")]
+		public virtual string SectionBackgroundColor => this.Value<string>(_publishedValueFallback, "sectionBackgroundColor");
+
+		///<summary>
 		/// Section Background Image
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("sectionBackgroundImage")]
 		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops SectionBackgroundImage => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "sectionBackgroundImage");
+
+		///<summary>
+		/// Section Subtitle
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("sectionSubtitle")]
+		public virtual string SectionSubtitle => this.Value<string>(_publishedValueFallback, "sectionSubtitle");
 
 		///<summary>
 		/// Section Title

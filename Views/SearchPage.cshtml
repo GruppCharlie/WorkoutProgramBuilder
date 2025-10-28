@@ -1,0 +1,62 @@
+﻿@using System.Globalization
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    Layout = "mainLayout.cshtml";
+    var query = ViewData["Query"] as string ?? "";
+    var exercises = ViewData["Exercises"] as List<WorkoutProgramBuilder.Business.Dto.ExerciseDto> ?? [];
+    var metadata = ViewData["Metadata"] as WorkoutProgramBuilder.Business.Dto.ExerciseMetadataDto;
+    var limit = 10;
+    var currentPage = metadata?.CurrentPage ?? 1;
+    var prevOffset = Math.Max(0, (currentPage - 2) * limit);
+    var nextOffset = currentPage * limit;
+
+    var currentCulture = CultureInfo.CurrentCulture.Name;
+    var searchNode = Umbraco.ContentAtRoot()
+    .SelectMany(x => x.DescendantsOrSelf())
+    .FirstOrDefault(x => x.ContentType.Alias == "searchPage");
+
+    var searchUrl = searchNode?.Url(culture: currentCulture) ?? "/search";
+}
+
+
+
+
+<section class="container mx-auto py-10">
+    <h1 class="text-2xl font-semibold mb-6">@Model.Value("searchResults") "@query"</h1>
+
+    @if (string.IsNullOrWhiteSpace(query))
+    {
+        <p class="text-gray-500">@Model.Value("emptySearchText")</p>
+    }
+    else if (!exercises.Any())
+    {
+        <p class="text-gray-500">@Model.Value("noResults")</p>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            @foreach (var ex in exercises)
+            {
+                <div class="border border-gray-200 rounded-md p-4 shadow hover:shadow-md transition">
+                    <img src="@ex.GifUrl" alt="@ex.Name" class="w-full h-48 object-contain mb-2" />
+                    <h3 class="font-bold text-lg">@ex.Name</h3>
+                    <p class="text-sm text-gray-600">@ex.BodyPart - @ex.Target</p>
+                    <p class="text-xs text-gray-400 mt-1">Equipment: @ex.Equipment</p>
+                </div>
+            }
+        </div>
+
+        <div class="flex justify-center mt-6 space-x-4">
+            @if (!string.IsNullOrEmpty(metadata?.PreviousPage))
+            {
+                <a href="@($"{searchUrl}?query={Uri.EscapeDataString(query)}&offset={prevOffset}")"
+                   class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">@Model.Value("previousButtonText")</a>
+            }
+            @if (!string.IsNullOrEmpty(metadata?.NextPage))
+            {
+                <a href="@($"{searchUrl}?query={Uri.EscapeDataString(query)}&offset={nextOffset}")"
+                   class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">@Model.Value("nextButtonText")</a>
+            }
+        </div>
+    }
+</section>
