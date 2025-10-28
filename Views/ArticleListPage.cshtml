@@ -1,0 +1,72 @@
+@using System.Linq
+@using Umbraco.Extensions
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Web.Common.PublishedModels
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@{
+    Layout = "mainLayout.cshtml";
+    ViewBag.Title = Model?.Value<string>("pageTitle") ?? string.Empty;
+
+    var selection = Umbraco.Content(Guid.Parse("0bde7d2b-14a7-4c63-a0a3-db84428b99ff"))
+        ?.ChildrenOfType("articleItemTemplate")
+        ?.Where(x => x.IsVisible())
+        ?? Enumerable.Empty<IPublishedContent>();
+
+    var customHeadline = Model?.Value<string>("customHeadline");
+    var preambleText = string.IsNullOrWhiteSpace(customHeadline)
+        ? "Build strength, confidence, and knowledge — one article at a time."
+        : customHeadline;
+}
+
+<section id="our-articles">
+    <!-- Preamble (uses customHeadline if present) -->
+    <div class="bg-white py-10">
+        <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-2xl sm:text-3xl font-bold text-neutral-800">
+                @preambleText
+            </h2>
+        </div>
+    </div>
+
+    <!-- Articles grid -->
+    <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+        <div class="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
+            @foreach (var item in selection)
+            {
+                var imageUrl = item.Value<MediaWithCrops>("thumbnailImage")?.Url() ?? string.Empty;
+                var preamble = item.Value<string>("preamble") ?? string.Empty;
+
+                <a href="@item.Url()" class="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl">
+                    <article class="bg-white rounded-2xl border border-neutral-200/90 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                        <div class="relative w-full pt-[68%] overflow-hidden">
+                            @if (!string.IsNullOrWhiteSpace(imageUrl))
+                            {
+                                <img src="@imageUrl" alt="@item.Name()" class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+                            }
+                            else
+                            {
+                                <div class="absolute inset-0 bg-gradient-to-br from-blue-300/30 to-blue-700/30"></div>
+                            }
+                        </div>
+
+                        <div class="p-5 sm:p-6">
+                            <h3 class="text-lg sm:text-xl font-bold text-neutral-900 group-hover:text-blue-700">
+                                @item.Name()
+                            </h3>
+                            <p class="mt-2 line-clamp-3 text-neutral-600">@preamble</p>
+
+                            <span class="mt-4 inline-flex items-center gap-2 text-blue-700 font-medium">
+                                Read article
+                                <svg class="size-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 11-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </div>
+                    </article>
+                </a>
+            }
+        </div>
+    </div>
+</section>
