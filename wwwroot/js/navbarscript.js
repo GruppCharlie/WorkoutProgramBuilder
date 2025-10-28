@@ -37,4 +37,20 @@
     overlay.addEventListener("click", closeMenu);
 
     menuClose.addEventListener("click", closeMenu);
+
+    const input = document.querySelector('#navbar-search');
+    if (!input) return;
+
+    const searchUrl = input.dataset.searchUrl || '/search';
+
+    input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const query = input.value.trim();
+            if (query.length > 0) {
+                window.location.href = `${searchUrl}?query=${encodeURIComponent(query)}`;
+            }
+        }
+    });
+
 });
