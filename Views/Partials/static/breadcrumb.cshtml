@@ -1,4 +1,4 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @using Umbraco.Cms.Core.PublishedCache
 @using Umbraco.Cms.Core.Routing
 @using Umbraco.Cms.Core.Services.Navigation
@@ -16,7 +16,7 @@
 @if (!isHome)
 {
     <section class="pt-16">
-        <div class="relative bg-gradient-to-b from-neutral-100 to-neutral-50 border border-neutral-200 pb-4">
+        <div class="relative bg-gradient-to-b from-neutral-100 to-neutral-50 border-b border-neutral-200 py-6 ">
             <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-800 mb-3 pt-4">
                     @(ViewBag.Title ?? Model.Name)
