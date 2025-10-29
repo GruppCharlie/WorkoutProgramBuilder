@@ -1,3 +1,10 @@
-﻿@inherits UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+@inherits UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
 
-@await Html.GetBlockGridItemAreasHtmlAsync(Model)
+@{
+    var hasContent = Model.Areas?.Any(area => area.Any()) ?? false;
+}
+
+@if (hasContent)
+{
+    @await Html.GetBlockGridItemAreasHtmlAsync(Model)
+}
