@@ -1,16 +1,30 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<SignUpPage>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.Blocks;
+@using System.Linq;
 @{
 	Layout = "mainLayout.cshtml";
     ViewBag.Title = Model.Value("pageTitle");
 }
 
-<div class="container">
-	<h1>@ViewBag.Title</h1>
+<div class="container mx-auto px-4">
+	<section class="max-w-md mx-auto mt-24 bg-white rounded-2xl shadow-lg px-8 py-10">
+        <h1 class="text 2xl font-semibold text-center mb-8">@ViewBag.Title</h1>
 
-	<form onsubmit="handleSignUpFormSubmit(event)" novalidate>
-		@Html.GetBlockListHtml(Model.SignUpForm)
-	</form>
+        @{
+            var all = Model.SignUpForm ?? new BlockListModel(new List<BlockListItem>());
 
+            var inputBlocks  = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton").ToList());
+            var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
+        }
+
+        <form class="space-y-6" onsubmit="handleSignUpFormSubmit(event)" novalidate>
+            @Html.GetBlockListHtml(inputBlocks)
+
+            <div class="flex gap-3">
+                @Html.GetBlockListHtml(buttonBlocks)
+            </div>
+        </form>
+	</section>
 </div>
