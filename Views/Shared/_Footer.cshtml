@@ -8,7 +8,7 @@
 
     var FooterRights = FooterNode?.Value<string>("programBuilderRights") ?? "place";
 
-    var FooterItems = FooterNode?.Value<IEnumerable<CoreLink>>("footerItems") ?? Enumerable.Empty<CoreLink>();
+    var FooterItems = FooterNode?.Value<IEnumerable<CoreLink>>("footerItems") ?? [];
 
 }
 
