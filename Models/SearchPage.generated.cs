@@ -18,14 +18,14 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Navbar</summary>
-	[PublishedModel("navbar")]
-	public partial class Navbar : PublishedContentModel
+	/// <summary>Search Page</summary>
+	[PublishedModel("searchPage")]
+	public partial class SearchPage : PublishedContentModel, IBase
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		public new const string ModelTypeAlias = "navbar";
+		public new const string ModelTypeAlias = "searchPage";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -34,14 +34,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 			=> PublishedModelUtility.GetModelContentType(contentTypeCache, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<Navbar, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<SearchPage, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(contentTypeCache), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public Navbar(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
+		public SearchPage(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -50,51 +50,51 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Language selector
+		/// Empty Search Text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("languageSelector")]
-		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel LanguageSelector => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "languageSelector");
+		[ImplementPropertyType("emptySearchText")]
+		public virtual string EmptySearchText => this.Value<string>(_publishedValueFallback, "emptySearchText");
 
 		///<summary>
-		/// NavbarLogin
+		/// Next Button Text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("navbarLogin")]
-		public virtual string NavbarLogin => this.Value<string>(_publishedValueFallback, "navbarLogin");
+		[ImplementPropertyType("nextButtonText")]
+		public virtual string NextButtonText => this.Value<string>(_publishedValueFallback, "nextButtonText");
 
 		///<summary>
-		/// Navbar Login Link
+		/// No Results
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("navbarLoginLink")]
-		public virtual string NavbarLoginLink => this.Value<string>(_publishedValueFallback, "navbarLoginLink");
+		[ImplementPropertyType("noResults")]
+		public virtual string NoResults => this.Value<string>(_publishedValueFallback, "noResults");
 
 		///<summary>
-		/// NavbarLogo
+		/// Previous Button Text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("navbarLogo")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops NavbarLogo => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "navbarLogo");
+		[ImplementPropertyType("previousButtonText")]
+		public virtual string PreviousButtonText => this.Value<string>(_publishedValueFallback, "previousButtonText");
 
 		///<summary>
-		/// NavbarMenuItems
+		/// Search Results Text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("navbarMenuItems")]
-		public virtual global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link> NavbarMenuItems => this.Value<global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link>>(_publishedValueFallback, "navbarMenuItems");
+		[ImplementPropertyType("searchResults")]
+		public virtual string SearchResults => this.Value<string>(_publishedValueFallback, "searchResults");
 
 		///<summary>
-		/// SearchPlaceHolder
+		/// MetaDescription
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("searchPlaceHolder")]
-		public virtual string SearchPlaceHolder => this.Value<string>(_publishedValueFallback, "searchPlaceHolder");
+		[ImplementPropertyType("metaDescription")]
+		public virtual string MetaDescription => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetMetaDescription(this, _publishedValueFallback);
 	}
 }

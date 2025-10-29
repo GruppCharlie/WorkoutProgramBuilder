@@ -7,6 +7,9 @@
     var buttonType = Model?.Content.Value<string>("buttonType");
 }
 
-<div id="_@buttonText" class="form-input-group">
-    <button type="@buttonType" class="form-button-btn-submit">@buttonText</button>
+<div class="inline-flex mb-0">
+    <button type="@buttonType" 
+            class="inline-flex items-center rounded-md bg-orange-500 px-4 py-2 text-white hover:bg-orange-600">
+        @buttonText
+    </button>
 </div>
