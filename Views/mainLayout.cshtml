@@ -1,9 +1,9 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @{
     Layout = null;
 
     var pageTitle = Model.Value("pageTitle") ?? Model.Name;
-    var pageDescription = Model.Value("metaDescription");
+    var pageDescription = Model.Value("metaDescription") ?? "";
 }
 
 <!doctype html>
@@ -16,22 +16,23 @@
     <title>@pageTitle</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Poppins:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/umbraco/backoffice/css/umbraco-blockgridlayout.css">
     <script src="/js/tailwind.config.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 </head>
 
-    <body class="font-poppins bg-neutral-50 text-neutral-900 ">
-   
-   /* Header/Nav */
+<body class="font-poppins bg-neutral-50 text-neutral-900 min-h-screen flex flex-col">
 
-    <main class="">
+    @await Html.PartialAsync("_Navbar")
+
+    <main class="flex-grow">
         @RenderBody()
     </main>
 
-    /* Footer */
+    @await Html.PartialAsync("_Footer")
 
     @await RenderSectionAsync("Scripts", required: false)
-    
+    <script src="~/js/navbarscript.js"></script>
     </body>
 </html>

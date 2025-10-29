@@ -18,14 +18,14 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Button Link</summary>
-	[PublishedModel("buttonLink")]
-	public partial class ButtonLink : PublishedElementModel
+	/// <summary>InputPassword</summary>
+	[PublishedModel("inputPassword")]
+	public partial class InputPassword : PublishedElementModel
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		public new const string ModelTypeAlias = "buttonLink";
+		public new const string ModelTypeAlias = "inputPassword";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -34,14 +34,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 			=> PublishedModelUtility.GetModelContentType(contentTypeCache, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<ButtonLink, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<InputPassword, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(contentTypeCache), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public ButtonLink(IPublishedElement content, IPublishedValueFallback publishedValueFallback)
+		public InputPassword(IPublishedElement content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -50,27 +50,57 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Button Link Text
+		/// Error Message
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("buttonLinkText")]
-		public virtual string ButtonLinkText => this.Value<string>(_publishedValueFallback, "buttonLinkText");
+		[ImplementPropertyType("errorMessage")]
+		public virtual string ErrorMessage => this.Value<string>(_publishedValueFallback, "errorMessage");
 
 		///<summary>
-		/// Button Link Url
+		/// Is Required
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("buttonLinkUrl")]
-		public virtual global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent> ButtonLinkUrl => this.Value<global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>>(_publishedValueFallback, "buttonLinkUrl");
+		[ImplementPropertyType("isRequired")]
+		public virtual bool IsRequired => this.Value<bool>(_publishedValueFallback, "isRequired");
 
 		///<summary>
-		/// Button Variant
+		/// Label Text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("buttonVariant")]
-		public virtual string ButtonVariant => this.Value<string>(_publishedValueFallback, "buttonVariant");
+		[ImplementPropertyType("labelText")]
+		public virtual string LabelText => this.Value<string>(_publishedValueFallback, "labelText");
+
+		///<summary>
+		/// Placeholder Text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("placeholderText")]
+		public virtual string PlaceholderText => this.Value<string>(_publishedValueFallback, "placeholderText");
+
+		///<summary>
+		/// Regular Expression Pattern
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("regularExpressionPattern")]
+		public virtual string RegularExpressionPattern => this.Value<string>(_publishedValueFallback, "regularExpressionPattern");
+
+		///<summary>
+		/// Unique Name
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("uniqueName")]
+		public virtual string UniqueName => this.Value<string>(_publishedValueFallback, "uniqueName");
+
+		///<summary>
+		/// Use Regular Expression
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("useRegularExpression")]
+		public virtual bool UseRegularExpression => this.Value<bool>(_publishedValueFallback, "useRegularExpression");
 	}
 }

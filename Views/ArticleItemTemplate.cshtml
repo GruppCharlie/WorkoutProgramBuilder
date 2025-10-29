@@ -1,12 +1,170 @@
-﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+﻿@using System.Text.RegularExpressions
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
 @{
-	Layout = "mainLayout.cshtml";
-    ViewBag.Title = Model.Name;
+    Layout = "mainLayout.cshtml";
+
+    // Basic fields
+    var pageTitle = Model?.Value<string>("pageTitle") ?? Model?.Name ?? string.Empty;
+    var preamble  = Model?.Value<string>("preamble")   ?? string.Empty;
+    var thumbnail = Model?.Value<MediaWithCrops>("thumbnail")?.Url() ?? string.Empty;
+    var body      = Model?.Value<string>("pageContent") ?? string.Empty;
+
+    // -------- Breadcrumb (root → parent, skip hidden) --------
+    var ancestors = Model.Ancestors()?
+        .Where(x => x.IsVisible())
+        .OrderBy(x => x.Level)
+        .ToList() ?? new List<IPublishedContent>();
+
+    var hasHome = ancestors.Any() && ancestors.First().Level == 1;
+    var trail   = hasHome ? ancestors.Skip(1) : ancestors;
+
+    // -------- Helpers (simple + fast) --------
+    string StripTags(string s) => Regex.Replace(s ?? string.Empty, "<.*?>", string.Empty);
+    string Norm(string s) => Regex.Replace(StripTags(s).Trim(), @"\s+", " ").ToLowerInvariant();
+
+    // -------- Clean body (remove top image, duplicate heading + preamble) --------
+    var cleaned = body;
+
+    // 1) Remove a leading image-only paragraph (with/without <a>)
+    cleaned = Regex.Replace(
+        cleaned,
+        @"^\s*<p\b[^>]*>\s*(?:<a\b[^>]*>\s*)?<img\b[^>]*>(?:\s*</a>)?\s*</p>\s*",
+        string.Empty,
+        RegexOptions.IgnoreCase | RegexOptions.Singleline
+    );
+
+    // 2) Remove the first heading if it matches the page title (h1–h6)
+    var h = Regex.Match(cleaned, @"<h([1-6])\b[^>]*>(.*?)</h\1>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+    if (h.Success && Norm(h.Groups[2].Value) == Norm(pageTitle))
+        cleaned = cleaned.Remove(h.Index, h.Length);
+
+    // 3) Remove the first paragraph if it matches the preamble
+    if (!string.IsNullOrWhiteSpace(preamble))
+    {
+        var p = Regex.Match(cleaned, @"^\s*<p\b[^>]*>(.*?)</p>\s*", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        if (p.Success && Norm(p.Groups[1].Value) == Norm(preamble))
+            cleaned = cleaned.Remove(p.Index, p.Length);
+    }
+
+    // -------- Previous / Next (siblings by CreateDate) --------
+    var siblings = Model.Parent?
+        .ChildrenOfType("articleItemTemplate")
+        .Where(x => x.IsVisible())
+        .OrderBy(x => x.CreateDate)
+        .ToList() ?? new List<IPublishedContent>();
+
+    var i    = siblings.FindIndex(x => x.Id == Model.Id);
+    var prev = i > 0 ? siblings[i - 1] : null;
+    var next = (i >= 0 && i < siblings.Count - 1) ? siblings[i + 1] : null;
+
+    string Thumb(IPublishedContent c)
+        => c?.Value<MediaWithCrops>("thumbnail")?.Url()
+           ?? c?.Value<IPublishedContent>("thumbnail")?.Url()
+           ?? string.Empty;
 }
 
-<section class="article-details">
-    <div class="container">
-        @Model.Value("pageContent")
-    </div>
+<!-- Banner -->
+<section class="relative bg-gradient-to-b from-neutral-100 to-neutral-50 border-b border-neutral-200 py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+    <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-800 mb-3 pt-8">@pageTitle</h1>
+
+    <!-- Breadcrumb -->
+    <nav class="text-sm">
+      <ol class="inline-flex items-center gap-2 text-neutral-500 justify-center">
+        <li>
+          <a href="@(hasHome ? ancestors.First().Url() : "/")"
+             class="hover:text-blue-700 underline-offset-2 hover:underline">Home</a>
+        </li>
+
+        @foreach (var node in trail)
+        {
+          <li class="text-neutral-400">›</li>
+          <li><a href="@node.Url()" class="hover:text-blue-700 underline-offset-2 hover:underline">@node.Name</a></li>
+        }
+
+        <li class="text-neutral-400">›</li>
+        <li class="font-medium text-neutral-400">@Model.Name</li>
+      </ol>
+    </nav>
+
+    @if (!string.IsNullOrWhiteSpace(preamble))
+    {
+      <p class="mt-4 max-w-3xl mx-auto text-neutral-700">@preamble</p>
+    }
+  </div>
 </section>
+
+<!-- Article -->
+<main class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pt-10 pb-10">
+  @if (!string.IsNullOrWhiteSpace(thumbnail))
+  {
+    <figure class="mb-8">
+      <img src="@thumbnail" alt="@pageTitle" class="w-full h-auto rounded-xl shadow-sm block" />
+    </figure>
+  }
+
+  <article class="rte-content">
+    @Html.Raw(cleaned)
+  </article>
+</main>
+
+<!-- Prev / Next -->
+@if (prev != null || next != null)
+{
+<section aria-label="Article pagination" class="border-t border-neutral-200 bg-white/60">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+    <div class="grid gap-4 sm:grid-cols-2">
+
+      @if (prev != null)
+      {
+        var pThumb = Thumb(prev);
+        <a href="@prev.Url()" class="group block rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-4">
+            @if (!string.IsNullOrEmpty(pThumb))
+            { <img src="@pThumb" alt="@prev.Name" class="h-16 w-24 rounded-lg object-cover" loading="lazy" decoding="async" /> }
+            <div class="min-w-0">
+              <div class="text-xs uppercase tracking-wide text-neutral-500">Previous</div>
+              <div class="mt-0.5 line-clamp-2 font-semibold text-neutral-900 group-hover:text-blue-700">@prev.Name</div>
+            </div>
+          </div>
+        </a>
+      }
+
+      @if (next != null)
+      {
+        var nThumb = Thumb(next);
+        <a href="@next.Url()" class="group block rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow sm:ml-auto">
+          <div class="flex items-center gap-4 justify-end">
+            <div class="min-w-0 text-right">
+              <div class="text-xs uppercase tracking-wide text-neutral-500">Next</div>
+              <div class="mt-0.5 line-clamp-2 font-semibold text-neutral-900 group-hover:text-blue-700">@next.Name</div>
+            </div>
+            @if (!string.IsNullOrEmpty(nThumb))
+            { <img src="@nThumb" alt="@next.Name" class="h-16 w-24 rounded-lg object-cover" loading="lazy" decoding="async" /> }
+          </div>
+        </a>
+      }
+
+    </div>
+  </div>
+</section>
+}
+
+<style>
+/* RTE styles */
+.rte-content img{max-width:100%;height:auto;display:block;border-radius:8px;margin:1rem 0}
+.rte-content p{margin:0 0 16px;line-height:1.7;color:#1f2937;text-align:justify}
+.rte-content h2,.rte-content h3,.rte-content h4,.rte-content h5,.rte-content h6{
+  margin:24px 0 10px;font-weight:800;line-height:1.25;color:#111827
+}
+.rte-content h2{font-size:1.65rem}
+.rte-content h3{font-size:1.3rem}
+.rte-content ul,.rte-content ol{margin:0 0 16px 1.2rem;line-height:1.7}
+.rte-content li{margin:.18rem 0}
+.rte-content hr{border:none;border-top:1px solid #e5e7eb;margin:28px 0}
+main{scroll-margin-top:100px}
+</style>

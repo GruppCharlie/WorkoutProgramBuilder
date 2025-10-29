@@ -1,1 +1,16 @@
-﻿
+@inherits UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockGridItem>
+
+@{
+    var linkText = Model.Content.Value<string>("linkText");
+    var linkUrl = Model.Content.Value<string>("linkUrl");
+    var isExternal = Model.Content.Value<bool>("isExternal");
+}
+
+@if (!string.IsNullOrEmpty(linkText) && !string.IsNullOrEmpty(linkUrl))
+{
+    <a href="@linkUrl" 
+       class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors duration-200"
+       @(isExternal ? "target=\"_blank\" rel=\"noopener noreferrer\"" : "")>
+        @linkText
+    </a>
+}
