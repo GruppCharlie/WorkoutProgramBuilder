@@ -58,6 +58,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string NavbarLogin => this.Value<string>(_publishedValueFallback, "navbarLogin");
 
 		///<summary>
+		/// Navbar Login Link
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("navbarLoginLink")]
+		public virtual string NavbarLoginLink => this.Value<string>(_publishedValueFallback, "navbarLoginLink");
+
+		///<summary>
 		/// NavbarLogo
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
