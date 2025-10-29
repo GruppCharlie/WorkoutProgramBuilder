@@ -485,4 +485,3 @@ umbraco-package-schema.json
 # Generated Tailwind CSS
 /wwwroot/css/globals.css
 /frontend-nextjs/
-/Models/
