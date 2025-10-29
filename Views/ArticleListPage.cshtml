@@ -1,28 +1,30 @@
-@using System.Linq
+﻿@using System.Linq
 @using Umbraco.Extensions
-@using Umbraco.Cms.Core.Models            
+@using Umbraco.Cms.Core.Models
 @using Umbraco.Cms.Core.Models.PublishedContent
 @using Umbraco.Cms.Web.Common.PublishedModels
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 
 @{
-    Layout = "mainlayout.cshtml";
+    Layout = "mainLayout.cshtml";
     ViewBag.Title = Model?.Value<string>("pageTitle") ?? string.Empty;
 
     var selection = Umbraco.Content(Guid.Parse("0bde7d2b-14a7-4c63-a0a3-db84428b99ff"))
         ?.ChildrenOfType("articleItemTemplate")
         ?.Where(x => x.IsVisible())
-        ?? [];
+        ?? Enumerable.Empty<IPublishedContent>();
 
     var customHeadline = Model?.Value<string>("customHeadline");
     var preambleText = string.IsNullOrWhiteSpace(customHeadline)
         ? "Build strength, confidence, and knowledge — one article at a time."
         : customHeadline;
+
+    var isSwedish = Model.Url().Contains("/sv/");
+    var readLabel = isSwedish ? "Läs artikeln" : "Read article";
 }
 
 <section id="our-articles">
-    <!-- Preamble (uses customHeadline if present) -->
-    <div class=" py-10">
+    <div class="py-10">
         <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-2xl sm:text-3xl font-bold text-neutral-800">
                 @preambleText
@@ -30,8 +32,37 @@
         </div>
     </div>
 
-    <!-- Articles grid -->
     <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-        @await Html.PartialAsync("~/Views/Partials/static/articleGrid.cshtml", selection)
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach (var item in selection)
+            {
+                var title    = item.Value<string>("pageTitle") ?? item.Name;
+                var url      = item.Url();
+                var thumb    = item.Value<MediaWithCrops>("thumbnail")?.Url();
+                var preamble = item.Value<string>("preamble") ?? string.Empty;
+
+                <article class="rounded-2xl overflow-hidden border border-neutral-200 shadow-sm bg-white hover:shadow-md transition-shadow">
+                    @if (!string.IsNullOrEmpty(thumb))
+                    {
+                        <a href="@url" class="block aspect-[16/9] overflow-hidden">
+                            <img src="@thumb" alt="@title" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" />
+                        </a>
+                    }
+
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-neutral-900 mb-3">@title</h3>
+
+                        @if (!string.IsNullOrWhiteSpace(preamble))
+                        {
+                            <p class="line-clamp-3 text-neutral-700">@preamble</p>
+                        }
+
+                        <a href="@url" class="text-blue-700 font-medium mt-4 inline-flex items-center gap-1">
+                            @readLabel <span aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                </article>
+            }
+        </div>
     </div>
 </section>

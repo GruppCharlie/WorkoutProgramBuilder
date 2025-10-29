@@ -1,5 +1,4 @@
-@using System.Text.RegularExpressions
-@using Umbraco.Cms.Core.Models
+﻿@using Umbraco.Cms.Core.Models
 @using Umbraco.Cms.Core.Models.PublishedContent
 @using Umbraco.Extensions
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
@@ -7,50 +6,23 @@
 @{
     Layout = "mainLayout.cshtml";
 
-    // Basic fields
     var pageTitle = Model?.Value<string>("pageTitle") ?? Model?.Name ?? string.Empty;
-    var preamble  = Model?.Value<string>("preamble")   ?? string.Empty;
+    var preamble  = Model?.Value<string>("preamble") ?? string.Empty;
     var thumbnail = Model?.Value<MediaWithCrops>("thumbnail")?.Url() ?? string.Empty;
     var body      = Model?.Value<string>("pageContent") ?? string.Empty;
 
-    // -------- Breadcrumb (root → parent, skip hidden) --------
+    var isSwedish = Model.GetCultureFromDomains()?.StartsWith("sv", StringComparison.OrdinalIgnoreCase) == true 
+                    || Model.Url().Contains("/sv/");
+
+    var labelHome     = isSwedish ? "Hem" : "Home";
+    var labelPrevious = isSwedish ? "Föregående" : "Previous";
+    var labelNext     = isSwedish ? "Nästa" : "Next";
+
     var ancestors = Model.Ancestors()?
         .Where(x => x.IsVisible())
         .OrderBy(x => x.Level)
         .ToList() ?? new List<IPublishedContent>();
 
-    var hasHome = ancestors.Any() && ancestors.First().Level == 1;
-    var trail   = hasHome ? ancestors.Skip(1) : ancestors;
-
-    // -------- Helpers (simple + fast) --------
-    string StripTags(string s) => Regex.Replace(s ?? string.Empty, "<.*?>", string.Empty);
-    string Norm(string s) => Regex.Replace(StripTags(s).Trim(), @"\s+", " ").ToLowerInvariant();
-
-    // -------- Clean body (remove top image, duplicate heading + preamble) --------
-    var cleaned = body;
-
-    // 1) Remove a leading image-only paragraph (with/without <a>)
-    cleaned = Regex.Replace(
-        cleaned,
-        @"^\s*<p\b[^>]*>\s*(?:<a\b[^>]*>\s*)?<img\b[^>]*>(?:\s*</a>)?\s*</p>\s*",
-        string.Empty,
-        RegexOptions.IgnoreCase | RegexOptions.Singleline
-    );
-
-    // 2) Remove the first heading if it matches the page title (h1–h6)
-    var h = Regex.Match(cleaned, @"<h([1-6])\b[^>]*>(.*?)</h\1>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-    if (h.Success && Norm(h.Groups[2].Value) == Norm(pageTitle))
-        cleaned = cleaned.Remove(h.Index, h.Length);
-
-    // 3) Remove the first paragraph if it matches the preamble
-    if (!string.IsNullOrWhiteSpace(preamble))
-    {
-        var p = Regex.Match(cleaned, @"^\s*<p\b[^>]*>(.*?)</p>\s*", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        if (p.Success && Norm(p.Groups[1].Value) == Norm(preamble))
-            cleaned = cleaned.Remove(p.Index, p.Length);
-    }
-
-    // -------- Previous / Next (siblings by CreateDate) --------
     var siblings = Model.Parent?
         .ChildrenOfType("articleItemTemplate")
         .Where(x => x.IsVisible())
@@ -61,10 +33,10 @@
     var prev = i > 0 ? siblings[i - 1] : null;
     var next = (i >= 0 && i < siblings.Count - 1) ? siblings[i + 1] : null;
 
-    string Thumb(IPublishedContent c)
-        => c?.Value<MediaWithCrops>("thumbnail")?.Url()
-           ?? c?.Value<IPublishedContent>("thumbnail")?.Url()
-           ?? string.Empty;
+    string Thumb(IPublishedContent c) =>
+        c?.Value<MediaWithCrops>("thumbnail")?.Url()
+        ?? c?.Value<IPublishedContent>("thumbnail")?.Url()
+        ?? string.Empty;
 }
 
 @if (!string.IsNullOrWhiteSpace(preamble))
@@ -76,7 +48,6 @@
   </section>
 }
 
-<!-- Article -->
 <main class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pt-10 pb-10">
   @if (!string.IsNullOrWhiteSpace(thumbnail))
   {
@@ -86,11 +57,10 @@
   }
 
   <article class="rte-content">
-    @Html.Raw(cleaned)
+    @Html.Raw(body)
   </article>
 </main>
 
-<!-- Prev / Next -->
 @if (prev != null || next != null)
 {
 <section aria-label="Article pagination" class="border-t border-neutral-200 bg-white/60">
@@ -105,7 +75,7 @@
             @if (!string.IsNullOrEmpty(pThumb))
             { <img src="@pThumb" alt="@prev.Name" class="h-16 w-24 rounded-lg object-cover" loading="lazy" decoding="async" /> }
             <div class="min-w-0">
-              <div class="text-xs uppercase tracking-wide text-neutral-500">Previous</div>
+              <div class="text-xs uppercase tracking-wide text-neutral-500">@labelPrevious</div>
               <div class="mt-0.5 line-clamp-2 font-semibold text-neutral-900 group-hover:text-blue-700">@prev.Name</div>
             </div>
           </div>
@@ -118,7 +88,7 @@
         <a href="@next.Url()" class="group block rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow sm:ml-auto">
           <div class="flex items-center gap-4 justify-end">
             <div class="min-w-0 text-right">
-              <div class="text-xs uppercase tracking-wide text-neutral-500">Next</div>
+              <div class="text-xs uppercase tracking-wide text-neutral-500">@labelNext</div>
               <div class="mt-0.5 line-clamp-2 font-semibold text-neutral-900 group-hover:text-blue-700">@next.Name</div>
             </div>
             @if (!string.IsNullOrEmpty(nThumb))
@@ -133,12 +103,9 @@
 }
 
 <style>
-/* RTE styles */
 .rte-content img{max-width:100%;height:auto;display:block;border-radius:8px;margin:1rem 0}
 .rte-content p{margin:0 0 16px;line-height:1.7;color:#1f2937;text-align:justify}
-.rte-content h2,.rte-content h3,.rte-content h4,.rte-content h5,.rte-content h6{
-  margin:24px 0 10px;font-weight:800;line-height:1.25;color:#111827
-}
+.rte-content h2,.rte-content h3,.rte-content h4,.rte-content h5,.rte-content h6{margin:24px 0 10px;font-weight:800;line-height:1.25;color:#111827}
 .rte-content h2{font-size:1.65rem}
 .rte-content h3{font-size:1.3rem}
 .rte-content ul,.rte-content ol{margin:0 0 16px 1.2rem;line-height:1.7}
