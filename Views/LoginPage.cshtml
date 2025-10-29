@@ -1,0 +1,16 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<LoginPage>;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+	Layout = "mainLayout.cshtml";
+    ViewBag.Title = Model.Value("pageTitle");
+}
+
+<div class="container">
+	<h1>@ViewBag.Title</h1>
+
+	<form onsubmit="handleLoginFormSubmit(event)" novalidate>
+		@Html.GetBlockListHtml(Model.LoginForm)
+	</form>
+
+</div>
