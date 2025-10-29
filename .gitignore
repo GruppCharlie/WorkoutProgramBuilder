@@ -484,5 +484,4 @@ umbraco-package-schema.json
 
 # Generated Tailwind CSS
 /wwwroot/css/globals.css
-/Models/
-
+/frontend-nextjs/
