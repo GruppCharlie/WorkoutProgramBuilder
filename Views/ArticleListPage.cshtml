@@ -1,127 +1,37 @@
-﻿@using System.Linq
+@using System.Linq
 @using Umbraco.Extensions
-@using Umbraco.Cms.Core.Models              // MediaWithCrops
+@using Umbraco.Cms.Core.Models            
 @using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Web.Common.PublishedModels
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 
 @{
     Layout = "mainlayout.cshtml";
     ViewBag.Title = Model?.Value<string>("pageTitle") ?? string.Empty;
 
-    // Replace this GUID with your actual Articles parent node ID if needed
     var selection = Umbraco.Content(Guid.Parse("0bde7d2b-14a7-4c63-a0a3-db84428b99ff"))
         ?.ChildrenOfType("articleItemTemplate")
         ?.Where(x => x.IsVisible())
-        ?? Enumerable.Empty<IPublishedContent>();
+        ?? [];
 
     var customHeadline = Model?.Value<string>("customHeadline");
     var preambleText = string.IsNullOrWhiteSpace(customHeadline)
         ? "Build strength, confidence, and knowledge — one article at a time."
         : customHeadline;
-
-    // Helper: works for Image Media Picker (single or multiple)
-    string GetThumbUrl(IPublishedContent content, string alias = "thumbnail")
-    {
-        if (content == null || !content.HasProperty(alias))
-            return string.Empty;
-
-        // Single picker
-        var single = content.Value<MediaWithCrops>(alias);
-        if (single != null) return single.Url() ?? string.Empty;
-
-        // Multiple picker
-        var many = content.Value<IEnumerable<MediaWithCrops>>(alias);
-        if (many?.Any() == true) return many.First().Url() ?? string.Empty;
-
-        // Legacy fallback
-        var singlePub = content.Value<IPublishedContent>(alias);
-        if (singlePub != null) return singlePub.Url();
-
-        var manyPub = content.Value<IEnumerable<IPublishedContent>>(alias);
-        return manyPub?.FirstOrDefault()?.Url() ?? string.Empty;
-    }
 }
 
 <section id="our-articles">
-    <!-- Banner -->
-    <div class="relative bg-gradient-to-b from-neutral-100 to-neutral-50 border-b border-neutral-200 py-16">
-        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-800 mb-3 pt-8">
-                Our Articles
-            </h1>
-
-            <nav class="text-sm">
-                <ol class="inline-flex items-center gap-2 text-neutral-500">
-                    <li><a href="/" class="hover:text-blue-700 pt-4 underline-offset-2 hover:underline">Home</a></li>
-                    <li class="text-neutral-400">›</li>
-                    <li class="font-medium text-neutral-400">Articles</li>
-                </ol>
-            </nav>
+    <!-- Preamble (uses customHeadline if present) -->
+    <div class=" py-10">
+        <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-2xl sm:text-3xl font-bold text-neutral-800">
+                @preambleText
+            </h2>
         </div>
     </div>
 
-    <!-- Preamble -->
-    @if (!string.IsNullOrWhiteSpace(preambleText))
-    {
-        <div class="bg-white py-10">
-            <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-2xl sm:text-3xl font-bold text-neutral-800">
-                    @preambleText
-                </h2>
-            </div>
-        </div>
-    }
-
     <!-- Articles grid -->
     <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-        <div class="articles grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
-            @foreach (var item in selection)
-            {
-                var imageUrl = GetThumbUrl(item, "thumbnail");
-                var preamble = item.Value<string>("preamble") ?? string.Empty;
-
-                <a href="@item.Url()" class="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl h-full">
-                    <article class="bg-white rounded-2xl border border-neutral-200/90 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full">
-                        <!-- Image (fixed 16:9) -->
-                        <div class="relative w-full overflow-hidden" style="aspect-ratio:16/9;">
-                            @if (!string.IsNullOrWhiteSpace(imageUrl))
-                            {
-                                <img
-                                    src="@imageUrl"
-                                    alt="@item.Name()"
-                                    loading="lazy"
-                                    decoding="async"
-                                    class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
-                            }
-                            else
-                            {
-                                <div class="absolute inset-0 bg-gradient-to-br from-blue-300/30 to-blue-700/30"></div>
-                            }
-                        </div>
-
-                        <!-- Content -->
-                        <div class="flex flex-col flex-1 p-5 sm:p-6">
-                            <h3 class="text-lg sm:text-xl font-bold text-neutral-900 group-hover:text-blue-700 line-clamp-2 min-h-[3rem]">
-                                @item.Name()
-                            </h3>
-
-                            <p class="mt-2 text-neutral-600 line-clamp-3 flex-1">
-                                @preamble
-                            </p>
-
-                            <div class="pt-4">
-                                <span class="inline-flex items-center gap-2 text-blue-700 font-medium">
-                                    Read article
-                                    <svg class="size-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 11-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                    </article>
-                </a>
-
-            }
-        </div>
+        @await Html.PartialAsync("~/Views/Partials/static/articleGrid.cshtml", selection)
     </div>
 </section>
