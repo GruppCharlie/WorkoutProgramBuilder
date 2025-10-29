@@ -7,22 +7,20 @@
     var description = content.Value<string>("cardDescription");
 }
 
-<div class="p-3 h-full">
-    <div class="bg-white px-6 py-12 rounded-2xl border border-neutral-200 hover:shadow-sm transition-all duration-300 min-h-[300px] h-full flex flex-col">
-        @if (icon != null)
-        {
-            <img src="@icon.Url()" alt="@title" class="w-12 h-12 object-contain mb-4 flex-shrink-0" />
-        }
-        
-        @if (!string.IsNullOrEmpty(title))
-        {
-            <h3 class="text-lg font-semibold mb-2 text-neutral-900 line-clamp-2">@title</h3>
-        }
-        
-        @if (!string.IsNullOrEmpty(description))
-        {
-            <p class="text-sm text-neutral-600 leading-relaxed line-clamp-3">@description</p>
-        }
-    </div>
+<div class="bg-white px-6 py-12 rounded-2xl border border-neutral-200 hover:shadow-sm transition-all duration-300 min-h-[300px] h-full flex flex-col">
+    @if (icon != null)
+    {
+        <img src="@icon.Url()" alt="@title" class="w-12 h-12 object-contain mb-4 flex-shrink-0" />
+    }
+    
+    @if (!string.IsNullOrEmpty(title))
+    {
+        <h3 class="text-lg font-semibold mb-2 text-neutral-900 line-clamp-2">@title</h3>
+    }
+    
+    @if (!string.IsNullOrEmpty(description))
+    {
+        <p class="text-sm text-neutral-600 leading-relaxed line-clamp-3">@description</p>
+    }
 </div>
 
