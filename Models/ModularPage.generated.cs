@@ -50,11 +50,11 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Hide in Navigation: Check this box to hide this page from the main navigation
+		/// Hide Breadcrumbs: Check this box to hide Breadcrumbs on this site
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[ImplementPropertyType("hideInNavigation")]
-		public virtual bool HideInNavigation => this.Value<bool>(_publishedValueFallback, "hideInNavigation");
+		[ImplementPropertyType("hideBreadcrumbs")]
+		public virtual bool HideBreadcrumbs => this.Value<bool>(_publishedValueFallback, "hideBreadcrumbs");
 
 		///<summary>
 		/// Layout
