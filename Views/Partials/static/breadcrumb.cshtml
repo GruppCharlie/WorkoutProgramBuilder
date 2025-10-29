@@ -1,4 +1,4 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @using Umbraco.Cms.Core.PublishedCache
 @using Umbraco.Cms.Core.Routing
 @using Umbraco.Cms.Core.Services.Navigation
@@ -7,30 +7,33 @@
 @inject IDocumentNavigationQueryService DocumentNavigationQueryService
 @inject IPublishedUrlProvider PublishedUrlProvider
 
-
 @{ 
     var selection = Model.Ancestors(PublishedContentCache, DocumentNavigationQueryService).ToArray();
     var homePageDisplayName = "Home";
-    var isFirstItem = true; 
-
+    var isHome = Model.Root().Id == Model.Id;
 }
 
-<section class="page-title">
-    <div class="container">
-        <h1>@ViewBag.Title</h1>
+@if (!isHome)
+{
+    <section class="pt-16">
+        <div class="relative bg-gradient-to-b from-neutral-100 to-neutral-50 border-b border-neutral-200 py-6 ">
+            <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-800 mb-3 pt-4">
+                    @(ViewBag.Title ?? Model.Name)
+                </h1>
 
-        @if (selection?.Length > 0)
-        {
-            <ul class="breadcrumb">
-                @foreach (var item in selection.OrderBy(x => x.Level))
-                {
-                    var displayName = isFirstItem ? homePageDisplayName : item.Name;
-                    <li><a href="@item.Url(PublishedUrlProvider)">@item.Name</a></li>
-                    isFirstItem = false;
-                }
-                <li class="active">@Model.Name</li>
-            </ul>
-        }
-    </div>
-</section>
-
+                <nav class="text-sm">
+                    <ol class="inline-flex items-center gap-2 text-neutral-500">
+                        @foreach (var item in selection.OrderBy(x => x.Level))
+                        {
+                            var displayName = item.Level == 1 ? homePageDisplayName : item.Name;
+                            <li><a href="@item.Url(PublishedUrlProvider)" class="underline-offset-2 hover:underline">@displayName</a></li>
+                            <li class="text-neutral-400">›</li>
+                        }
+                        <li class="font-medium text-neutral-400">@Model.Name</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </section>
+}
