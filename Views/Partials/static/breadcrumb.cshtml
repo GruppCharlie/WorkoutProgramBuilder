@@ -11,9 +11,10 @@
     var selection = Model.Ancestors(PublishedContentCache, DocumentNavigationQueryService).ToArray();
     var homePageDisplayName = "Home";
     var isHome = Model.Root().Id == Model.Id;
+    var hideBreadcrumbs = Model.Value<bool>("hideBreadcrumbs");
 }
 
-@if (!isHome)
+@if (!isHome && !hideBreadcrumbs)
 {
     <section class="pt-16">
         <div class="relative bg-gradient-to-b from-neutral-100 to-neutral-50 border-b border-neutral-200 py-6 ">
