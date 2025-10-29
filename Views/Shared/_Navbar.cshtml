@@ -1,21 +1,31 @@
 ﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using System.Globalization
 @using Umbraco.Cms.Core.Models.PublishedContent
 @using Umbraco.Cms.Web.Common.PublishedModels
 @using CoreLink = Umbraco.Cms.Core.Models.Link
 @{
-    var NavbarNode = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "navbar");
+    var navbarNode = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "navbar");
 
-    var navbarLogo = NavbarNode?.Value<IPublishedContent>("navbarLogo");
+    var navbarLogo = navbarNode?.Value<IPublishedContent>("navbarLogo");
     var navbarLogoUrl = navbarLogo != null ? navbarLogo.Url() : null;
 
-    var searchPlaceholder = NavbarNode?.Value<string>("searchPlaceHolder") ?? "Search...";
+    var searchPlaceholder = navbarNode?.Value<string>("searchPlaceHolder") ?? "Search...";
 
-    var navbarLogin = NavbarNode?.Value<string>("navbarLogin") ?? "Login";
+    var navbarLogin = navbarNode?.Value<string>("navbarLogin") ?? "Login";
 
-    var NavbarItems = NavbarNode?.Value<IEnumerable<CoreLink>>("navbarMenuItems") ?? Enumerable.Empty<CoreLink>();
+    var NavbarItems = navbarNode?.Value<IEnumerable<CoreLink>>("navbarMenuItems") ?? [];
+
+
+    var currentCulture = CultureInfo.CurrentCulture.Name;
+    var searchNode = Umbraco.ContentAtRoot()
+    .SelectMany(x => x.DescendantsOrSelf())
+    .FirstOrDefault(x => x.ContentType.Alias == "searchPage");
+
+    var searchUrl = searchNode?.Url(culture: currentCulture) ?? "/search";
 }
+
 <nav class="bg-neutral-200 shadow-sm fixed top-0 left-0 right-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="container mx-auto">
         <div class="flex items-center justify-between h-16">
 
             <div class="flex items-center space-x-4">
@@ -32,12 +42,18 @@
             </div>
 
             <div class="flex items-center space-x-4">
-                <div class="relative ">
+                <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500"></i>
+
                     <input type="text"
+                           id="navbar-search"
+                           data-search-url="@searchUrl"
                            placeholder="@searchPlaceholder"
                            class="pl-10 pr-3 py-2 rounded-md border border-neutral-300 bg-neutral-50 text-neutral-800 placeholder-placeholder focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary w-48 sm:w-64" />
                 </div>
+
+                <div id="search-results" class="absolute bg-white shadow-lg rounded-md mt-2 w-64 max-h-80 overflow-y-auto hidden"></div>
+
 
                 <a href="/login"
                    class="text-neutral-700 font-medium hover:text-primary transition-colors">
@@ -76,5 +92,3 @@
 </div>
 
 <div id="overlay" class="fixed inset-0 bg-black bg-opacity-30 hidden z-30 transition-opacity duration-300"></div>
-
-

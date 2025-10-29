@@ -1,4 +1,9 @@
+using WorkoutProgramBuilder.Services;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpClient<IMuscleGroupApiService, MuscleGroupApiService>();
+builder.Services.AddControllers();
 
 builder.CreateUmbracoBuilder()
     .AddBackOffice()
@@ -24,6 +29,7 @@ app.UseUmbraco()
     {
         u.UseBackOfficeEndpoints();
         u.UseWebsiteEndpoints();
+        u.EndpointRouteBuilder.MapControllers();
     });
 
 await app.RunAsync();

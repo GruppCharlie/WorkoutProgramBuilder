@@ -2,34 +2,71 @@
 
 @{
   var sectionTitle = Model.Content.Value<string>("sectionTitle") ?? "";
+  var sectionSubtitle = Model.Content.Value<string>("sectionSubtitle") ?? "";
   var sectionId = sectionTitle.ToLower().Trim().Replace(" ", "-");
   
   var sectionBackgroundImage = Model.Content.Value<IPublishedContent>("sectionBackgroundImage")?.Url() ?? null;
+  var sectionBackgroundColor = Model.Content.Value<string>("sectionBackgroundColor") ?? "";
   var isHero = sectionTitle.Equals("Hero", StringComparison.OrdinalIgnoreCase);
+  var isWorkOutArticles = sectionTitle.Equals("Work Out Articles", StringComparison.OrdinalIgnoreCase);
+  
+  // Build background style
+  var bgStyle = "";
+  if (!string.IsNullOrEmpty(sectionBackgroundColor))
+  {
+    bgStyle = $"background-color: {sectionBackgroundColor};";
+  }
 }
 
 @if (isHero && !string.IsNullOrEmpty(sectionBackgroundImage))
 {
-  <section id="@sectionId" class="relative min-h-screen w-full overflow-hidden">
-    <img class="absolute inset-0 w-full h-full object-cover" src="@sectionBackgroundImage" alt="@($"{sectionTitle} background image")"/>
+  <section id="@sectionId" class="relative h-[70vh] w-full overflow-visible">
+    <img class="absolute inset-0 w-full h-full object-cover object-top" src="@sectionBackgroundImage" alt="@($"{sectionTitle} background image")"/>
     
-    <div class="relative z-10 container mx-auto px-6 py-20 flex items-center min-h-screen">
-      <div class="max-w-2xl text-white">
-        @await Html.GetBlockGridItemAreasHtmlAsync(Model)
-      </div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6 h-full flex items-center">
+      @await Html.GetBlockGridItemAreasHtmlAsync(Model)
     </div>
   </section>
 }
 else
 {
-  <section id="@sectionId" class="py-16">
+  <section id="@sectionId" class="py-16" style="@bgStyle">
     @if (!string.IsNullOrEmpty(sectionBackgroundImage))
     {
       <img class="w-full h-auto" src="@sectionBackgroundImage" alt="@($"{sectionTitle} background image")"/>
     }
 
     <div class="container mx-auto px-6">
-      @await Html.GetBlockGridItemAreasHtmlAsync(Model)
+      @* Section Header *@
+      @if (!string.IsNullOrEmpty(sectionSubtitle) || !string.IsNullOrEmpty(sectionTitle))
+      {
+        <div class="text-center mb-12">
+          @if (!string.IsNullOrEmpty(sectionSubtitle))
+          {
+            <span class="inline-block px-4 py-1 bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider rounded-full mb-4">
+              @sectionSubtitle
+            </span>
+          }
+          
+          @if (!string.IsNullOrEmpty(sectionTitle))
+          {
+            <h2 class="text-3xl md:text-4xl font-bold text-neutral-900">@sectionTitle</h2>
+          }
+        </div>
+      }
+      
+      @if (isWorkOutArticles)
+      {
+        var maxArticles = Model.Content.Value<int>("maxArticles");
+        if (maxArticles <= 0) maxArticles = 3;
+        ViewData["maxArticles"] = maxArticles;
+        @await Html.PartialAsync("~/Views/Partials/static/workOutArticles.cshtml")
+      }
+      else
+      {
+        @await Html.GetBlockGridItemAreasHtmlAsync(Model)
+      }
     </div>
   </section>
 }
+
