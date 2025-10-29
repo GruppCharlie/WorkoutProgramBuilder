@@ -1,0 +1,13 @@
+@using System.Linq
+@inject Umbraco.Cms.Web.Common.UmbracoHelper Umbraco
+
+@{
+    var maxArticles = ViewData["maxArticles"] as int? ?? 3;
+    
+    var selection = Umbraco.Content(Guid.Parse("0bde7d2b-14a7-4c63-a0a3-db84428b99ff"))
+        .ChildrenOfType("articleItemTemplate")
+        .Where(x => x.IsVisible())
+        .Take(maxArticles);
+}
+
+@await Html.PartialAsync("~/Views/Partials/static/articleGrid.cshtml", selection)

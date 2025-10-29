@@ -1,13 +1,8 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 
 @{
 	Layout = "mainLayout.cshtml";
 	ViewBag.Title = Model.Value("pageTitle") ?? null;
-}
-
-@if (!string.IsNullOrEmpty(ViewBag.Title))
-{
-    @await Html.PartialAsync("partials/static/breadcrumb.cshtml")
 }
 
 @await Html.GetBlockGridHtmlAsync(Model, "layout")

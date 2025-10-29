@@ -1,4 +1,4 @@
-﻿@using System.Text.RegularExpressions
+@using System.Text.RegularExpressions
 @using Umbraco.Cms.Core.Models
 @using Umbraco.Cms.Core.Models.PublishedContent
 @using Umbraco.Extensions
@@ -67,36 +67,14 @@
            ?? string.Empty;
 }
 
-<!-- Banner -->
-<section class="relative bg-gradient-to-b from-neutral-100 to-neutral-50 border-b border-neutral-200 py-16">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-    <h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-800 mb-3 pt-8">@pageTitle</h1>
-
-    <!-- Breadcrumb -->
-    <nav class="text-sm">
-      <ol class="inline-flex items-center gap-2 text-neutral-500 justify-center">
-        <li>
-          <a href="@(hasHome ? ancestors.First().Url() : "/")"
-             class="hover:text-blue-700 underline-offset-2 hover:underline">Home</a>
-        </li>
-
-        @foreach (var node in trail)
-        {
-          <li class="text-neutral-400">›</li>
-          <li><a href="@node.Url()" class="hover:text-blue-700 underline-offset-2 hover:underline">@node.Name</a></li>
-        }
-
-        <li class="text-neutral-400">›</li>
-        <li class="font-medium text-neutral-400">@Model.Name</li>
-      </ol>
-    </nav>
-
-    @if (!string.IsNullOrWhiteSpace(preamble))
-    {
-      <p class="mt-4 max-w-3xl mx-auto text-neutral-700">@preamble</p>
-    }
-  </div>
-</section>
+@if (!string.IsNullOrWhiteSpace(preamble))
+{
+  <section class="py-6">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-lg text-neutral-700">@preamble</p>
+    </div>
+  </section>
+}
 
 <!-- Article -->
 <main class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pt-10 pb-10">
