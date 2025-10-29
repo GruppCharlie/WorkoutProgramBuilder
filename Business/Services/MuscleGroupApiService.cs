@@ -1,4 +1,4 @@
-namespace WorkoutProgramBuilder.Services;
+namespace WorkoutProgramBuilder.Business.Services;
 
 public interface IMuscleGroupApiService
 {
