@@ -1,36 +1,30 @@
 @using System.Linq
-@using Umbraco.Extensions
-@using Umbraco.Cms.Core.Models            
-@using Umbraco.Cms.Core.Models.PublishedContent
-@using Umbraco.Cms.Web.Common.PublishedModels
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 
 @{
-    Layout = "mainlayout.cshtml";
-    ViewBag.Title = Model?.Value<string>("pageTitle") ?? string.Empty;
+    Layout = "mainLayout.cshtml";
+    ViewBag.Title = Model.Value<string>("pageTitle") ?? string.Empty;
 
     var selection = Umbraco.Content(Guid.Parse("0bde7d2b-14a7-4c63-a0a3-db84428b99ff"))
         ?.ChildrenOfType("articleItemTemplate")
         ?.Where(x => x.IsVisible())
         ?? [];
 
-    var customHeadline = Model?.Value<string>("customHeadline");
+    var customHeadline = Model.Value<string>("customHeadline");
     var preambleText = string.IsNullOrWhiteSpace(customHeadline)
         ? "Build strength, confidence, and knowledge — one article at a time."
         : customHeadline;
 }
 
 <section id="our-articles">
-    <!-- Preamble (uses customHeadline if present) -->
-    <div class=" py-10">
-        <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+    <div class="py-10">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-2xl sm:text-3xl font-bold text-neutral-800">
                 @preambleText
             </h2>
         </div>
     </div>
 
-    <!-- Articles grid -->
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
         @await Html.PartialAsync("~/Views/Partials/static/articleGrid.cshtml", selection)
     </div>
