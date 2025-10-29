@@ -2,7 +2,6 @@
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("overlay");
     const menuToggle = document.getElementById("menu-toggle");
-    const menuClose = document.getElementById("menu-close");
     const bars = menuToggle.querySelectorAll("span");
     const body = document.body;
 
@@ -35,8 +34,6 @@
     });
 
     overlay.addEventListener("click", closeMenu);
-
-    menuClose.addEventListener("click", closeMenu);
 
     const input = document.querySelector('#navbar-search');
     if (!input) return;

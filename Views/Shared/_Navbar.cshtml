@@ -4,39 +4,38 @@
 @using Umbraco.Cms.Web.Common.PublishedModels
 @using CoreLink = Umbraco.Cms.Core.Models.Link
 @{
-    var navbarNode = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "navbar");
-
-    var navbarLogo = navbarNode?.Value<IPublishedContent>("navbarLogo");
-    var navbarLogoUrl = navbarLogo != null ? navbarLogo.Url() : null;
-
-    var searchPlaceholder = navbarNode?.Value<string>("searchPlaceHolder") ?? "Search...";
-
-    var navbarLogin = navbarNode?.Value<string>("navbarLogin") ?? "Login";
-
-    var NavbarItems = navbarNode?.Value<IEnumerable<CoreLink>>("navbarMenuItems") ?? [];
-
-
+    var contentAtRoot = Umbraco.ContentAtRoot().ToList(); 
     var currentCulture = CultureInfo.CurrentCulture.Name;
-    var searchNode = Umbraco.ContentAtRoot()
-    .SelectMany(x => x.DescendantsOrSelf())
-    .FirstOrDefault(x => x.ContentType.Alias == "searchPage");
 
+    var navbarNode = contentAtRoot.FirstOrDefault(x => x.ContentType.Alias == "navbar");
+    var navbarLogo = navbarNode?.Value<IPublishedContent>("navbarLogo");
+    var navbarLogoUrl = navbarLogo?.Url() ?? string.Empty;
+    var searchPlaceholder = navbarNode?.Value<string>("searchPlaceHolder") ?? "Search...";
+    var navbarLogin = navbarNode?.Value<string>("navbarLogin") ?? "Login";
+    var NavbarItems = navbarNode?.Value<IEnumerable<CoreLink>>("navbarMenuItems") ?? Enumerable.Empty<CoreLink>();
+    var NavbarlanguageSelector = navbarNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("languageSelector");
+
+    var searchNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "searchPage");
     var searchUrl = searchNode?.Url(culture: currentCulture) ?? "/search";
+
+    var homeNode = contentAtRoot.FirstOrDefault(x => x.ContentType.Alias == "modularPage");
+    var homeUrl = homeNode?.Url(culture: currentCulture) ?? "/";
+
+    var loginNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "loginPage");
+    var loginUrl = loginNode?.Url(culture: currentCulture) ?? "/login";
 }
 
-<nav class="bg-neutral-200 shadow-sm fixed top-0 left-0 right-0 z-50">
-    <div class="container mx-auto">
+<nav class="bg-neutral-200 text-neutral-700 shadow-sm fixed top-0 left-0 right-0 z-50">
+    <div class="container mx-auto px-6">
         <div class="flex items-center justify-between h-16">
-
             <div class="flex items-center space-x-4">
-                <button id="menu-toggle"
-                        class="relative w-8 h-8 flex flex-col justify-between items-center p-1.5 focus:outline-none transition-all duration-300">
+                <button id="menu-toggle" class="relative w-8 h-8 flex flex-col justify-between items-center p-1.5 focus:outline-none transition-all duration-300">
                     <span class="block w-6 h-0.5 bg-neutral-700 transform transition-all duration-300 origin-center"></span>
                     <span class="block w-6 h-0.5 bg-neutral-700 transform transition-all duration-300 origin-center"></span>
                     <span class="block w-6 h-0.5 bg-neutral-700 transform transition-all duration-300 origin-center"></span>
                 </button>
 
-                <a href="/">
+                <a class="hidden md:block" href="@homeUrl">
                     <img src="@navbarLogoUrl" alt="Logo" class="h-8 w-auto" />
                 </a>
             </div>
@@ -44,19 +43,31 @@
             <div class="flex items-center space-x-4">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500"></i>
-
                     <input type="text"
                            id="navbar-search"
                            data-search-url="@searchUrl"
                            placeholder="@searchPlaceholder"
-                           class="pl-10 pr-3 py-2 rounded-md border border-neutral-300 bg-neutral-50 text-neutral-800 placeholder-placeholder focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary w-48 sm:w-64" />
+                           class="pl-10 pr-3 py-2 rounded-md bg-neutral-200 text-neutral-800 placeholder-placeholder focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary w-48" />
                 </div>
 
                 <div id="search-results" class="absolute bg-white shadow-lg rounded-md mt-2 w-64 max-h-80 overflow-y-auto hidden"></div>
 
+                @foreach (var language in NavbarlanguageSelector ?? Enumerable.Empty<Umbraco.Cms.Core.Models.Blocks.BlockListItem>())
+                {
+                    var languageLink = language?.Content.Value<string>("socialMediaUrl");
+                    var languageIcon = language?.Content.Value<IPublishedContent>("socialMediaIcon")?.Url();
 
-                <a href="/login"
-                   class="text-neutral-700 font-medium hover:text-primary transition-colors">
+                    if (string.IsNullOrEmpty(languageLink) || string.IsNullOrEmpty(languageIcon))
+                    {
+                        continue;
+                    }
+
+                    <a href="@languageLink" class="hover:text-primary transition-colors duration-200">
+                        <img src="@languageIcon" alt="Social Media Icon" class="w-6 h-6" />
+                    </a>
+                }
+
+                <a href="@loginUrl" class="text-neutral-700 font-medium hover:text-primary transition-colors">
                     @navbarLogin
                 </a>
             </div>
@@ -64,24 +75,17 @@
     </div>
 </nav>
 
-<div id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-neutral-50 shadow-lg transform -translate-x-full transition-transform duration-300 z-40">
-    <div class="p-4 border-b border-neutral-200 flex justify-between items-center">
-        <span class="font-semibold text-neutral-800 text-lg">Menu</span>
-        <button id="menu-close" class="text-neutral-600 hover:text-primary focus:outline-none sm:hidden">
-            <i class="fa-solid fa-xmark text-xl"></i>
-        </button>
-    </div>
-
+<div id="sidebar" class="fixed top-16 left-0 h-full w-64 bg-neutral-200 text-neutral-700 shadow-lg transform -translate-x-full transition-transform duration-300 z-40">
     <nav class="mt-4 space-y-2">
         @if (NavbarItems.Any())
         {
-            <ul class="flex flex-col mt-4 space-y-2 px-4 bg-primary">
+            <ul class="flex flex-col mt-4 space-y-2 px-4">
                 @foreach (var link in NavbarItems)
                 {
                     <li>
                         <a href="@link.Url"
                            target="@(string.IsNullOrWhiteSpace(link.Target) ? "_self" : link.Target)"
-                           class="block px-4 py-2 rounded-md text-neutral-800 hover:bg-primary transition-colors duration-200 font-medium">
+                           class="block px-4 py-2 text-neutral-700 hover:bg-neutral-300 hover:text-primary transition-colors duration-200 font-medium border-b border-neutral-300">
                             @link.Name
                         </a>
                     </li>
