@@ -17,16 +17,19 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Poppins:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/umbraco/backoffice/css/umbraco-blockgridlayout.css">
-    <script src="/js/tailwind.config.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/tailwind.config.js"></script>
+    <link rel="stylesheet" href="/css/main.css">
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 </head>
 
 <body class="font-poppins bg-neutral-50 text-neutral-900 min-h-screen flex flex-col">
 
     @await Html.PartialAsync("_Navbar")
-
-    <main class="flex-grow pt-16">
+    @* breadcrumbs here  *@
+    @await Html.PartialAsync("Partials/static/breadcrumb.cshtml")
+    
+    <main class="flex-grow">
         @RenderBody()
     </main>
 
@@ -34,5 +37,6 @@
 
     @await RenderSectionAsync("Scripts", required: false)
     <script src="~/js/navbarscript.js"></script>
+    <script src="~/js/muscleGroups.js"></script>
     </body>
 </html>
