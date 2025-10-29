@@ -13,7 +13,7 @@
 
     var navbarLogin = navbarNode?.Value<string>("navbarLogin") ?? "Login";
 
-    var NavbarItems = navbarNode?.Value<IEnumerable<CoreLink>>("navbarMenuItems") ?? Enumerable.Empty<CoreLink>();
+    var NavbarItems = navbarNode?.Value<IEnumerable<CoreLink>>("navbarMenuItems") ?? [];
 
 
     var currentCulture = CultureInfo.CurrentCulture.Name;
