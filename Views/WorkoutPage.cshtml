@@ -2,9 +2,17 @@
 
 @{
     Layout = "mainLayout.cshtml";
-    ViewBag.Title = Model.Value<string>("pageTitle") ?? "Workouts";
-    var pageTitle = Model.Value<string>("pageTitle") ?? "Muscle Group Visualizer";
-    var pageSubtitle = Model.Value<string>("pageSubtitle") ?? "Select muscle groups to see which muscles you'll be training";
+    
+    var isSwedish = Model.Url().Contains("/sv/");
+    
+    var defaultTitle = isSwedish ? "Muskelgruppsvisualiserare" : "Muscle Group Visualizer";
+    var defaultSubtitle = isSwedish 
+        ? "Välj muskelgrupper för att se vilka muskler du tränar" 
+        : "Select muscle groups to see which muscles you'll be training";
+    
+    ViewBag.Title = Model.Value<string>("pageTitle") ?? defaultTitle;
+    var pageTitle = Model.Value<string>("pageTitle") ?? defaultTitle;
+    var pageSubtitle = Model.Value<string>("pageSubtitle") ?? defaultSubtitle;
 }
 
 <section class="py-16 bg-white">

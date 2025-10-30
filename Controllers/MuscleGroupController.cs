@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using WorkoutProgramBuilder.Services;
+using WorkoutProgramBuilder.Business.Services;
 
 namespace WorkoutProgramBuilder.Controllers;
 

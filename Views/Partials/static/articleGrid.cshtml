@@ -2,70 +2,42 @@
 @using Umbraco.Cms.Core.Models
 @model IEnumerable<IPublishedContent>
 
-@functions {
-    string GetThumbUrl(IPublishedContent content, string alias = "thumbnail")
-    {
-        if (content == null || !content.HasProperty(alias))
-            return string.Empty;
-
-        var single = content.Value<MediaWithCrops>(alias);
-        if (single != null) return single.Url() ?? string.Empty;
-
-        var many = content.Value<IEnumerable<MediaWithCrops>>(alias);
-        if (many?.Any() == true) return many.First().Url() ?? string.Empty;
-
-        var singlePub = content.Value<IPublishedContent>(alias);
-        if (singlePub != null) return singlePub.Url();
-
-        var manyPub = content.Value<IEnumerable<IPublishedContent>>(alias);
-        return manyPub?.FirstOrDefault()?.Url() ?? string.Empty;
-    }
+@{
+    var firstItem = Model.FirstOrDefault();
+    var isSwedish = firstItem?.Url().Contains("/sv/") ?? false;
+    var readLabel = isSwedish ? "Läs artikeln" : "Read article";
 }
 
-<div class="articles grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
+<div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
     @foreach (var item in Model)
     {
-        var imageUrl = GetThumbUrl(item);
+        var title = item.Value<string>("pageTitle") ?? item.Name;
+        var url = item.Url();
+        var thumb = item.Value<MediaWithCrops>("thumbnail")?.Url();
         var preamble = item.Value<string>("preamble") ?? string.Empty;
 
-        <a href="@item.Url()" class="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl h-full">
-            <article class="bg-white rounded-2xl border border-neutral-200/90 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full">
-                <div class="relative w-full overflow-hidden" style="aspect-ratio:16/9;">
-                    @if (!string.IsNullOrWhiteSpace(imageUrl))
-                    {
-                        <img
-                            src="@imageUrl"
-                            alt="@item.Name()"
-                            loading="lazy"
-                            decoding="async"
-                            class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
-                    }
-                    else
-                    {
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-300/30 to-blue-700/30"></div>
-                    }
-                </div>
+        <article class="rounded-2xl overflow-hidden border border-neutral-200 shadow-sm bg-white hover:shadow-md transition-shadow">
+            @if (!string.IsNullOrEmpty(thumb))
+            {
+                <a href="@url" class="block aspect-[16/9] overflow-hidden">
+                    <img src="@thumb" alt="@title" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" decoding="async" />
+                </a>
+            }
 
-                <div class="flex flex-col flex-1 p-5 sm:p-6">
-                    <h3 class="text-lg sm:text-xl font-bold text-neutral-900 group-hover:text-blue-700 line-clamp-2 min-h-[3rem]">
-                        @item.Name()
-                    </h3>
-                    <p class="mt-2 line-clamp-3 text-neutral-600">@preamble</p>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-neutral-900 mb-3">
+                    <a href="@url" class="hover:text-blue-700 transition-colors">@title</a>
+                </h3>
 
-                    <p class="mt-2 text-neutral-600 line-clamp-3 flex-1">
-                        @preamble
-                    </p>
+                @if (!string.IsNullOrWhiteSpace(preamble))
+                {
+                    <p class="line-clamp-3 text-neutral-700 mb-4">@preamble</p>
+                }
 
-                    <div class="pt-4">
-                        <span class="inline-flex items-center gap-2 text-blue-700 font-medium">
-                            Read article
-                            <svg class="size-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 11-1.414-1.414L13.586 10H4a1 1 0 110-2h9.586l-3.293-3.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-            </article>
-        </a>
+                <a href="@url" class="text-blue-700 font-medium inline-flex items-center gap-1 hover:gap-2 transition-all">
+                    @readLabel <span aria-hidden="true">→</span>
+                </a>
+            </div>
+        </article>
     }
 </div>
