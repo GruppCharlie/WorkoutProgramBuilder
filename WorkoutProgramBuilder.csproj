@@ -10,7 +10,6 @@
     <PackageReference Include="Umbraco.Cms" Version="16.3.2" />
     <PackageReference Include="Umbraco.StorageProviders.AzureBlob" Version="16.0.0" />
     <PackageReference Include="Umbraco.StorageProviders.AzureBlob.ImageSharp" Version="16.0.0" />
-    <PackageReference Include="uSync" Version="16.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +20,12 @@
 
   <ItemGroup>
     <None Include="wwwroot\css\main.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.example.json">
+      <DependentUpon>Program.cs</DependentUpon>
+    </Content>
   </ItemGroup>
 
   <PropertyGroup>
