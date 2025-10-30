@@ -10,17 +10,22 @@
     var errorMessage = Model?.Content.Value<string>("errorMessage");
 }
 
-<div class="space-y-2">
+<div class="space-y-2" data-validate>
     <label class="block text-gray-800" for="@uniqueName">@labelText</label>
 
     <input id="@uniqueName" 
            name="@uniqueName" 
            type="email" 
            placeholder="@placeholderText" 
-           class="w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+           class="w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+           autocomplete="email"
+           autocapitalize="none"
+           spellcheck="false"
            @(isRequired ? "required" : null) />
 
     @if(isRequired && !string.IsNullOrWhiteSpace(errorMessage)) {
-        <span class="block text-sm text-red-600">@errorMessage</span>
+        <span data-error="required" hidden class="text-sm text-red-600 mt-1">@errorMessage</span>
     }
+
+    <span data-error="format" hidden class="text-sm text-red-600 mt-1">Please enter a valid email address</span>
 </div>
