@@ -19,7 +19,7 @@
             var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
         }
 
-        <form class="space-y-6" onsubmit="handleSignUpFormSubmit(event)" novalidate>
+        <form id="signupForm" class="space-y-6" novalidate autocomplete="off">
             @Html.GetBlockListHtml(inputBlocks)
 
             <div class="flex gap-3">
@@ -28,3 +28,7 @@
         </form>
 	</section>
 </div>
+
+@section Scripts {
+    <script src="~/js/signup-validation.js"></script>
+}
