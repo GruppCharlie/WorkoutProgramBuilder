@@ -22,6 +22,12 @@
     <None Include="wwwroot\css\main.css" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.example.json">
+      <DependentUpon>Program.cs</DependentUpon>
+    </Content>
+  </ItemGroup>
+
   <PropertyGroup>
     <!-- Razor files are needed for the backoffice to work correctly -->
     <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>

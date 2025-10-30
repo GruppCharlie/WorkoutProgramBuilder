@@ -1,42 +1,39 @@
-﻿@using Umbraco.Cms.Core.Models
-@using Umbraco.Cms.Core.Models.PublishedContent
-@using Umbraco.Extensions
+@using Umbraco.Cms.Core.Models
+@using System.Linq
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 
 @{
     Layout = "mainLayout.cshtml";
 
-    var pageTitle = Model?.Value<string>("pageTitle") ?? Model?.Name ?? string.Empty;
-    var preamble  = Model?.Value<string>("preamble") ?? string.Empty;
-    var thumbnail = Model?.Value<MediaWithCrops>("thumbnail")?.Url() ?? string.Empty;
-    var body      = Model?.Value<string>("pageContent") ?? string.Empty;
+    var pageTitle = Model.Value<string>("pageTitle") ?? Model.Name;
+    var preamble = Model.Value<string>("preamble") ?? string.Empty;
+    var thumbnail = Model.Value<MediaWithCrops>("thumbnail")?.Url() ?? string.Empty;
+    var body = Model.Value<string>("pageContent") ?? string.Empty;
 
-    var isSwedish = Model.GetCultureFromDomains()?.StartsWith("sv", StringComparison.OrdinalIgnoreCase) == true 
+    var culture = Model.GetCultureFromDomains();
+    var isSwedish = (culture != null && culture.StartsWith("sv", StringComparison.OrdinalIgnoreCase)) 
                     || Model.Url().Contains("/sv/");
 
-    var labelHome     = isSwedish ? "Hem" : "Home";
     var labelPrevious = isSwedish ? "Föregående" : "Previous";
-    var labelNext     = isSwedish ? "Nästa" : "Next";
+    var labelNext = isSwedish ? "Nästa" : "Next";
 
-    var ancestors = Model.Ancestors()?
-        .Where(x => x.IsVisible())
-        .OrderBy(x => x.Level)
-        .ToList() ?? new List<IPublishedContent>();
-
-    var siblings = Model.Parent?
-        .ChildrenOfType("articleItemTemplate")
-        .Where(x => x.IsVisible())
+    var parent = Model.Parent<IPublishedContent>();
+    var siblings = parent?.ChildrenOfType("articleItemTemplate")
+        ?.Where(x => x.IsVisible())
         .OrderBy(x => x.CreateDate)
-        .ToList() ?? new List<IPublishedContent>();
+        .ToList() ?? [];
 
-    var i    = siblings.FindIndex(x => x.Id == Model.Id);
+    var i = siblings.FindIndex(x => x.Id == Model.Id);
     var prev = i > 0 ? siblings[i - 1] : null;
     var next = (i >= 0 && i < siblings.Count - 1) ? siblings[i + 1] : null;
 
-    string Thumb(IPublishedContent c) =>
-        c?.Value<MediaWithCrops>("thumbnail")?.Url()
-        ?? c?.Value<IPublishedContent>("thumbnail")?.Url()
-        ?? string.Empty;
+    string GetThumb(IPublishedContent? content)
+    {
+        if (content == null) return string.Empty;
+        return content.Value<MediaWithCrops>("thumbnail")?.Url()
+            ?? content.Value<IPublishedContent>("thumbnail")?.Url()
+            ?? string.Empty;
+    }
 }
 
 @if (!string.IsNullOrWhiteSpace(preamble))
@@ -69,7 +66,7 @@
 
       @if (prev != null)
       {
-        var pThumb = Thumb(prev);
+        var pThumb = GetThumb(prev);
         <a href="@prev.Url()" class="group block rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
           <div class="flex items-center gap-4">
             @if (!string.IsNullOrEmpty(pThumb))
@@ -84,7 +81,7 @@
 
       @if (next != null)
       {
-        var nThumb = Thumb(next);
+        var nThumb = GetThumb(next);
         <a href="@next.Url()" class="group block rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow sm:ml-auto">
           <div class="flex items-center gap-4 justify-end">
             <div class="min-w-0 text-right">

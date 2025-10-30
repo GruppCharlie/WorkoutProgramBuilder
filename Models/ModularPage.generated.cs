@@ -73,13 +73,6 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string PageTitle => this.Value<string>(_publishedValueFallback, "pageTitle");
 
 		///<summary>
-		/// Exclude From Sitemap: Check to exclude this page from sitemap
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[ImplementPropertyType("excludeFromSitemap")]
-		public virtual bool ExcludeFromSitemap => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetExcludeFromSitemap(this, _publishedValueFallback);
-
-		///<summary>
 		/// MetaDescription
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]

@@ -8,7 +8,8 @@
   var sectionBackgroundImage = Model.Content.Value<IPublishedContent>("sectionBackgroundImage")?.Url() ?? null;
   var sectionBackgroundColor = Model.Content.Value<string>("sectionBackgroundColor") ?? "";
   var isHero = sectionTitle.Equals("Hero", StringComparison.OrdinalIgnoreCase);
-  var isWorkOutArticles = sectionTitle.Equals("Work Out Articles", StringComparison.OrdinalIgnoreCase);
+  var isWorkOutArticles = sectionTitle.Equals("Work Out Articles", StringComparison.OrdinalIgnoreCase) 
+                       || sectionTitle.Equals("Träningsartiklar", StringComparison.OrdinalIgnoreCase);
   
   // Build background style
   var bgStyle = "";
@@ -23,7 +24,7 @@
   <section id="@sectionId" class="relative h-[70vh] w-full overflow-visible">
     <img class="absolute inset-0 w-full h-full object-cover object-top" src="@sectionBackgroundImage" alt="@($"{sectionTitle} background image")"/>
     
-    <div class="relative z-10 max-w-7xl mx-auto px-6 h-full flex items-center">
+    <div class="relative z-10 container mx-auto px-6 h-full flex items-center">
       @await Html.GetBlockGridItemAreasHtmlAsync(Model)
     </div>
   </section>
@@ -55,17 +56,25 @@ else
         </div>
       }
       
-      @if (isWorkOutArticles)
-      {
-        var maxArticles = Model.Content.Value<int>("maxArticles");
-        if (maxArticles <= 0) maxArticles = 3;
-        ViewData["maxArticles"] = maxArticles;
-        @await Html.PartialAsync("~/Views/Partials/static/workOutArticles.cshtml")
-      }
-      else
-      {
-        @await Html.GetBlockGridItemAreasHtmlAsync(Model)
-      }
+        @if (isWorkOutArticles)
+        {
+          var maxArticles = Model.Content.Value<int>("maxArticles");
+          if (maxArticles <= 0) maxArticles = 3;
+          ViewData["maxArticles"] = maxArticles;
+          @await Html.PartialAsync("~/Views/Partials/static/workOutArticles.cshtml")
+        }
+        else
+        {
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @foreach (var area in Model.Areas)
+            {
+              foreach (var item in area)
+              {
+                <div>@await Html.PartialAsync("~/Views/Partials/blockgrid/components/card.cshtml", item)</div>
+              }
+            }
+          </div>
+        }
     </div>
   </section>
 }

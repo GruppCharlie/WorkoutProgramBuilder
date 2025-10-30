@@ -22,10 +22,6 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 	/// <summary>Base</summary>
 	public partial interface IBase : IPublishedContent
 	{
-		/// <summary>Exclude From Sitemap</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		bool ExcludeFromSitemap { get; }
-
 		/// <summary>MetaDescription</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
@@ -62,17 +58,6 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		}
 
 		// properties
-
-		///<summary>
-		/// Exclude From Sitemap: Check to exclude this page from sitemap
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[ImplementPropertyType("excludeFromSitemap")]
-		public virtual bool ExcludeFromSitemap => GetExcludeFromSitemap(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Exclude From Sitemap</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		public static bool GetExcludeFromSitemap(IBase that, IPublishedValueFallback publishedValueFallback) => that.Value<bool>(publishedValueFallback, "excludeFromSitemap");
 
 		///<summary>
 		/// MetaDescription
