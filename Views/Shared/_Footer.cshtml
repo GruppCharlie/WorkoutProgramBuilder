@@ -6,36 +6,61 @@
 @{
     var FooterNode = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "footer");
 
+    var FooterCompanyName = FooterNode?.Value<string>("copmanyName") ?? "Company Name";
+
     var FooterRights = FooterNode?.Value<string>("programBuilderRights") ?? "place";
 
-    var FooterItems = FooterNode?.Value<IEnumerable<CoreLink>>("footerItems") ?? [];
+    var FooterItems = FooterNode?.Value<IEnumerable<CoreLink>>("footerItems") ?? new List<CoreLink>();
+
+    var FooterSocialMedia = FooterNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("socialMediaIcons") ?? null;
 
 }
 
-<footer class="bg-neutral-200 shadow-sm py-6 mt-12">
-    <div class="mx-auto container">
-        <div class="flex flex-col sm:flex-row justify-between items-center">
+<footer class="bg-neutral-200 text-neutral-700 py-10 mt-16 border-t border-neutral-300 shadow-sm">
+    <div class="container mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
 
-            <p class="text-sm">@FooterRights</p>
-
-            <div class="flex space-x-4 mt-4 sm:mt-0">
-                @if (FooterItems.Any())
-                {
-                    <ul class="flex flex-col mt-4 space-y-2 px-4 bg-primary">
-                        @foreach (var link in FooterItems)
-                        {
-                            <li>
-                                <a href="@link.Url"
-                                   target="@(string.IsNullOrWhiteSpace(link.Target) ? "_self" : link.Target)"
-                                   class="block px-4 py-2 rounded-md text-neutral-800 hover:bg-primary transition-colors duration-200 font-medium">
-                                    @link.Name
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                }
+            <div class="text-center md:text-left">
+                <p class="text-xl font-semibold text-neutral-900">
+                    @FooterCompanyName
+                </p>
+                <p class="text-sm text-neutral-500 mt-2">@FooterRights</p>
             </div>
 
+            <nav>
+                <ul class="flex flex-wrap justify-center md:justify-end gap-6 text-sm font-medium">
+                    @foreach (var link in FooterItems)
+                    {
+                        <li>
+                            <a href="@link.Url"
+                               target="@(string.IsNullOrWhiteSpace(link.Target) ? "_self" : link.Target)"
+                               class="text-neutral-700 hover:text-primary transition-colors duration-200">
+                                @link.Name
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
         </div>
+
+        <hr class="border-neutral-300 my-8" />
+
+        <div class="flex justify-center md:justify-start items-center text-sm text-neutral-600 gap-4">
+            @foreach (var social in FooterSocialMedia!)
+            {
+                var platformLink = social?.Content.Value<string>("socialMediaUrl");
+                var platformIcon = social?.Content.Value<IPublishedContent>("socialMediaIcon")?.Url();
+
+                if (string.IsNullOrEmpty(platformLink) || string.IsNullOrEmpty(platformIcon))
+                {
+                    continue;
+                }
+
+                <a href="@platformLink" class="hover:text-primary transition-colors duration-200" target="_blank">
+                    <img src="@platformIcon" alt="Social Media Icon" class="w-6 h-6" />
+                </a>
+            }
+        </div>
+
     </div>
 </footer>

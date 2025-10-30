@@ -50,12 +50,28 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
+		/// Language selector
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("languageSelector")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel LanguageSelector => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "languageSelector");
+
+		///<summary>
 		/// NavbarLogin
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("navbarLogin")]
 		public virtual string NavbarLogin => this.Value<string>(_publishedValueFallback, "navbarLogin");
+
+		///<summary>
+		/// Navbar Login Link
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("navbarLoginLink")]
+		public virtual string NavbarLoginLink => this.Value<string>(_publishedValueFallback, "navbarLoginLink");
 
 		///<summary>
 		/// NavbarLogo

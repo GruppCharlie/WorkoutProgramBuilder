@@ -1,4 +1,4 @@
-using WorkoutProgramBuilder.Services;
+using WorkoutProgramBuilder.Business.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
