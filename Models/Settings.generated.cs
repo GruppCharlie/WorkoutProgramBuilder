@@ -88,6 +88,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("sitemapDefaultChangeFrequency")]
 		public virtual global::System.Collections.Generic.IEnumerable<string> SitemapDefaultChangeFrequency => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "sitemapDefaultChangeFrequency");
+		public virtual string SitemapDefaultChangeFrequency => this.Value<string>(_publishedValueFallback, "sitemapDefaultChangeFrequency");
 
 		///<summary>
 		/// Sitemap Default Priority
