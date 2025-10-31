@@ -7,8 +7,9 @@
 	Layout = "mainLayout.cshtml";
 
 	var all = Model.LoginForm ?? new BlockListModel(new List<BlockListItem>());
-	var inputBlocks  = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton").ToList());
+	var inputBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton" && x.Content.ContentType.Alias != "formCta").ToList());
 	var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
+    var ctaBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formCta").ToList());
 }
 
 <div class="container mx-auto px-4">
@@ -20,15 +21,7 @@
                 @Html.GetBlockListHtml(buttonBlocks)
             </div>
 
-            <div class="text-center mt-6">
-                <p class="text-gray-600 mb-3">
-                    Not a member? <span class="font-medium text-gray-800">Register here</span>
-                </p>
-                <a href="/signup" 
-                class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition-colors duration-200">
-                Register
-                </a>
-            </div>
+            @Html.GetBlockListHtml(ctaBlocks)
         </form>
     </section>
 </div>
