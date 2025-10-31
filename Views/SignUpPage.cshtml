@@ -5,21 +5,15 @@
 @using System.Linq;
 @{
 	Layout = "mainLayout.cshtml";
-    ViewBag.Title = Model.Value("pageTitle");
+
+    var all = Model.SignUpForm ?? new BlockListModel(new List<BlockListItem>());
+    var inputBlocks  = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton").ToList());
+    var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
 }
 
 <div class="container mx-auto px-4">
 	<section class="max-w-md mx-auto mt-24 bg-white rounded-2xl shadow-lg px-8 py-10">
-        <h1 class="text 2xl font-semibold text-center mb-8">@ViewBag.Title</h1>
-
-        @{
-            var all = Model.SignUpForm ?? new BlockListModel(new List<BlockListItem>());
-
-            var inputBlocks  = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton").ToList());
-            var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
-        }
-
-        <form class="space-y-6" onsubmit="handleSignUpFormSubmit(event)" novalidate>
+        <form id="signupForm" class="space-y-6" novalidate autocomplete="off">
             @Html.GetBlockListHtml(inputBlocks)
 
             <div class="flex gap-3">
@@ -28,3 +22,7 @@
         </form>
 	</section>
 </div>
+
+@section Scripts {
+    <script src="~/js/signup-validation.js"></script>
+}

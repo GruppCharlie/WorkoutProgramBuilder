@@ -1,0 +1,44 @@
+﻿@using System.Globalization
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@{
+    Layout = "mainLayout.cshtml";
+    Context.Response.StatusCode = 404;
+
+    var pageTitle = Model.Value<string>("pageTitle") ?? "404";
+    var customHeadline = Model.Value<string>("customHeadline")
+                         ?? "Sorry, the page you're looking for doesn’t exist or has been moved.";
+    var homeUrl = Model.Root().Url();
+
+    var gifRaw = Model.Value("gif");
+    string gifUrl = null;
+
+    if (gifRaw is IPublishedContent m1) gifUrl = m1.Url();
+    else if (gifRaw is IEnumerable<IPublishedContent> many && many.Any()) gifUrl = many.First().Url();
+    else gifUrl = gifRaw?.ToString();
+
+    if (!string.IsNullOrWhiteSpace(gifUrl)) gifUrl = Url.Content(gifUrl);
+
+    var culture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var backLabel = culture == "sv" ? "Tillbaka till startsidan" : "Back to homepage";
+}
+
+<section class="flex flex-col items-center justify-center min-h-[70vh] text-center px-6 py-16">
+    <div class="max-w-xl mx-auto">
+        @if (!string.IsNullOrWhiteSpace(gifUrl))
+        {
+            <img src="@gifUrl" alt="@pageTitle" class="mx-auto rounded-xl shadow-lg max-h-[360px] w-auto" />
+        }
+
+        <p class="mt-6 text-gray-600">
+            @customHeadline
+        </p>
+
+        <a href="@homeUrl"
+           class="mt-8 inline-block px-6 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+            @backLabel
+        </a>
+    </div>
+</section>
