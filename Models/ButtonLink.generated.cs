@@ -71,6 +71,6 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("buttonVariant")]
-		public virtual string ButtonVariant => this.Value<string>(_publishedValueFallback, "buttonVariant");
+		public virtual global::System.Collections.Generic.IEnumerable<string> ButtonVariant => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "buttonVariant");
 	}
 }
