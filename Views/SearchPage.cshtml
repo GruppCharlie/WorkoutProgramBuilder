@@ -40,14 +40,9 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             @foreach (var ex in exercises)
             {
-                <div class="border border-gray-200 rounded-md p-4 shadow hover:shadow-md transition">
-                    <img src="@ex.GifUrl" alt="@ex.Name" class="w-full h-48 object-contain mb-2" />
-                    <h3 class="font-bold text-lg">@ex.Name</h3>
-                    <p class="text-sm text-gray-600">@ex.BodyPart - @ex.Target</p>
-                    <p class="text-xs text-gray-400 mt-1">Equipment: @ex.Equipment</p>
-                </div>
+                @await Html.PartialAsync("_ExerciseCard", ex)
             }
-    </div>
+        </div>
 
 
 
