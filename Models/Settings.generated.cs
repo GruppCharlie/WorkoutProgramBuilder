@@ -58,12 +58,51 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string CopyrightDescription => this.Value<string>(_publishedValueFallback, "copyrightDescription");
 
 		///<summary>
+		/// Policy
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("policy")]
+		public virtual string Policy => this.Value<string>(_publishedValueFallback, "policy");
+
+		///<summary>
+		/// Privacy
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("privacy")]
+		public virtual string Privacy => this.Value<string>(_publishedValueFallback, "privacy");
+
+		///<summary>
 		/// Site Logotype
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("siteLogotype")]
 		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops SiteLogotype => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "siteLogotype");
+
+		///<summary>
+		/// Sitemap Default Change Frequency
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("sitemapDefaultChangeFrequency")]
+		public virtual string SitemapDefaultChangeFrequency => this.Value<string>(_publishedValueFallback, "sitemapDefaultChangeFrequency");
+
+		///<summary>
+		/// Sitemap Default Priority
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("sitemapDefaultPriority")]
+		public virtual decimal SitemapDefaultPriority => this.Value<decimal>(_publishedValueFallback, "sitemapDefaultPriority");
+
+		///<summary>
+		/// Sitemap Exclude URLs
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("sitemapExcludeUrLs")]
+		public virtual string SitemapExcludeUrLs => this.Value<string>(_publishedValueFallback, "sitemapExcludeUrLs");
 
 		///<summary>
 		/// Site Name
