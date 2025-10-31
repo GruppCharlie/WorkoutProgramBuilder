@@ -1,5 +1,6 @@
 ﻿using Umbraco.Cms.Core.Composing;
 using WorkoutProgramBuilder.Business.Interface;
+using WorkoutProgramBuilder.Business.Services;
 
 namespace WorkoutProgramBuilder.Composers;
 
