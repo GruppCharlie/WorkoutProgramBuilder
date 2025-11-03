@@ -30,9 +30,10 @@ public class AuthSurfaceController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> HandleSignup(string emailsignup, string createPassword, string confirmPassword)
+    public async Task<IActionResult> HandleSignup(string username, string emailsignup, string createPassword, string confirmPassword)
     {
-        if (string.IsNullOrWhiteSpace(emailsignup) ||
+        if (string.IsNullOrWhiteSpace(username) ||
+            string.IsNullOrWhiteSpace(emailsignup) ||
             string.IsNullOrWhiteSpace(createPassword) ||
             string.IsNullOrWhiteSpace(confirmPassword))
         {
@@ -46,20 +47,28 @@ public class AuthSurfaceController(
             return RedirectToCurrentUmbracoPage();
         }
 
-        var existing = _memberService.GetByEmail(emailsignup);
-        if (existing != null)
+        if (!System.Text.RegularExpressions.Regex.IsMatch(username, @"^[a-zA-Z0-9_]{3,20}$"))
+        {
+            TempData["SignupError"] = "Username must be 3–20 characters (letters, numbers, underscore).";
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        if (_memberService.GetByUsername(username) != null)
+        {
+            TempData["SignupError"] = "That username is already taken.";
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        if (_memberService.GetByEmail(emailsignup) != null)
         {
             TempData["SignupError"] = "An account with that email already exists.";
             return RedirectToCurrentUmbracoPage();
         }
 
         const string memberTypeAlias = "member"; 
-        var userName = emailsignup;  
-        var name = emailsignup; 
+        var displayName = username;
 
-        var identityUser = MemberIdentityUser.CreateNew(userName, emailsignup, memberTypeAlias, true, name);
-        identityUser.Name = name;
-        identityUser.IsApproved = true;
+        var identityUser = MemberIdentityUser.CreateNew(username, emailsignup, memberTypeAlias, true, displayName);
         identityUser.EmailConfirmed = true; 
 
         var createResult = await _memberManager.CreateAsync(identityUser, createPassword);
@@ -71,6 +80,19 @@ public class AuthSurfaceController(
                 : msg;
 
             return RedirectToCurrentUmbracoPage();
+        }
+
+        var member = _memberService.GetByKey(identityUser.Key);
+        if (member != null)
+        {
+            // sätt både visningsnamn och username
+            if (!string.Equals(member.Name, username, StringComparison.Ordinal))
+                member.Name = username;
+
+            if (!string.Equals(member.Username, username, StringComparison.Ordinal))
+                member.Username = username;
+
+            _memberService.Save(member);
         }
 
         var attempt = await _memberSignInManager.PasswordSignInAsync(identityUser.UserName, createPassword, false, true);
