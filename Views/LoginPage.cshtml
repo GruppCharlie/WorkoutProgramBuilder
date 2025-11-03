@@ -20,7 +20,7 @@
             <div class="text-red-600 mb-4">@TempData["LoginError"]</div>
         }
 
-        @using (Html.BeginUmbracoForm("HandleLogin", "LoginSurface", FormMethod.Post, new { id = "loginForm", @class = "space-y-6", novalidate = "novalidate", autocomplete = "off" }))
+        @using (Html.BeginUmbracoForm("HandleLogin", "AuthSurface", FormMethod.Post, new { id = "loginForm", @class = "space-y-6", novalidate = "novalidate", autocomplete = "off" }))
         {
 
             @Html.GetBlockListHtml(inputBlocks)
