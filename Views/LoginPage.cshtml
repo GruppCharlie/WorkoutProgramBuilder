@@ -1,20 +1,28 @@
-﻿@using System.Linq;
-@using Umbraco.Cms.Core.Models.Blocks;
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<LoginPage>;
+﻿@using System.Linq
+@using Umbraco.Cms.Core.Models.Blocks
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<LoginPage>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 
 @{
-	Layout = "mainLayout.cshtml";
+    Layout = "mainLayout.cshtml";
 
-	var all = Model.LoginForm ?? new BlockListModel(new List<BlockListItem>());
-	var inputBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton" && x.Content.ContentType.Alias != "formCta").ToList());
-	var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
+    var all = Model.LoginForm ?? new BlockListModel(new List<BlockListItem>());
+    var inputBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton" && x.Content.ContentType.Alias != "formCta").ToList());
+    var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
     var ctaBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formCta").ToList());
 }
 
 <div class="container mx-auto px-4">
     <section class="max-w-md mx-auto mt-24 bg-white rounded-2xl shadow-lg px-8 py-10">
-        <form id="loginForm" class="space-y-6" novalidate autocomplete="off">
+
+        @if (TempData["LoginError"] != null)
+        {
+            <div class="text-red-600 mb-4">@TempData["LoginError"]</div>
+        }
+
+        @using (Html.BeginUmbracoForm("HandleLogin", "LoginSurface", FormMethod.Post, new { id = "loginForm", @class = "space-y-6", novalidate = "novalidate", autocomplete = "off" }))
+        {
+
             @Html.GetBlockListHtml(inputBlocks)
 
             <div class="flex gap-3">
@@ -22,10 +30,10 @@
             </div>
 
             @Html.GetBlockListHtml(ctaBlocks)
-        </form>
+        }
     </section>
 </div>
 
 @section Scripts {
-  <script src="~/js/login-validation.js"></script>
+    <script src="~/js/login-validation.js"></script>
 }
