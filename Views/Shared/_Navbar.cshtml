@@ -3,6 +3,8 @@
 @using Umbraco.Cms.Core.Models.PublishedContent
 @using Umbraco.Cms.Web.Common.PublishedModels
 @using CoreLink = Umbraco.Cms.Core.Models.Link
+@inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
+
 @{
     var contentAtRoot = Umbraco.ContentAtRoot().ToList();
     var currentCulture = CultureInfo.CurrentCulture.Name;
@@ -23,6 +25,9 @@
 
     var loginNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "loginPage");
     var loginUrl = loginNode?.Url(culture: currentCulture) ?? "/login";
+
+    var currentMember = await MemberManager.GetCurrentMemberAsync();
+    var isLoggedIn = currentMember != null;
 }
 
 <nav class="bg-neutral-200 text-neutral-700 shadow-sm fixed top-0 left-0 right-0 z-50">
@@ -40,6 +45,9 @@
                 </a>
             </div>
 
+    
+
+
             <div class="flex items-center space-x-4">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500"></i>
@@ -49,7 +57,10 @@
                            placeholder="@searchPlaceholder"
                            class="pl-10 pr-3 py-2 rounded-md bg-neutral-200 text-neutral-800 placeholder-placeholder focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary w-48" />
                 </div>
-
+                @if (isLoggedIn)
+                {
+                    <p>Welcome @currentMember.UserName</p>
+                }
                 <div id="search-results" class="absolute bg-white shadow-lg rounded-md mt-2 w-64 max-h-80 overflow-y-auto hidden"></div>
 
                 @foreach (var language in NavbarlanguageSelector ?? Enumerable.Empty<Umbraco.Cms.Core.Models.Blocks.BlockListItem>())
