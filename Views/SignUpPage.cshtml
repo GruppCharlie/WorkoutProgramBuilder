@@ -1,14 +1,15 @@
-﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+﻿@using System.Linq;
+@using Umbraco.Cms.Core.Models.Blocks;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<SignUpPage>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
-@using Umbraco.Cms.Core.Models.Blocks;
-@using System.Linq;
+
 @{
 	Layout = "mainLayout.cshtml";
 
     var all = Model.SignUpForm ?? new BlockListModel(new List<BlockListItem>());
-    var inputBlocks  = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton").ToList());
+    var inputBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton" && x.Content.ContentType.Alias != "formCta").ToList());
     var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
+    var ctaBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formCta").ToList());
 }
 
 <div class="container mx-auto px-4">
@@ -19,6 +20,8 @@
             <div class="flex gap-3">
                 @Html.GetBlockListHtml(buttonBlocks)
             </div>
+
+            @Html.GetBlockListHtml(ctaBlocks)
         </form>
 	</section>
 </div>
