@@ -12,7 +12,7 @@ using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Web.Common.Security;
 using Umbraco.Cms.Web.Website.Controllers;
 
-public class LoginSurfaceController(
+public class AuthSurfaceController(
     IUmbracoContextAccessor umbracoContextAccessor,
     IUmbracoDatabaseFactory databaseFactory,
     ServiceContext services,
@@ -21,11 +21,13 @@ public class LoginSurfaceController(
     IPublishedUrlProvider publishedUrlProvider,
     IMemberSignInManager memberSignInManager,
     IMemberManager memberManager,
-    IMemberService memberService) : SurfaceController(umbracoContextAccessor, databaseFactory, services, appCaches, profilingLogger, publishedUrlProvider)
+    IMemberService memberService)
+    : SurfaceController(umbracoContextAccessor, databaseFactory, services, appCaches, profilingLogger, publishedUrlProvider)
 {
     private readonly IMemberSignInManager _memberSignInManager = memberSignInManager;
     private readonly IMemberManager _memberManager = memberManager;
     private readonly IMemberService _memberService = memberService;
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -46,7 +48,6 @@ public class LoginSurfaceController(
 
         var attempt = await _memberSignInManager.PasswordSignInAsync(member.Username, password, false, true);
 
-
         if (attempt.Succeeded)
         {
             return Redirect("/");
@@ -56,4 +57,12 @@ public class LoginSurfaceController(
         return RedirectToCurrentUmbracoPage();
     }
 
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> HandleLogout()
+    {
+        await _memberSignInManager.SignOutAsync();
+        return Redirect("/");
+    }
 }

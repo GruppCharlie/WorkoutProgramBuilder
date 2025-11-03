@@ -59,7 +59,7 @@
                 </div>
                 @if (isLoggedIn)
                 {
-                    <p>Welcome @currentMember.UserName</p>
+                    <p class="hidden md:block">Welcome @currentMember?.UserName</p>
                 }
                 <div id="search-results" class="absolute bg-white shadow-lg rounded-md mt-2 w-64 max-h-80 overflow-y-auto hidden"></div>
 
@@ -77,10 +77,23 @@
                         <img src="@languageIcon" alt="Social Media Icon" class="w-6 h-6" />
                     </a>
                 }
+                @if (!isLoggedIn)
+                {
+                    <a href="@loginUrl" class="text-neutral-700 font-medium hover:text-primary transition-colors">
+                        @navbarLogin
+                    </a>
+                }
+                else if (isLoggedIn)
+                {
+                    <form method="post" asp-controller="AuthSurface" asp-action="HandleLogout" class="inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit"
+                                class="text-neutral-700 font-medium hover:text-primary transition-colors bg-transparent border-none cursor-pointer">
+                            Logout
+                        </button>
+                    </form>
+                }
 
-                <a href="@loginUrl" class="text-neutral-700 font-medium hover:text-primary transition-colors">
-                    @navbarLogin
-                </a>
             </div>
         </div>
     </div>
