@@ -9,13 +9,14 @@
     var contentAtRoot = Umbraco.ContentAtRoot().ToList();
     var currentCulture = CultureInfo.CurrentCulture.Name;
 
-    var navbarNode = contentAtRoot.FirstOrDefault(x => x.ContentType.Alias == "navbar");
-    var navbarLogo = navbarNode?.Value<IPublishedContent>("navbarLogo");
+    var settingsNode = contentAtRoot.FirstOrDefault(x => x.ContentType.Alias == "settings");
+    var navbarLogo = settingsNode?.Value<IPublishedContent>("siteLogotype");
     var navbarLogoUrl = navbarLogo?.Url() ?? string.Empty;
-    var searchPlaceholder = navbarNode?.Value<string>("searchPlaceHolder") ?? "Search...";
-    var navbarLogin = navbarNode?.Value<string>("navbarLogin") ?? "Login";
-    var NavbarItems = navbarNode?.Value<IEnumerable<CoreLink>>("navbarMenuItems") ?? [];
-    var NavbarlanguageSelector = navbarNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("languageSelector");
+    var searchPlaceholder = settingsNode?.Value<string>("searchPlaceHolderText") ?? "Search...";
+    var navbarLogin = settingsNode?.Value<string>("navbarLogin") ?? "Login";
+    var navbarLogout = settingsNode?.Value<string>("navbarLogoutText") ?? "Logout";
+    var NavbarItems = settingsNode?.Value<IEnumerable<CoreLink>>("sidebarMenuItems") ?? Enumerable.Empty<CoreLink>();
+    var NavbarlanguageSelector = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("languageSelector");
 
     var searchNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "searchPage");
     var searchUrl = searchNode?.Url(culture: currentCulture) ?? "/search";
@@ -45,7 +46,6 @@
                 </a>
             </div>
 
-    
 
 
             <div class="flex items-center space-x-4">
@@ -63,7 +63,7 @@
                 }
                 <div id="search-results" class="absolute bg-white shadow-lg rounded-md mt-2 w-64 max-h-80 overflow-y-auto hidden"></div>
 
-                @foreach (var language in NavbarlanguageSelector ?? [])
+                @foreach (var language in NavbarlanguageSelector ?? Enumerable.Empty<Umbraco.Cms.Core.Models.Blocks.BlockListItem>())
                 {
                     var languageLink = language?.Content.Value<string>("socialMediaUrl");
                     var languageIcon = language?.Content.Value<IPublishedContent>("socialMediaIcon")?.Url();
@@ -77,6 +77,7 @@
                         <img src="@languageIcon" alt="Social Media Icon" class="w-6 h-6" />
                     </a>
                 }
+
                 @if (!isLoggedIn)
                 {
                     <a href="@loginUrl" class="text-neutral-700 font-medium hover:text-primary transition-colors">
@@ -89,7 +90,7 @@
                         @Html.AntiForgeryToken()
                         <button type="submit"
                                 class="text-neutral-700 font-medium hover:text-primary transition-colors bg-transparent border-none cursor-pointer">
-                            Logout
+                            @navbarLogout
                         </button>
                     </form>
                 }
