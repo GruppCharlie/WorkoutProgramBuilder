@@ -17,6 +17,8 @@
     var navbarLogout = settingsNode?.Value<string>("navbarLogoutText") ?? "Logout";
     var NavbarItems = settingsNode?.Value<IEnumerable<CoreLink>>("sidebarMenuItems") ?? Enumerable.Empty<CoreLink>();
     var NavbarlanguageSelector = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("languageSelector");
+    var favoritesNames = new[] { "Favorites", "Favoriter" };
+
 
     var searchNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "searchPage");
     var searchUrl = searchNode?.Url(culture: currentCulture) ?? "/search";
@@ -107,6 +109,11 @@
             <ul class="flex flex-col mt-4 space-y-2 px-4">
                 @foreach (var link in NavbarItems)
                 {
+
+                    if (currentMember == null && favoritesNames.Contains(link.Name, StringComparer.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
                     <li>
                         <a href="@link.Url"
                            target="@(string.IsNullOrWhiteSpace(link.Target) ? "_self" : link.Target)"

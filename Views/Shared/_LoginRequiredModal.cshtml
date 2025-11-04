@@ -1,0 +1,31 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@{
+    var currentCulture = System.Globalization.CultureInfo.CurrentCulture.Name;
+    var root = Umbraco.ContentAtRoot().FirstOrDefault();
+    var allPages = root?.DescendantsOrSelf() ?? Enumerable.Empty<Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>();
+
+    var loginPage = allPages.FirstOrDefault(x => x.ContentType.Alias == "loginPage");
+    var signUpPage = allPages.FirstOrDefault(x => x.ContentType.Alias == "signUpPage");
+
+    var loginLink = loginPage?.Url(culture: currentCulture) ?? "/login";
+    var signUpLink = signUpPage?.Url(culture: currentCulture) ?? "/signup";
+
+    var header = Model.Value("exersiceModalHeader") ?? "Login Required";
+    var text = Model.Value("exersiceModalText") ?? "You need to log in or sign up to add exercises to your favorites.";
+    var loginText = Model.Value("exersiceModalLogin") ?? "Login";
+    var signupText = Model.Value("exersiceModalSignUp") ?? "Sign up";
+    var closeText = Model.Value("exersiceModalClose") ?? "Close";
+}
+
+<div id="loginModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full text-center">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">@header</h2>
+        <p class="text-gray-600 mb-6">@text</p>
+        <div class="flex justify-center gap-4">
+            <a href="@loginLink" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition">@loginText</a>
+            <a href="@signUpLink" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition">@signupText</a>
+        </div>
+        <button id="closeLoginModal" class="mt-6 text-sm text-gray-500 hover:text-gray-700">@closeText</button>
+    </div>
+</div>

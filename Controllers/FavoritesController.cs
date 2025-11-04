@@ -20,17 +20,19 @@ public class FavoritesController(
 {
     private readonly IMemberManager _memberManager = memberManager;
     private readonly IMemberService _memberService = memberService;
+    private readonly IUmbracoContextAccessor _contextAccessor = contextAccessor;
+
 
     [HttpGet]
     public new async Task<IActionResult> Index()
     {
         var currentMember = await _memberManager.GetCurrentMemberAsync();
         if (currentMember == null)
-            return Unauthorized();
+            return RenderUmbraco404();
 
         var member = _memberService.GetById(int.Parse(currentMember.Id));
         if (member == null)
-            return Unauthorized();
+            return RenderUmbraco404();
 
         var savedJson = member.GetValue<string>("savedExercisesJson");
         var saved = string.IsNullOrWhiteSpace(savedJson)
@@ -156,4 +158,25 @@ public class FavoritesController(
 
         return Ok();
     }
+
+    [Obsolete]
+    private IActionResult RenderUmbraco404()
+    {
+        if (!_contextAccessor.TryGetUmbracoContext(out var umbracoContext) || umbracoContext == null)
+            return NotFound();
+
+        var contentCache = umbracoContext.Content;
+        var candidates = contentCache.GetAtRoot().SelectMany(r => r.DescendantsOrSelf());
+
+        var errorPage = candidates.FirstOrDefault(c => string.Equals(c.ContentType.Alias, "errorPage", StringComparison.OrdinalIgnoreCase));
+
+        if (errorPage == null)
+            return NotFound();
+
+        Response.StatusCode = 404;
+
+        return View("~/Views/ErrorPage.cshtml", errorPage);
+    }
 }
+
+

@@ -28,18 +28,21 @@ public class SearchPageController(
     {
         var searchResponse = await _exerciseDbService.SearchAsync(query ?? "", offset, limit);
 
+        List<ExerciseDto> saved = [];
+
         var currentMember = await _memberManager.GetCurrentMemberAsync();
-        if (currentMember == null)
-            return Unauthorized();
-
-        var member = _memberService.GetById(int.Parse(currentMember.Id));
-        if (member == null)
-            return Unauthorized();
-
-        var savedJson = member.GetValue<string>("savedExercisesJson");
-        var saved = string.IsNullOrWhiteSpace(savedJson)
-            ? []
-            : JsonSerializer.Deserialize<List<ExerciseDto>>(savedJson) ?? [];
+        if (currentMember != null)
+        {
+            var member = _memberService.GetById(int.Parse(currentMember.Id));
+            if (member != null)
+            {
+                var savedJson = member.GetValue<string>("savedExercisesJson");
+                if (!string.IsNullOrWhiteSpace(savedJson))
+                {
+                    saved = JsonSerializer.Deserialize<List<ExerciseDto>>(savedJson) ?? [];
+                }
+            }
+        }
 
         foreach (var exercise in searchResponse?.Data ?? [])
         {
