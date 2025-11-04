@@ -4,15 +4,15 @@
 @using CoreLink = Umbraco.Cms.Core.Models.Link
 
 @{
-    var FooterNode = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "footer");
+    var settingsNode = Umbraco.ContentAtRoot().FirstOrDefault(x => x.ContentType.Alias == "settings");
 
-    var FooterCompanyName = FooterNode?.Value<string>("copmanyName") ?? "Company Name";
+    var FooterCompanyName = settingsNode?.Value<string>("siteName") ?? "Workout Program Builder";
 
-    var FooterRights = FooterNode?.Value<string>("programBuilderRights") ?? "place";
+    var FooterRights = settingsNode?.Value<string>("copyrightDescription") ?? "All rights reserved";
 
-    var FooterItems = FooterNode?.Value<IEnumerable<CoreLink>>("footerItems") ?? new List<CoreLink>();
+    var FooterItems = settingsNode?.Value<IEnumerable<CoreLink>>("footerItems") ?? new List<CoreLink>();
 
-    var FooterSocialMedia = FooterNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("socialMediaIcons") ?? null;
+    var FooterSocialMedia = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("socialMediaIcons") ?? null;
 
 }
 
