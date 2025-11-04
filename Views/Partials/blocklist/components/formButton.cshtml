@@ -5,11 +5,16 @@
 @{
     var buttonText = Model?.Content.Value<string>("buttonText");
     var buttonType = Model?.Content.Value<string>("buttonType");
+
+    var baseClasses = "inline-flex items-center rounded-md px-4 py-2 text-white transition-colors";
+    var colorClasses = buttonType == "submit"
+        ? "bg-accent-blue hover:bg-blue-600"
+        : "bg-orange-500 hover:bg-orange-700";
 }
 
 <div class="inline-flex mb-0">
     <button type="@buttonType" 
-            class="inline-flex items-center rounded-md bg-orange-500 px-4 py-2 text-white hover:bg-orange-600">
+            class="@($"{baseClasses} {colorClasses}")">
         @buttonText
     </button>
 </div>

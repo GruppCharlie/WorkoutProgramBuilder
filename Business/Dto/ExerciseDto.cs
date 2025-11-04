@@ -2,9 +2,17 @@
 
 public class ExerciseDto
 {
+    public string? ExerciseId { get; set; }
     public string? Name { get; set; }
-    public string? BodyPart { get; set; } 
-    public string? Target { get; set; } 
-    public string? Equipment { get; set; }
     public string? GifUrl { get; set; }
+    public bool IsSaved { get; set; } = false;
+
+    public List<string>? BodyParts { get; set; }
+    public List<string>? TargetMuscles { get; set; }
+    public List<string>? Equipments { get; set; }
+    public List<string>? SecondaryMuscles { get; set; }
+    public List<string>? Instructions { get; set; }
+
+
+
 }

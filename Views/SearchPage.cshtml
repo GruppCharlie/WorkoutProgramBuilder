@@ -12,17 +12,20 @@
 
     var currentCulture = CultureInfo.CurrentCulture.Name;
     var searchNode = Umbraco.ContentAtRoot()
-    .SelectMany(x => x.DescendantsOrSelf())
-    .FirstOrDefault(x => x.ContentType.Alias == "searchPage");
+        .SelectMany(x => x.DescendantsOrSelf())
+        .FirstOrDefault(x => x.ContentType.Alias == "searchPage");
 
     var searchUrl = searchNode?.Url(culture: currentCulture) ?? "/search";
+
+    bool hasPrev = !string.IsNullOrEmpty(metadata?.PreviousPage);
+    bool hasNext = !string.IsNullOrEmpty(metadata?.NextPage);
 }
 
-
-
-
-<section class="container mx-auto py-10">
-    <h1 class="text-2xl font-semibold mb-6">@Model.Value("searchResults") "@query"</h1>
+<section class="container px-6 mx-auto py-10">
+    <h1 class="text-2xl font-semibold mb-6">
+        @Model.Value("searchResults")
+        "<span class="text-primary">@query</span>"
+    </h1>
 
     @if (string.IsNullOrWhiteSpace(query))
     {
@@ -35,28 +38,44 @@
     else
     {
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            @foreach (var ex in exercises)
+                @await Html.PartialAsync("_ExerciseCard")
+        </div>
+
+
+
+        <div class="flex justify-center items-center mt-10 space-x-4">
+            @if (hasPrev)
             {
-                <div class="border border-gray-200 rounded-md p-4 shadow hover:shadow-md transition">
-                    <img src="@ex.GifUrl" alt="@ex.Name" class="w-full h-48 object-contain mb-2" />
-                    <h3 class="font-bold text-lg">@ex.Name</h3>
-                    <p class="text-sm text-gray-600">@ex.BodyPart - @ex.Target</p>
-                    <p class="text-xs text-gray-400 mt-1">Equipment: @ex.Equipment</p>
-                </div>
+                <a href="@($"{searchUrl}?query={Uri.EscapeDataString(query)}&offset={prevOffset}")"
+                   class="px-4 py-2 rounded border transition text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
+                    @Model.Value("previousButtonText")
+                </a>
+            }
+            else
+            {
+                <button disabled
+                        class="px-4 py-2 rounded border bg-gray-100 text-gray-400 opacity-60 cursor-not-allowed text-sm font-medium">
+                    @Model.Value("previousButtonText")
+                </button>
+            }
+
+            <span class="text-gray-500 text-sm">Page @currentPage</span>
+
+            @if (hasNext)
+            {
+                <a href="@($"{searchUrl}?query={Uri.EscapeDataString(query)}&offset={nextOffset}")"
+                   class="px-4 py-2 rounded border transition text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200">
+                    @Model.Value("nextButtonText")
+                </a>
+            }
+            else
+            {
+                <button disabled
+                        class="px-4 py-2 rounded border bg-gray-100 text-gray-400 opacity-60 cursor-not-allowed text-sm font-medium">
+                    @Model.Value("nextButtonText")
+                </button>
             }
         </div>
 
-        <div class="flex justify-center mt-6 space-x-4">
-            @if (!string.IsNullOrEmpty(metadata?.PreviousPage))
-            {
-                <a href="@($"{searchUrl}?query={Uri.EscapeDataString(query)}&offset={prevOffset}")"
-                   class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">@Model.Value("previousButtonText")</a>
-            }
-            @if (!string.IsNullOrEmpty(metadata?.NextPage))
-            {
-                <a href="@($"{searchUrl}?query={Uri.EscapeDataString(query)}&offset={nextOffset}")"
-                   class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">@Model.Value("nextButtonText")</a>
-            }
-        </div>
-    }
+        }
 </section>
