@@ -3,32 +3,15 @@ namespace WorkoutProgramBuilder.Business.Services;
 public interface IMuscleGroupApiService
 {
     Task<List<string>> GetMuscleGroupsAsync();
-    Task<byte[]> GetMuscleImageAsync(string muscleGroups, string color = "79,70,229", bool transparentBackground = true);
+    Task<byte[]> GetMuscleImageAsync(string muscleGroups, string? color = null, bool transparentBackground = true);
 }
 
-public class MuscleGroupApiService : IMuscleGroupApiService
+public class MuscleGroupApiService(HttpClient httpClient, ILogger<MuscleGroupApiService> logger) : IMuscleGroupApiService
 {
-    private readonly HttpClient _httpClient;
-    private readonly ILogger<MuscleGroupApiService> _logger;
-    private const string BaseUrl = "https://muscle-group-image-generator.p.rapidapi.com";
+    private readonly HttpClient _httpClient = httpClient;
+    private readonly ILogger<MuscleGroupApiService> _logger = logger;
+    private const string DefaultMuscleColor = "131,115,218"; // RGB: Secondary Purple (#8373da)
     private List<string>? _cachedMuscleGroups;
-
-    public MuscleGroupApiService( HttpClient httpClient, IConfiguration configuration, ILogger<MuscleGroupApiService> logger)
-    {
-        _httpClient = httpClient;
-        _logger = logger;
-        
-        var apiKey = configuration["RapidApi:Key"];
-        if (string.IsNullOrEmpty(apiKey))
-        {
-            _logger.LogWarning("RapidAPI key not configured");
-            return;
-        }
-
-        _httpClient.DefaultRequestHeaders.Add("x-rapidapi-key", apiKey);
-        _httpClient.DefaultRequestHeaders.Add("x-rapidapi-host", "muscle-group-image-generator.p.rapidapi.com");
-        _httpClient.Timeout = TimeSpan.FromSeconds(10);
-    }
 
     public async Task<List<string>> GetMuscleGroupsAsync()
     {
@@ -37,7 +20,8 @@ public class MuscleGroupApiService : IMuscleGroupApiService
 
         try
         {
-            var response = await _httpClient.GetAsync($"{BaseUrl}/getMuscleGroups");
+            _logger.LogInformation("Fetching muscle groups from: {BaseAddress}getMuscleGroups", _httpClient.BaseAddress);
+            var response = await _httpClient.GetAsync("getMuscleGroups");
             response.EnsureSuccessStatusCode();
             
             var muscleGroups = await response.Content.ReadFromJsonAsync<List<string>>();
@@ -58,29 +42,20 @@ public class MuscleGroupApiService : IMuscleGroupApiService
         }
     }
 
-    public async Task<byte[]> GetMuscleImageAsync(string muscleGroups, string color = "79,70,229", bool transparentBackground = true)
+    public async Task<byte[]> GetMuscleImageAsync(string muscleGroups, string? color = null, bool transparentBackground = true)
     {
         try
         {
+            var muscleColor = color ?? DefaultMuscleColor;
             var transparentBg = transparentBackground ? "1" : "0";
             
-            // If no muscle groups selected, get base image
-            if (string.IsNullOrWhiteSpace(muscleGroups))
-            {
-                var baseUrl = $"{BaseUrl}/getBaseImage?transparentBackground={transparentBg}";
-                var baseResponse = await _httpClient.GetAsync(baseUrl);
-                baseResponse.EnsureSuccessStatusCode();
-                
-                var baseImageBytes = await baseResponse.Content.ReadAsByteArrayAsync();
-                _logger.LogDebug("Successfully fetched base image ({Size} bytes)", baseImageBytes.Length);
-                return baseImageBytes;
-            }
+            var url = string.IsNullOrWhiteSpace(muscleGroups)
+                ? $"getBaseImage?transparentBackground={transparentBg}"
+                : $"getImage?muscleGroups={Uri.EscapeDataString(muscleGroups)}&color={Uri.EscapeDataString(muscleColor)}&transparentBackground={transparentBg}";
             
-            var encodedMuscleGroups = Uri.EscapeDataString(muscleGroups);
-            var encodedColor = Uri.EscapeDataString(color);
-            var url = $"{BaseUrl}/getImage?muscleGroups={encodedMuscleGroups}&color={encodedColor}&transparentBackground={transparentBg}";
+            _logger.LogInformation("Fetching muscle image from: {BaseAddress}{Url}", _httpClient.BaseAddress, url);
             
-            var response = await _httpClient.GetAsync(url);
+            using var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             
             var imageBytes = await response.Content.ReadAsByteArrayAsync();
@@ -99,7 +74,7 @@ public class MuscleGroupApiService : IMuscleGroupApiService
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "Failed to fetch muscle image for: {Muscles}", muscleGroups);
+            _logger.LogError(ex, "HTTP error fetching muscle image for: {Muscles}", muscleGroups);
             return [];
         }
         catch (TaskCanceledException ex)

@@ -10,6 +10,8 @@
   var isHero = sectionTitle.Equals("Hero", StringComparison.OrdinalIgnoreCase);
   var isWorkOutArticles = sectionTitle.Equals("Work Out Articles", StringComparison.OrdinalIgnoreCase) 
                        || sectionTitle.Equals("Träningsartiklar", StringComparison.OrdinalIgnoreCase);
+  var isMuscleVisualizer = sectionTitle.Contains("Muscle Group Visualizer", StringComparison.OrdinalIgnoreCase) 
+                        || sectionTitle.Contains("Muskelgruppsvisualiserare", StringComparison.OrdinalIgnoreCase);
   
   // Build background style
   var bgStyle = "";
@@ -56,7 +58,20 @@ else
         </div>
       }
       
-        @if (isWorkOutArticles)
+        @if (isMuscleVisualizer)
+        {
+          @* Render all components dynamically *@
+          @await Html.GetBlockGridItemAreasHtmlAsync(Model)
+          
+          @* Add muscle visualizer *@
+          <div data-muscle-visualizer class="p-8">
+            <div class="text-center py-12">
+              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p class="mt-4 text-neutral-600">Loading muscle groups...</p>
+            </div>
+          </div>
+        }
+        else if (isWorkOutArticles)
         {
           var maxArticles = Model.Content.Value<int>("maxArticles");
           if (maxArticles <= 0) maxArticles = 3;
@@ -65,14 +80,8 @@ else
         }
         else
         {
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            @foreach (var area in Model.Areas)
-            {
-              foreach (var item in area)
-              {
-                <div>@await Html.PartialAsync("~/Views/Partials/blockgrid/components/card.cshtml", item)</div>
-              }
-            }
+          <div class="flex flex-col justify-center items-center text-center">
+            @await Html.GetBlockGridItemAreasHtmlAsync(Model)
           </div>
         }
     </div>
