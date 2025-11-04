@@ -1,0 +1,25 @@
+﻿@using System.Globalization
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@{
+    Layout = "mainLayout.cshtml";
+    var exercises = ViewData["Exercises"] as List<WorkoutProgramBuilder.Business.Dto.ExerciseDto>;
+
+    var favoritesHeadline = Model.Value("favoritesHeadline");
+    var noFavorites = Model.Value("noFavorites");
+}
+
+<section class="container px-6 mx-auto py-10">
+    <h1 class="text-2xl font-semibold mb-6">@favoritesHeadline</h1>
+
+    @if (exercises != null && exercises.Any())
+    {
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                @await Html.PartialAsync("_ExerciseCard")
+        </div>
+    }
+    else
+    {
+        <p class="text-gray-500">@noFavorites</p>
+    }
+</section>
