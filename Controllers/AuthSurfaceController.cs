@@ -28,6 +28,82 @@ public class AuthSurfaceController(
     private readonly IMemberManager _memberManager = memberManager;
     private readonly IMemberService _memberService = memberService;
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> HandleSignup(string username, string emailsignup, string createPassword, string confirmPassword)
+    {
+        if (string.IsNullOrWhiteSpace(username) ||
+            string.IsNullOrWhiteSpace(emailsignup) ||
+            string.IsNullOrWhiteSpace(createPassword) ||
+            string.IsNullOrWhiteSpace(confirmPassword))
+        {
+            TempData["SignupError"] = "Please fill in all fields.";
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        if (!string.Equals(createPassword, confirmPassword))
+        {
+            TempData["SignupError"] = "Passwords do not match.";
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        if (!System.Text.RegularExpressions.Regex.IsMatch(username, @"^[a-zA-Z0-9_]{3,20}$"))
+        {
+            TempData["SignupError"] = "Username must be 3–20 characters (letters, numbers, underscore).";
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        if (_memberService.GetByUsername(username) != null)
+        {
+            TempData["SignupError"] = "That username is already taken.";
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        if (_memberService.GetByEmail(emailsignup) != null)
+        {
+            TempData["SignupError"] = "An account with that email already exists.";
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        const string memberTypeAlias = "member"; 
+        var displayName = username;
+
+        var identityUser = MemberIdentityUser.CreateNew(username, emailsignup, memberTypeAlias, true, displayName);
+        identityUser.EmailConfirmed = true; 
+
+        var createResult = await _memberManager.CreateAsync(identityUser, createPassword);
+        if (!createResult.Succeeded)
+        {
+            var msg = string.Join(" ", createResult.Errors.Select(e => e.Description));
+            TempData["SignupError"] = string.IsNullOrWhiteSpace(msg)
+                ? "Could not create the account. Please try again."
+                : msg;
+
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        var member = _memberService.GetByKey(identityUser.Key);
+        if (member != null)
+        {
+            // sätt både visningsnamn och username
+            if (!string.Equals(member.Name, username, StringComparison.Ordinal))
+                member.Name = username;
+
+            if (!string.Equals(member.Username, username, StringComparison.Ordinal))
+                member.Username = username;
+
+            _memberService.Save(member);
+        }
+
+        var attempt = await _memberSignInManager.PasswordSignInAsync(identityUser.UserName, createPassword, false, true);
+        if (!attempt.Succeeded)
+        {
+            TempData["SignupSuccess"] = "Account created. Please log in.";
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        return Redirect("/");
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
