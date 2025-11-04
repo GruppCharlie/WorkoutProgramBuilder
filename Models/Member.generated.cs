@@ -50,12 +50,12 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// savedExercises
+		/// savedExercisesJson
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("savedExercises")]
-		public virtual string SavedExercises => this.Value<string>(_publishedValueFallback, "savedExercises");
+		[ImplementPropertyType("savedExercisesJson")]
+		public virtual string SavedExercisesJson => this.Value<string>(_publishedValueFallback, "savedExercisesJson");
 
 		///<summary>
 		/// Comments

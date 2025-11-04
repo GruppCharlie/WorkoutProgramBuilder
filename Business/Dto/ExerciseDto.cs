@@ -4,6 +4,8 @@ public class ExerciseDto
 {
     public string? ExerciseId { get; set; }
     public string? Name { get; set; }
+    public string? GifUrl { get; set; }
+    public bool IsSaved { get; set; } = false;
 
     public List<string>? BodyParts { get; set; }
     public List<string>? TargetMuscles { get; set; }
@@ -11,5 +13,6 @@ public class ExerciseDto
     public List<string>? SecondaryMuscles { get; set; }
     public List<string>? Instructions { get; set; }
 
-    public string? GifUrl { get; set; }
+
+
 }
