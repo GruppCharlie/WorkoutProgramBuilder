@@ -1,0 +1,41 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    Layout = "mainLayout.cshtml";
+    var title = Model.Value<string>("pageTitle") ?? string.Empty;
+    var body = Model.Value<string>("pageContent") ?? string.Empty;
+}
+
+<section class="page-wrapper">
+    <div class="container">
+        @if (!string.IsNullOrWhiteSpace(title))
+        {
+            <h1>@title</h1>
+        }
+
+        <div class="page-content">
+            @Html.Raw(body)
+        </div>
+    </div>
+</section>
+
+<style>
+    .page-wrapper {
+        padding: 100px 60px;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .page-content {
+        line-height: 1.7;
+        font-size: 1.05rem;
+        color: #333;
+    }
+
+    .page-content p {
+        margin-bottom: 1.2rem;
+    }
+</style>

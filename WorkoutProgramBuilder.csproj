@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms" Version="16.3.2" />
+    <PackageReference Include="Umbraco.Cms.Integrations.Analytics.Cookiebot" Version="2.0.1" />
     <PackageReference Include="Umbraco.StorageProviders.AzureBlob" Version="16.0.0" />
     <PackageReference Include="Umbraco.StorageProviders.AzureBlob.ImageSharp" Version="16.0.0" />
   </ItemGroup>

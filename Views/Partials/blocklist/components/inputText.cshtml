@@ -8,6 +8,14 @@
     var placeholderText = Model?.Content.Value<string>("placeholderText");
     var isRequired = Model.Content.Value<bool>("isRequired");
     var errorMessage = Model?.Content.Value<string>("errorMessage");
+
+    var isEmailField = string.Equals(uniqueName, "emailsignup", StringComparison.OrdinalIgnoreCase);
+    var inputType = isEmailField ? "email" : "text";
+    var autoComplete = isEmailField ? "email" : "username";
+
+    var formatMessage = isEmailField
+        ? "Please enter a valid email address"
+        : "Please enter a valid username.";
 }
 
 <div class="space-y-2" data-validate>
@@ -15,10 +23,10 @@
 
     <input id="@uniqueName" 
            name="@uniqueName" 
-           type="email" 
+           type="@inputType" 
            placeholder="@placeholderText" 
            class="w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-           autocomplete="email"
+           autocomplete="@autoComplete"
            autocapitalize="none"
            spellcheck="false"
            @(isRequired ? "required" : null) />
@@ -27,5 +35,5 @@
         <span data-error="required" hidden class="text-sm text-red-600 mt-1">@errorMessage</span>
     }
 
-    <span data-error="format" hidden class="text-sm text-red-600 mt-1">Please enter a valid email address</span>
+    <span data-error="format" hidden class="text-sm text-red-600 mt-1">@formatMessage</span>
 </div>
