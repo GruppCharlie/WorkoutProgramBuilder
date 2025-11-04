@@ -18,7 +18,7 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Image and Link block</summary>
+	/// <summary>{umbValue:socialMediaUrl}</summary>
 	[PublishedModel("footerSocialMediaBlock")]
 	public partial class FooterSocialMediaBlock : PublishedElementModel
 	{
