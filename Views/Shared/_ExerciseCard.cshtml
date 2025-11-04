@@ -2,15 +2,16 @@
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 
 @{
-    var currentCulture = CultureInfo.CurrentCulture.Name;
-    var exerciseNode = Umbraco.ContentAtRoot()
-        .SelectMany(x => x.DescendantsOrSelf())
-        .FirstOrDefault(x => x.ContentType.Alias == "exercisePage");
+    var root = Umbraco.ContentAtRoot().FirstOrDefault();
+    var allPages = root?.DescendantsOrSelf() ?? Enumerable.Empty<IPublishedContent>();
 
-    var exerciseCardLink = exerciseNode?.Url(culture: currentCulture) ?? "/Exercise";
+    var currentCulture = CultureInfo.CurrentCulture.Name;
+
+    var exerciseNode = allPages.FirstOrDefault(x => x.ContentType.Alias == "exercisePage");
+
+    var exerciseCardLink = exerciseNode?.Url(culture: currentCulture) ?? "/exercise";
 
     var exercises = ViewData["Exercises"] as List<WorkoutProgramBuilder.Business.Dto.ExerciseDto> ?? [];
-
 }
 
 @foreach (var ex in exercises)
@@ -62,9 +63,7 @@
                 id="favorite-btn-@ex.ExerciseId">
             <i class="fa-solid fa-heart @((ex.IsSaved ? "text-red-500" : ""))"></i>
         </button>
-
     </div>
 }
 
-
-
+@await Html.PartialAsync("_LoginRequiredModal")
