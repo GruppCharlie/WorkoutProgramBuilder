@@ -86,5 +86,20 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("metaDescription")]
 		public virtual string MetaDescription => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetMetaDescription(this, _publishedValueFallback);
+
+		///<summary>
+		/// sitemap Change Frequency
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("sitemapChangeFrequency")]
+		public virtual string SitemapChangeFrequency => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetSitemapChangeFrequency(this, _publishedValueFallback);
+
+		///<summary>
+		/// Sitemap Priority
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("sitemapPriority")]
+		public virtual decimal SitemapPriority => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetSitemapPriority(this, _publishedValueFallback);
 	}
 }

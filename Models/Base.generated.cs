@@ -30,6 +30,15 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		string MetaDescription { get; }
+
+		/// <summary>sitemap Change Frequency</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		string SitemapChangeFrequency { get; }
+
+		/// <summary>Sitemap Priority</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		decimal SitemapPriority { get; }
 	}
 
 	/// <summary>Base</summary>
@@ -86,5 +95,29 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		public static string GetMetaDescription(IBase that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "metaDescription");
+
+		///<summary>
+		/// sitemap Change Frequency
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("sitemapChangeFrequency")]
+		public virtual string SitemapChangeFrequency => GetSitemapChangeFrequency(this, _publishedValueFallback);
+
+		/// <summary>Static getter for sitemap Change Frequency</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static string GetSitemapChangeFrequency(IBase that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "sitemapChangeFrequency");
+
+		///<summary>
+		/// Sitemap Priority
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("sitemapPriority")]
+		public virtual decimal SitemapPriority => GetSitemapPriority(this, _publishedValueFallback);
+
+		/// <summary>Static getter for Sitemap Priority</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		public static decimal GetSitemapPriority(IBase that, IPublishedValueFallback publishedValueFallback) => that.Value<decimal>(publishedValueFallback, "sitemapPriority");
 	}
 }
