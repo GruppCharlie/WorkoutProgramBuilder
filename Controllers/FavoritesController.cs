@@ -150,6 +150,9 @@ public class FavoritesController(
             }
             saved.Add(incoming);
             incoming.IsSaved = true;
+
+            var currentAmount = member.GetValue<int?>("amountOfSavedExercises") ?? 0;
+            member.SetValue("amountOfSavedExercises", currentAmount + 1);
         }
 
         var newJson = JsonSerializer.Serialize(saved);

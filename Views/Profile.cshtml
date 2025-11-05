@@ -1,0 +1,161 @@
+﻿@using System.Globalization
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Models.PublishedContent
+@inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
+@inject Umbraco.Cms.Core.Services.IMemberService MemberService
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+
+@{
+    Layout = "mainLayout.cshtml";
+    var currentCulture = CultureInfo.CurrentCulture.Name;
+
+    var allNodes = Umbraco.ContentAtRoot().SelectMany(r => r.DescendantsOrSelf());
+    var profileNode = allNodes.FirstOrDefault(x => x.ContentType.Alias == "profile");
+    var loginNode = allNodes.FirstOrDefault(x => x.ContentType.Alias == "loginPage");
+    var loginUrl = loginNode?.Url(culture: currentCulture) ?? "/login";
+
+
+    var currentMember = await MemberManager.GetCurrentMemberAsync();
+
+    if (currentMember == null)
+    {
+        Context.Response.Redirect(loginUrl);
+        return;
+    }
+
+    var member = MemberService.GetById(int.Parse(currentMember!.Id));
+
+
+    var memberSince = profileNode?.Value<string>("memberSince");
+
+    var profileDetails = profileNode?.Value<string>("profileDetails") ?? "Profile Details";
+    var username = profileNode?.Value<string>("username") ?? "Username";
+    var profileEmail = profileNode?.Value<string>("profileEmail") ?? "Profile Email";
+    var profileLastLogin = profileNode?.Value<string>("profileLastLogin") ?? "Profile Last Login";
+
+    var achievementsHeader = profileNode?.Value<string>("achievementsHeader") ?? "Achievements";
+    var amountSavedExercises = profileNode?.Value<string>("amountSavedExercises") ?? "Exercises saved:";
+    var amountNextAchievement = profileNode?.Value<string>("amountNextAchievement") ?? "more to next achievement:";
+    var completedAllAchivments = profileNode?.Value<string>("completedAllAchivments") ?? "All achievements unlocked!";
+
+    var modalText = profileNode?.Value<string>("modalText") ?? "?";
+    var achievementsModalHeadline = profileNode?.Value<string>("achievementsModalHeadline") ?? "How the Achievement System Works";
+    var achievementsModalText = profileNode?.Value<string>("achievementsModalText") ?? "Each time you save an exercise, your progress toward new achievements increases. Unlock milestones at 10, 25, 50, and 100 saved exercises to earn new badges!";
+    var achievementsModalSubText = profileNode?.Value<string>("achievementsModalSubText") ?? "The more you save, the more achievements you unlock — keep going to reach the Master level!";
+    var achievementsModalButtonText = profileNode?.Value<string>("achievementsModalButtonText") ?? "Got it";
+
+    int exercisesSaved = member!.GetValue<int?>("amountOfSavedExercises") ?? 0;
+
+
+    var achievements = profileNode?.Value<IEnumerable<BlockListItem>>("achivmentBlock") ?? Enumerable.Empty<BlockListItem>();
+
+    var nextAchievement = achievements
+    .Where(a => (a.Content.Value<int?>("achievementThreshold") ?? 0) > exercisesSaved)
+    .OrderBy(a => a.Content.Value<int?>("achievementThreshold"))
+    .FirstOrDefault();
+
+    int remainingToNext = nextAchievement != null
+        ? (nextAchievement.Content.Value<int?>("achievementThreshold") ?? 0) - exercisesSaved
+        : 0;
+
+    string nextAchievementText = nextAchievement != null
+        ? $"{remainingToNext} {amountNextAchievement} {nextAchievement.Content.Value<string>("achievementName")}"
+        : completedAllAchivments;
+}
+
+
+
+<section class="container px-6 py-8 mx-auto mt-10 relative">
+    <div class="bg-white rounded-lg shadow-md p-5">
+    <div class="flex items-center gap-6 mb-6">
+            <div class="bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-semibold">
+                @currentMember.UserName?.Substring(0, 1)
+            </div>
+
+            <div class="space-y-1">
+                <h1 class="text-2xl font-bold leading-tight">@currentMember.Name</h1>
+                <p class="text-gray-600">@currentMember.Email</p>
+                <p class="text-sm text-gray-500">@memberSince @currentMember.CreatedDateUtc.ToString("MMMM yyyy")</p>
+ 
+            </div>
+        </div>
+
+ 
+        <div class="border-t pt-6">
+            <h2 class="text-lg font-semibold mb-3">@profileDetails</h2>
+            <ul class="space-y-1 text-gray-700">
+                <li><strong>@username</strong> @currentMember.UserName</li>
+                <li><strong>@profileEmail</strong> @currentMember.Email</li>
+                <li>
+                    <strong>@profileLastLogin</strong>
+                @(currentMember?.LastLoginDateUtc?.ToLocalTime().ToString("MMMM d, yyyy 'at' h:mm tt") ?? "Never")
+            </li>
+            </ul>
+        </div>
+
+        <div class="border-t pt-6 mt-6">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-semibold flex items-center gap-2">
+                    @achievementsHeader
+                    <button id="openModalBtn"
+                            class="w-6 h-6 flex items-center justify-center border border-gray-400 rounded-full text-gray-600 text-sm hover:bg-gray-100"
+                            title="How achievements work">
+                        @modalText
+                    </button>
+                </h2>
+            </div>
+
+            <div class="space-y-3">
+                <p class="text-gray-700">
+                    @amountSavedExercises<strong> @exercisesSaved</strong>
+
+                </p>
+
+                <div class="flex flex-wrap gap-3">
+                    @foreach (var a in achievements ?? Enumerable.Empty<BlockListItem>())
+                    {
+                        var achievementName = a.Content.Value<string>("achievementName") ?? "Achievement";
+                        var achievementIcon = a.Content.Value<IPublishedContent>("achievementIcon")?.Url();
+
+                        var required = a.Content.Value<int?>("achievementThreshold") ?? 0;
+                        var unlocked = exercisesSaved >= required;
+
+                        <div class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-sm
+                            @(unlocked ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500")">
+                                @if (!string.IsNullOrEmpty(achievementIcon))
+                                {
+                                    <img src="@achievementIcon" alt="@achievementName" class="w-6 h-6 object-contain" />
+                                }
+                            <span>@achievementName</span>
+                            @required
+                        </div>
+                    }
+                </div>
+
+                <p class="text-gray-500 text-sm mb-2">
+                    @nextAchievementText
+                </p>
+            </div>
+        </div>
+
+
+        <div id="achievementModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen">
+                <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6 relative">
+                    <h3 class="text-xl font-semibold mb-4">@achievementsModalHeadline</h3>
+                    <p class="text-gray-700 mb-4">
+                        @achievementsModalText
+                    </p>
+                    <p class="text-gray-600 text-sm">
+                        @achievementsModalSubText
+                    </p>
+                    <div class="text-right mt-6">
+                        <button id="closeModalBtn" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/80">@achievementsModalButtonText</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
