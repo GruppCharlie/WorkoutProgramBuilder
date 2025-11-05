@@ -17,7 +17,7 @@
     var navbarLogout = settingsNode?.Value<string>("navbarLogoutText") ?? "Logout";
     var NavbarItems = settingsNode?.Value<IEnumerable<CoreLink>>("sidebarMenuItems") ?? Enumerable.Empty<CoreLink>();
     var NavbarlanguageSelector = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("languageSelector");
-    var favoritesNames = new[] { "Favorites", "Favoriter" };
+    var excludeFromSidebar = new[] { "Favorites", "Favoriter", "Profile", "Profil" };
 
 
     var searchNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "searchPage");
@@ -28,6 +28,9 @@
 
     var loginNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "loginPage");
     var loginUrl = loginNode?.Url(culture: currentCulture) ?? "/login";
+
+    var profileNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "profile");
+    var profileUrl = profileNode?.Url(culture: currentCulture) ?? "/profile";
 
     var currentMember = await MemberManager.GetCurrentMemberAsync();
     var isLoggedIn = currentMember != null;
@@ -61,7 +64,9 @@
                 </div>
                 @if (isLoggedIn)
                 {
-                    <p class="hidden md:block">Welcome @currentMember?.UserName</p>
+                    <a href="@profileUrl" class="bg-primary rounded-full w-10 h-10 flex items-center justify-center text-white hidden md:flex">
+                        @currentMember?.UserName?.Substring(0, 1)
+                    </a>
                 }
                 <div id="search-results" class="absolute bg-white shadow-lg rounded-md mt-2 w-64 max-h-80 overflow-y-auto hidden"></div>
 
@@ -110,7 +115,7 @@
                 @foreach (var link in NavbarItems)
                 {
 
-                    if (currentMember == null && favoritesNames.Contains(link.Name, StringComparer.OrdinalIgnoreCase))
+                    if (currentMember == null && excludeFromSidebar.Contains(link.Name, StringComparer.OrdinalIgnoreCase))
                     {
                         continue;
                     }
