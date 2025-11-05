@@ -18,14 +18,14 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Favorites</summary>
-	[PublishedModel("favorites")]
-	public partial class Favorites : PublishedContentModel, IBase
+	/// <summary>{umbValue:achievementName}</summary>
+	[PublishedModel("achievementBlock")]
+	public partial class AchievementBlock : PublishedElementModel
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		public new const string ModelTypeAlias = "favorites";
+		public new const string ModelTypeAlias = "achievementBlock";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -34,14 +34,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 			=> PublishedModelUtility.GetModelContentType(contentTypeCache, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<Favorites, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<AchievementBlock, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(contentTypeCache), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public Favorites(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
+		public AchievementBlock(IPublishedElement content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -50,37 +50,26 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Favorites Headline
+		/// Achievement Icon
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("favoritesHeadline")]
-		public virtual string FavoritesHeadline => this.Value<string>(_publishedValueFallback, "favoritesHeadline");
+		[ImplementPropertyType("achievementIcon")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops AchievementIcon => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "achievementIcon");
 
 		///<summary>
-		/// No Favorites
+		/// Achievement Name
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("noFavorites")]
-		public virtual string NoFavorites => this.Value<string>(_publishedValueFallback, "noFavorites");
+		[ImplementPropertyType("achievementName")]
+		public virtual string AchievementName => this.Value<string>(_publishedValueFallback, "achievementName");
 
 		///<summary>
-		/// Exclude From Sitemap: Check to exclude this page from sitemap
+		/// Achievement Threshold
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[ImplementPropertyType("excludeFromSitemap")]
-		public virtual bool ExcludeFromSitemap => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetExcludeFromSitemap(this, _publishedValueFallback);
-
-		///<summary>
-		/// MetaDescription
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("metaDescription")]
-		public virtual string MetaDescription => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetMetaDescription(this, _publishedValueFallback);
-
-		public string SitemapChangeFrequency { get; }
-		public decimal SitemapPriority { get; }
+		[ImplementPropertyType("achievementThreshold")]
+		public virtual int AchievementThreshold => this.Value<int>(_publishedValueFallback, "achievementThreshold");
 	}
 }
