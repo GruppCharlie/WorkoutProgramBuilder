@@ -18,14 +18,14 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Exercise Page</summary>
-	[PublishedModel("exercisePage")]
-	public partial class ExercisePage : PublishedContentModel, IBase
+	/// <summary>ProfilePage</summary>
+	[PublishedModel("profile")]
+	public partial class Profile : PublishedContentModel, IBase
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		public new const string ModelTypeAlias = "exercisePage";
+		public new const string ModelTypeAlias = "profile";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -34,14 +34,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 			=> PublishedModelUtility.GetModelContentType(contentTypeCache, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<ExercisePage, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<Profile, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(contentTypeCache), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public ExercisePage(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
+		public Profile(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -50,60 +50,124 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Body Parts
+		/// Achievements Header
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("bodyParts")]
-		public virtual string BodyParts => this.Value<string>(_publishedValueFallback, "bodyParts");
+		[ImplementPropertyType("achievementsHeader")]
+		public virtual string AchievementsHeader => this.Value<string>(_publishedValueFallback, "achievementsHeader");
 
 		///<summary>
-		/// Equipment
+		/// Achievements Modal Button Text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("equipment")]
-		public virtual string Equipment => this.Value<string>(_publishedValueFallback, "equipment");
+		[ImplementPropertyType("achievementsModalButtonText")]
+		public virtual string AchievementsModalButtonText => this.Value<string>(_publishedValueFallback, "achievementsModalButtonText");
 
 		///<summary>
-		/// Instructions
+		/// Achievements Modal Headline
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("instructions")]
-		public virtual string Instructions => this.Value<string>(_publishedValueFallback, "instructions");
+		[ImplementPropertyType("achievementsModalHeadline")]
+		public virtual string AchievementsModalHeadline => this.Value<string>(_publishedValueFallback, "achievementsModalHeadline");
 
 		///<summary>
-		/// Not available
+		/// Achievements Modal Sub Text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("notAvailable")]
-		public virtual string NotAvailable => this.Value<string>(_publishedValueFallback, "notAvailable");
+		[ImplementPropertyType("achievementsModalSubText")]
+		public virtual string AchievementsModalSubText => this.Value<string>(_publishedValueFallback, "achievementsModalSubText");
 
 		///<summary>
-		/// Secondary Muscles
+		/// Achievements Modal text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("secondaryMuscles")]
-		public virtual string SecondaryMuscles => this.Value<string>(_publishedValueFallback, "secondaryMuscles");
+		[ImplementPropertyType("achievementsModalText")]
+		public virtual string AchievementsModalText => this.Value<string>(_publishedValueFallback, "achievementsModalText");
 
 		///<summary>
-		/// Target Muscles
+		/// AchivmentBlock
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("targetMuscles")]
-		public virtual string TargetMuscles => this.Value<string>(_publishedValueFallback, "targetMuscles");
+		[ImplementPropertyType("achivmentBlock")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel AchivmentBlock => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "achivmentBlock");
 
 		///<summary>
-		/// Title
+		/// Amount next achievement
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("title")]
-		public virtual string Title => this.Value<string>(_publishedValueFallback, "title");
+		[ImplementPropertyType("amountNextAchievement")]
+		public virtual string AmountNextAchievement => this.Value<string>(_publishedValueFallback, "amountNextAchievement");
+
+		///<summary>
+		/// Amount Saved Exercises
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("amountSavedExercises")]
+		public virtual string AmountSavedExercises => this.Value<string>(_publishedValueFallback, "amountSavedExercises");
+
+		///<summary>
+		/// Completed All Achivments
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("completedAllAchivments")]
+		public virtual string CompletedAllAchivments => this.Value<string>(_publishedValueFallback, "completedAllAchivments");
+
+		///<summary>
+		/// Member Since
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("memberSince")]
+		public virtual string MemberSince => this.Value<string>(_publishedValueFallback, "memberSince");
+
+		///<summary>
+		/// Modal Text Icon
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("modalText")]
+		public virtual string ModalText => this.Value<string>(_publishedValueFallback, "modalText");
+
+		///<summary>
+		/// Profile Details
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("profileDetails")]
+		public virtual string ProfileDetails => this.Value<string>(_publishedValueFallback, "profileDetails");
+
+		///<summary>
+		/// Profile Email
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("profileEmail")]
+		public virtual string ProfileEmail => this.Value<string>(_publishedValueFallback, "profileEmail");
+
+		///<summary>
+		/// Profile Last login
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("profileLastLogin")]
+		public virtual string ProfileLastLogin => this.Value<string>(_publishedValueFallback, "profileLastLogin");
+
+		///<summary>
+		/// Username
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("username")]
+		public virtual string Username => this.Value<string>(_publishedValueFallback, "username");
 
 		///<summary>
 		/// Exclude From Sitemap: Check to exclude this page from sitemap
