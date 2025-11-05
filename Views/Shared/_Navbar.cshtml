@@ -3,17 +3,22 @@
 @using Umbraco.Cms.Core.Models.PublishedContent
 @using Umbraco.Cms.Web.Common.PublishedModels
 @using CoreLink = Umbraco.Cms.Core.Models.Link
+@inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
+
 @{
     var contentAtRoot = Umbraco.ContentAtRoot().ToList();
     var currentCulture = CultureInfo.CurrentCulture.Name;
 
-    var navbarNode = contentAtRoot.FirstOrDefault(x => x.ContentType.Alias == "navbar");
-    var navbarLogo = navbarNode?.Value<IPublishedContent>("navbarLogo");
+    var settingsNode = contentAtRoot.FirstOrDefault(x => x.ContentType.Alias == "settings");
+    var navbarLogo = settingsNode?.Value<IPublishedContent>("siteLogotype");
     var navbarLogoUrl = navbarLogo?.Url() ?? string.Empty;
-    var searchPlaceholder = navbarNode?.Value<string>("searchPlaceHolder") ?? "Search...";
-    var navbarLogin = navbarNode?.Value<string>("navbarLogin") ?? "Login";
-    var NavbarItems = navbarNode?.Value<IEnumerable<CoreLink>>("navbarMenuItems") ?? Enumerable.Empty<CoreLink>();
-    var NavbarlanguageSelector = navbarNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("languageSelector");
+    var searchPlaceholder = settingsNode?.Value<string>("searchPlaceHolderText") ?? "Search...";
+    var navbarLogin = settingsNode?.Value<string>("navbarLogin") ?? "Login";
+    var navbarLogout = settingsNode?.Value<string>("navbarLogoutText") ?? "Logout";
+    var NavbarItems = settingsNode?.Value<IEnumerable<CoreLink>>("sidebarMenuItems") ?? Enumerable.Empty<CoreLink>();
+    var NavbarlanguageSelector = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("languageSelector");
+    var favoritesNames = new[] { "Favorites", "Favoriter" };
+
 
     var searchNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "searchPage");
     var searchUrl = searchNode?.Url(culture: currentCulture) ?? "/search";
@@ -23,6 +28,9 @@
 
     var loginNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "loginPage");
     var loginUrl = loginNode?.Url(culture: currentCulture) ?? "/login";
+
+    var currentMember = await MemberManager.GetCurrentMemberAsync();
+    var isLoggedIn = currentMember != null;
 }
 
 <nav class="bg-neutral-200 text-neutral-700 shadow-sm fixed top-0 left-0 right-0 z-50">
@@ -40,6 +48,8 @@
                 </a>
             </div>
 
+
+
             <div class="flex items-center space-x-4">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500"></i>
@@ -49,7 +59,10 @@
                            placeholder="@searchPlaceholder"
                            class="pl-10 pr-3 py-2 rounded-md bg-neutral-200 text-neutral-800 placeholder-placeholder focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary w-48" />
                 </div>
-
+                @if (isLoggedIn)
+                {
+                    <p class="hidden md:block">Welcome @currentMember?.UserName</p>
+                }
                 <div id="search-results" class="absolute bg-white shadow-lg rounded-md mt-2 w-64 max-h-80 overflow-y-auto hidden"></div>
 
                 @foreach (var language in NavbarlanguageSelector ?? Enumerable.Empty<Umbraco.Cms.Core.Models.Blocks.BlockListItem>())
@@ -67,9 +80,23 @@
                     </a>
                 }
 
-                <a href="@loginUrl" class="text-neutral-700 font-medium hover:text-primary transition-colors">
-                    @navbarLogin
-                </a>
+                @if (!isLoggedIn)
+                {
+                    <a href="@loginUrl" class="text-neutral-700 font-medium hover:text-primary transition-colors">
+                        @navbarLogin
+                    </a>
+                }
+                else if (isLoggedIn)
+                {
+                    <form method="post" asp-controller="AuthSurface" asp-action="HandleLogout" class="inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit"
+                                class="text-neutral-700 font-medium hover:text-primary transition-colors bg-transparent border-none cursor-pointer">
+                            @navbarLogout
+                        </button>
+                    </form>
+                }
+
             </div>
         </div>
     </div>
@@ -82,6 +109,11 @@
             <ul class="flex flex-col mt-4 space-y-2 px-4">
                 @foreach (var link in NavbarItems)
                 {
+
+                    if (currentMember == null && favoritesNames.Contains(link.Name, StringComparer.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
                     <li>
                         <a href="@link.Url"
                            target="@(string.IsNullOrWhiteSpace(link.Target) ? "_self" : link.Target)"

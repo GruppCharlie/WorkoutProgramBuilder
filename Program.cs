@@ -1,8 +1,12 @@
 using WorkoutProgramBuilder.Business.Services;
+using WorkoutProgramBuilder.Business.Configuration;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpClient<IMuscleGroupApiService, MuscleGroupApiService>();
+builder.Services.AddRapidApiHttpClient<IMuscleGroupApiService, MuscleGroupApiService>(timeoutSeconds: 10);
+builder.Services.AddRapidApiHttpClient<IRapidApiService, GenerateWorkoutApiService>();
+
+builder.Services.AddResponseCaching();
 builder.Services.AddControllers();
 
 builder.CreateUmbracoBuilder()
@@ -18,6 +22,7 @@ WebApplication app = builder.Build();
 await app.BootUmbracoAsync();
 
 app.UseHttpsRedirection();
+app.UseResponseCaching();
 
 app.UseUmbraco()
     .WithMiddleware(u =>

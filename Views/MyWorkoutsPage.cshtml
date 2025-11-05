@@ -1,0 +1,25 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@{
+    Layout = "mainLayout.cshtml";
+    ViewBag.Title = Model.Value("pageTitle") ?? "My Workouts";
+}
+
+<section class="py-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col justify-center items-center pt-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-neutral-900 mb-4">
+                @Model.Value("pageTitle")
+            </h1>
+            
+            <div class="[&_section]:!py-0 [&_h6]:inline-block [&_h6]:px-4 [&_h6]:py-1 [&_h6]:bg-primary/10 [&_h6]:text-primary [&_h6]:text-xs [&_h6]:font-semibold [&_h6]:uppercase [&_h6]:tracking-wider [&_h6]:rounded-full [&_h6]:mb-4 [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:text-neutral-900 [&_p]:text-sm [&_p]:text-neutral-600 [&_p]:mb-2">
+                @await Html.GetBlockGridHtmlAsync(Model, "layout")
+            </div>
+        </div>
+
+        <!-- My Workouts Content -->
+        <div class="mt-8">
+            <p class="text-center text-neutral-600">Your saved workouts will appear here.</p>
+        </div>
+    </div>
+</section>

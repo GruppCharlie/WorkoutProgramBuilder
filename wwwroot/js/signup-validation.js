@@ -2,33 +2,41 @@
     function init(form) {
         if (!form) return;
 
+        const primaryGroup = form.querySelector('[data-password-primary]');
+        const confirmGroup = form.querySelector('[data-password-confirm]');
+        const primaryInput = primaryGroup ? primaryGroup.querySelector('input') : null;
+
         function showOrHideError(group) {
             const input = group.querySelector('input,textarea,select');
             if (!input) return;
 
             const requiredError = group.querySelector('[data-error="required"]');
-            const formatError = group.querySelector('[data-error="format"]');   // email
-            const patternError = group.querySelector('[data-error="pattern"]');  // lösenord
-            const mismatchError = group.querySelector('[data-error="mismatch"]'); // confirm password
+            const formatError = group.querySelector('[data-error="format"]');
+            const patternError = group.querySelector('[data-error="pattern"]');
+            const mismatchError = group.querySelector('[data-error="mismatch"]');
 
             const v = input.validity;
             const invalidRequired = !!v.valueMissing;
             const invalidFormat = !!v.typeMismatch;
             const invalidPattern = !!v.patternMismatch;
-            let invalidMismatch = false;
 
-            const matchTarget = group.getAttribute('data-match');
-            if (matchTarget) {
-                const target = form.querySelector('[data-password-primary] input');
-                if (target) invalidMismatch = input.value !== target.value;
+            let invalidMismatch = false;
+            if (group.hasAttribute('data-password-confirm') && primaryInput) {
+                invalidMismatch = input.value !== primaryInput.value;
             }
 
+            // Visa fel endast om fältet rörts ELLER formuläret skickats
             const shouldShow = group.dataset.touched === 'true' || form.dataset.submitted === 'true';
 
             if (requiredError) requiredError.hidden = !(shouldShow && invalidRequired);
             if (formatError) formatError.hidden = !(shouldShow && !invalidRequired && invalidFormat);
             if (patternError) patternError.hidden = !(shouldShow && !invalidRequired && invalidPattern);
-            if (mismatchError) mismatchError.hidden = !(shouldShow && !invalidRequired && !invalidPattern && invalidMismatch);
+
+            // ✅ Visa mismatch-fel enbart EFTER att man försökt skicka formuläret
+            if (mismatchError) {
+                const showMismatch = form.dataset.submitted === 'true' && invalidMismatch;
+                mismatchError.hidden = !showMismatch;
+            }
         }
 
         // blur = markera touched
@@ -39,41 +47,33 @@
             showOrHideError(group);
         }, true);
 
-        // input = validera live
+        // input = validera live (men visa inte mismatch ännu)
         form.addEventListener('input', (e) => {
             const group = e.target.closest('[data-validate]');
             if (!group) return;
             showOrHideError(group);
 
-            // Om detta är primär-lösenordet, validera om confirm
-            if (group.hasAttribute('data-password-primary')) {
-                const confirmGroup = form.querySelector('[data-validate][data-match]');
-                if (confirmGroup) showOrHideError(confirmGroup);
+            if (group.hasAttribute('data-password-primary') && confirmGroup) {
+                showOrHideError(confirmGroup);
             }
         });
 
         // submit
         form.addEventListener('submit', (e) => {
-            // flagga att formuläret har försökt skickas
             form.dataset.submitted = 'true';
 
-            // markera alla fält som "touched" och visa ev. fel
             const groups = form.querySelectorAll('[data-validate]');
             groups.forEach(g => {
                 g.dataset.touched = 'true';
                 showOrHideError(g);
             });
 
-            // blockera submit om ogiltigt eller confirm mismatch
             let ok = form.checkValidity();
 
-            const confirmGroup = form.querySelector('[data-validate][data-match]');
+            // extra kontroll för mismatch
             if (confirmGroup) {
-                const input = confirmGroup.querySelector('input');
-                const target = form.querySelector(
-                    `[name="${confirmGroup.getAttribute('data-match')}"]`
-                );
-                if (target && input.value !== target.value) {
+                const confirmInput = confirmGroup.querySelector('input');
+                if (primaryInput && confirmInput && confirmInput.value !== primaryInput.value) {
                     ok = false;
                     showOrHideError(confirmGroup);
                 }

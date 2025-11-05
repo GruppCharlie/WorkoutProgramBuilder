@@ -58,6 +58,38 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string CopyrightDescription => this.Value<string>(_publishedValueFallback, "copyrightDescription");
 
 		///<summary>
+		/// Footer Items
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerItems")]
+		public virtual global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link> FooterItems => this.Value<global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link>>(_publishedValueFallback, "footerItems");
+
+		///<summary>
+		/// Language selector
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("languageSelector")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel LanguageSelector => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "languageSelector");
+
+		///<summary>
+		/// Navbar login text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("navbarLogin")]
+		public virtual string NavbarLogin => this.Value<string>(_publishedValueFallback, "navbarLogin");
+
+		///<summary>
+		/// Navbar logout text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("navbarLogoutText")]
+		public virtual string NavbarLogoutText => this.Value<string>(_publishedValueFallback, "navbarLogoutText");
+
+		///<summary>
 		/// Policy
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -74,6 +106,22 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string Privacy => this.Value<string>(_publishedValueFallback, "privacy");
 
 		///<summary>
+		/// Search Place Holder Text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("searchPlaceHolderText")]
+		public virtual string SearchPlaceHolderText => this.Value<string>(_publishedValueFallback, "searchPlaceHolderText");
+
+		///<summary>
+		/// Sidebar Menu Items
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("sidebarMenuItems")]
+		public virtual global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link> SidebarMenuItems => this.Value<global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link>>(_publishedValueFallback, "sidebarMenuItems");
+
+		///<summary>
 		/// Site Logotype
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -87,7 +135,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("sitemapDefaultChangeFrequency")]
-		public virtual global::System.Collections.Generic.IEnumerable<string> SitemapDefaultChangeFrequency => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "sitemapDefaultChangeFrequency");
+		public virtual string SitemapDefaultChangeFrequency => this.Value<string>(_publishedValueFallback, "sitemapDefaultChangeFrequency");
 
 		///<summary>
 		/// Sitemap Default Priority
@@ -111,5 +159,13 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("siteName")]
 		public virtual string SiteName => this.Value<string>(_publishedValueFallback, "siteName");
+
+		///<summary>
+		/// Social Media icons
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("socialMediaIcons")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel SocialMediaIcons => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "socialMediaIcons");
 	}
 }

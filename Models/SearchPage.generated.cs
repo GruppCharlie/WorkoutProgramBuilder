@@ -58,6 +58,46 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string EmptySearchText => this.Value<string>(_publishedValueFallback, "emptySearchText");
 
 		///<summary>
+		/// Exersice Modal Close
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("exersiceModalClose")]
+		public virtual string ExersiceModalClose => this.Value<string>(_publishedValueFallback, "exersiceModalClose");
+
+		///<summary>
+		/// Exersice Modal Header
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("exersiceModalHeader")]
+		public virtual string ExersiceModalHeader => this.Value<string>(_publishedValueFallback, "exersiceModalHeader");
+
+		///<summary>
+		/// Exersice Modal Login
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("exersiceModalLogin")]
+		public virtual string ExersiceModalLogin => this.Value<string>(_publishedValueFallback, "exersiceModalLogin");
+
+		///<summary>
+		/// Exersice Modal Sign up
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("exersiceModalSignUp")]
+		public virtual string ExersiceModalSignUp => this.Value<string>(_publishedValueFallback, "exersiceModalSignUp");
+
+		///<summary>
+		/// Exersice Modal Text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("exersiceModalText")]
+		public virtual string ExersiceModalText => this.Value<string>(_publishedValueFallback, "exersiceModalText");
+
+		///<summary>
 		/// Next Button Text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]

@@ -38,10 +38,7 @@
     else
     {
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            @foreach (var ex in exercises)
-            {
-                @await Html.PartialAsync("_ExerciseCard", ex)
-            }
+                @await Html.PartialAsync("_ExerciseCard")
         </div>
 
 
