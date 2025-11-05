@@ -134,8 +134,17 @@ public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbr
         return date.ToString("yyyy-MM-ddTHH:mm:sszzz");
     }
 
-    private string GetChangeFrequency(IPublishedContent _)
+    private string GetChangeFrequency(IPublishedContent page)
     {
+        // Check if page has its own changefreq value
+        if (page.HasValue("sitemapChangeFrequency"))
+        {
+            var pageValue = page.Value<string>("sitemapChangeFrequency");
+            if (!string.IsNullOrWhiteSpace(pageValue))
+                return pageValue;
+        }
+
+        // Fallback to settings
         if (!_umbracoHelperAccessor.TryGetUmbracoHelper(out var umbracoHelper))
             return DefaultChangeFrequency;
 
@@ -145,8 +154,17 @@ public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbr
         return settingsNode?.Value<string>("sitemapDefaultChangeFrequency") ?? DefaultChangeFrequency;
     }
 
-    private decimal GetPriority(IPublishedContent _)
+    private decimal GetPriority(IPublishedContent page)
     {
+        // Check if page has its own priority value
+        if (page.HasValue("sitemapPriority"))
+        {
+            var pageValue = page.Value<decimal?>("sitemapPriority");
+            if (pageValue.HasValue)
+                return pageValue.Value;
+        }
+
+        // Fallback to settings
         if (!_umbracoHelperAccessor.TryGetUmbracoHelper(out var umbracoHelper))
             return DefaultPriority;
 
