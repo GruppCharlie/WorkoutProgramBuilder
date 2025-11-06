@@ -114,6 +114,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string AmountSavedExercises => this.Value<string>(_publishedValueFallback, "amountSavedExercises");
 
 		///<summary>
+		/// Amount Saved Workouts
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("amountSavedWorkouts")]
+		public virtual string AmountSavedWorkouts => this.Value<string>(_publishedValueFallback, "amountSavedWorkouts");
+
+		///<summary>
 		/// Completed All Achivments
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]

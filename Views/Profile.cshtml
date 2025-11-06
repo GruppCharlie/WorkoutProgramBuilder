@@ -37,6 +37,7 @@
 
     var achievementsHeader = profileNode?.Value<string>("achievementsHeader") ?? "Achievements";
     var amountSavedExercises = profileNode?.Value<string>("amountSavedExercises") ?? "Exercises saved:";
+    var amountSavedWorkouts = profileNode?.Value<string>("amountSavedWorkouts") ?? "Workouts saved:";
     var amountNextAchievement = profileNode?.Value<string>("amountNextAchievement") ?? "more to next achievement:";
     var completedAllAchivments = profileNode?.Value<string>("completedAllAchivments") ?? "All achievements unlocked!";
 
@@ -46,18 +47,19 @@
     var achievementsModalSubText = profileNode?.Value<string>("achievementsModalSubText") ?? "The more you save, the more achievements you unlock — keep going to reach the Master level!";
     var achievementsModalButtonText = profileNode?.Value<string>("achievementsModalButtonText") ?? "Got it";
 
-    int exercisesSaved = member!.GetValue<int?>("amountOfSavedExercises") ?? 0;
+    int exercisesSaved = member!.GetValue<int?>("amountOfSavedExercises") ?? 0; 
+    int workoutsSaved = member!.GetValue<int?>("amountOfMyWorkouts") ?? 0; 
 
 
     var achievements = profileNode?.Value<IEnumerable<BlockListItem>>("achivmentBlock") ?? Enumerable.Empty<BlockListItem>();
 
     var nextAchievement = achievements
-    .Where(a => (a.Content.Value<int?>("achievementThreshold") ?? 0) > exercisesSaved)
+    .Where(a => (a.Content.Value<int?>("achievementThreshold") ?? 0) > workoutsSaved)
     .OrderBy(a => a.Content.Value<int?>("achievementThreshold"))
     .FirstOrDefault();
 
     int remainingToNext = nextAchievement != null
-        ? (nextAchievement.Content.Value<int?>("achievementThreshold") ?? 0) - exercisesSaved
+        ? (nextAchievement.Content.Value<int?>("achievementThreshold") ?? 0) - workoutsSaved
         : 0;
 
     string nextAchievementText = nextAchievement != null
@@ -82,7 +84,7 @@
             </div>
         </div>
 
- 
+
         <div class="border-t pt-6">
             <h2 class="text-lg font-semibold mb-3">@profileDetails</h2>
             <ul class="space-y-1 text-gray-700">
@@ -90,10 +92,17 @@
                 <li><strong>@profileEmail</strong> @currentMember.Email</li>
                 <li>
                     <strong>@profileLastLogin</strong>
-                @(currentMember?.LastLoginDateUtc?.ToLocalTime().ToString("MMMM d, yyyy 'at' h:mm tt") ?? "Never")
-            </li>
+                    @(currentMember?.LastLoginDateUtc?.ToLocalTime().ToString("MMMM d, yyyy 'at' h:mm tt") ?? "Never")
+                </li>
+                <li>
+                    <strong>@amountSavedExercises</strong> @exercisesSaved
+                </li>
+                <li>
+                    <strong>@amountSavedWorkouts</strong> @workoutsSaved
+                </li>
             </ul>
         </div>
+
 
         <div class="border-t pt-6 mt-6">
             <div class="flex items-center justify-between mb-3">
@@ -108,10 +117,7 @@
             </div>
 
             <div class="space-y-3">
-                <p class="text-gray-700">
-                    @amountSavedExercises<strong> @exercisesSaved</strong>
 
-                </p>
 
                 <div class="flex flex-wrap gap-3">
                     @foreach (var a in achievements ?? Enumerable.Empty<BlockListItem>())
@@ -120,7 +126,7 @@
                         var achievementIcon = a.Content.Value<IPublishedContent>("achievementIcon")?.Url();
 
                         var required = a.Content.Value<int?>("achievementThreshold") ?? 0;
-                        var unlocked = exercisesSaved >= required;
+                        var unlocked = workoutsSaved >= required;
 
                         <div class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-sm
                             @(unlocked ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500")">

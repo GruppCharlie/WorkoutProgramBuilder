@@ -15,9 +15,8 @@
     var searchPlaceholder = settingsNode?.Value<string>("searchPlaceHolderText") ?? "Search...";
     var navbarLogin = settingsNode?.Value<string>("navbarLogin") ?? "Login";
     var navbarLogout = settingsNode?.Value<string>("navbarLogoutText") ?? "Logout";
-    var NavbarItems = settingsNode?.Value<IEnumerable<CoreLink>>("sidebarMenuItems") ?? Enumerable.Empty<CoreLink>();
+    var sidebarLinks = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("sidebarNavigation");
     var NavbarlanguageSelector = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("languageSelector");
-    var excludeFromSidebar = new[] { "Favorites", "Favoriter", "Profile", "Profil" };
 
 
     var searchNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "searchPage");
@@ -109,26 +108,37 @@
 
 <div id="sidebar" class="fixed top-16 left-0 h-full w-64 bg-neutral-200 text-neutral-700 shadow-lg transform -translate-x-full transition-transform duration-300 z-40">
     <nav class="mt-4 space-y-2">
-        @if (NavbarItems.Any())
-        {
             <ul class="flex flex-col mt-4 space-y-2 px-4">
-                @foreach (var link in NavbarItems)
-                {
+            @foreach (var linkItem in sidebarLinks ?? Enumerable.Empty<Umbraco.Cms.Core.Models.Blocks.BlockListItem>())
+            {
+                var sidebarToggle = linkItem.Content.Value<bool>("sidebarNavToggle");
+                var sidebarNavLinks = linkItem.Content.Value<IEnumerable<CoreLink>>("sidebarNavLink");
 
-                    if (currentMember == null && excludeFromSidebar.Contains(link.Name, StringComparer.OrdinalIgnoreCase))
+                if (sidebarNavLinks == null || !sidebarNavLinks.Any())
+                {
+                    continue;
+                }
+
+                if (!isLoggedIn)
+                {
+                    if (sidebarToggle)
                     {
                         continue;
                     }
+                }
+
+                foreach (var link in sidebarNavLinks)
+                {
                     <li>
                         <a href="@link.Url"
-                           target="@(string.IsNullOrWhiteSpace(link.Target) ? "_self" : link.Target)"
                            class="block px-4 py-2 text-neutral-700 hover:bg-neutral-300 hover:text-primary transition-colors duration-200 font-medium border-b border-neutral-300">
                             @link.Name
                         </a>
                     </li>
                 }
+            }
+
             </ul>
-        }
     </nav>
 </div>
 
