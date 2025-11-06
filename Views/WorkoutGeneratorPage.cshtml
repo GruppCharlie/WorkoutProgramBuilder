@@ -1,26 +1,19 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 
 @{
     Layout = "mainLayout.cshtml";
-    ViewBag.Title = Model.Value("pageTitle") ?? "Workout Generator";
+    // ViewBag.Title = Model.Value("pageTitle") ?? "Workout Generator";
 }
 
-<section class="py-16">
+<section class="">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col justify-center items-center pt-8">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-neutral-900 mb-4">
-                @Model.Value("pageTitle")
-            </h1>
-            
-            <div class="[&_section]:!py-0 [&_h6]:inline-block [&_h6]:px-4 [&_h6]:py-1 [&_h6]:bg-primary/10 [&_h6]:text-primary [&_h6]:text-xs [&_h6]:font-semibold [&_h6]:uppercase [&_h6]:tracking-wider [&_h6]:rounded-full [&_h6]:mb-4 [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:text-neutral-900 [&_p]:text-sm [&_p]:text-neutral-600 [&_p]:mb-2">
-                @await Html.GetBlockGridHtmlAsync(Model, "layout")
-            </div>
-        </div>
 
         <!-- Muscle Group Visualizer / AI Workout Generator -->
         <div data-muscle-visualizer class="p-8">
             <div class="text-center py-12">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto">
+
+                </div>
                 <p class="mt-4 text-neutral-600">Loading muscle groups...</p>
             </div>
         </div>

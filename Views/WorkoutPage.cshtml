@@ -2,19 +2,31 @@
 
 @{
     Layout = "mainLayout.cshtml";
-    ViewBag.Title = Model.Value("pageTitle") ?? "Workouts";
+    
+    // Load CMS-created workout templates from Umbraco
 }
 
-<section class="py-16">
+<section class="">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col justify-center items-center pt-8">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-neutral-900 mb-4">
-                @Model.Value("pageTitle")
-            </h1>
-            
-            <div class="[&_section]:!py-0 [&_h6]:inline-block [&_h6]:px-4 [&_h6]:py-1 [&_h6]:bg-primary/10 [&_h6]:text-primary [&_h6]:text-xs [&_h6]:font-semibold [&_h6]:uppercase [&_h6]:tracking-wider [&_h6]:rounded-full [&_h6]:mb-4 [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:text-neutral-900 [&_p]:text-sm [&_p]:text-neutral-600 [&_p]:mb-2">
-                @await Html.GetBlockGridHtmlAsync(Model, "layout")
+
+        <div class="mt-8">
+            @* @await Html.PartialAsync("_FilterBar") *@
+
+            @* Placeholder for CMS workout templates *@
+            <div class="text-center py-12">
+                <div class="max-w-md mx-auto">
+                    <i class="fas fa-dumbbell text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Workout Templates Coming Soon!</h3>
+                    <p class="text-sm text-gray-500 mt-4">
+                        For now, try our <a href="/workout-generator" class="text-primary hover:underline">AI Workout Generator</a> 
+                        to create custom workouts!
+                    </p>
+                </div>
             </div>
+            
+
+            @await Html.PartialAsync("_LoadingState")
+            @await Html.PartialAsync("_EmptyState")
         </div>
     </div>
 </section>

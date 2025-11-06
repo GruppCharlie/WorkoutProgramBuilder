@@ -4,7 +4,7 @@ namespace WorkoutProgramBuilder.Business.Configuration;
 
 public static class RapidApiHttpClientConfigurator
 {
-    public static HttpClient Configure(HttpClient httpClient, IConfiguration configuration, int timeoutSeconds = 30)
+    private static HttpClient Configure(HttpClient httpClient, IConfiguration configuration, int timeoutSeconds = 30)
     {
         var apiKey = configuration["RapidApi:ApiKey"] ?? throw new InvalidOperationException("RapidApi:ApiKey not configured");
         var apiHost = configuration["RapidApi:ApiHost"] ?? "muscle-group-image-generator.p.rapidapi.com";
