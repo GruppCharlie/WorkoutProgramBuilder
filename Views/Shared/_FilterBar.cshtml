@@ -1,0 +1,147 @@
+@{
+    var showSortFavorites = ViewData["ShowSortFavorites"] as bool? ?? false;
+    var showEquipmentFilter = ViewData["ShowEquipmentFilter"] as bool? ?? true;
+}
+
+<!-- Filters -->
+<div class="bg-white border border-gray-200 p-2">
+    <div class="flex flex-wrap items-center gap-1">
+        <!-- Sort Dropdown -->
+        <div class="relative">
+            <button id="sortBtn" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 focus:outline-none text-sm">
+                <span>Sort</span>
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+            </button>
+            <div id="sortDropdown" class="hidden absolute z-50 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
+                <div class="p-2">
+                    <button class="sort-option w-full text-left px-3 py-2 hover:bg-gray-50 rounded text-sm" data-value="recent">Most Recent</button>
+                    @if (showSortFavorites)
+                    {
+                        <button class="sort-option w-full text-left px-3 py-2 hover:bg-gray-50 rounded text-sm" data-value="favorites">Favorites</button>
+                    }
+                    <button class="sort-option w-full text-left px-3 py-2 hover:bg-gray-50 rounded text-sm" data-value="a-z">A-Z</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="h-4 w-px bg-gray-300"></div>
+
+        <!-- Muscles Dropdown -->
+        <div class="relative">
+            <button id="musclesBtn" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 focus:outline-none text-sm">
+                <span>Muscles</span>
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+            </button>
+            <div id="musclesDropdown" class="hidden absolute z-50 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg">
+                <div class="p-3 space-y-2 max-h-80 overflow-y-auto">
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="chest" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Chest</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="back" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Back</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="shoulders" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Shoulders</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="biceps" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Biceps</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="triceps" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Triceps</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="legs" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Legs</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="quadriceps" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Quadriceps</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="hamstrings" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Hamstrings</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="glutes" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Glutes</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="calves" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Calves</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="abs" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Abs</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="core" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Core</span>
+                    </label>
+                    <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                        <input type="checkbox" value="forearms" class="muscle-filter rounded text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-700">Forearms</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        @if (showEquipmentFilter)
+        {
+            <div class="h-4 w-px bg-gray-300"></div>
+
+            <!-- Equipment Dropdown -->
+            <div class="relative">
+                <button id="equipmentBtn" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 focus:outline-none text-sm">
+                    <span>Equipment</span>
+                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                </button>
+                <div id="equipmentDropdown" class="hidden absolute z-50 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg">
+                    <div class="p-3 space-y-2 max-h-80 overflow-y-auto">
+                        <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                            <input type="checkbox" value="barbell" class="equipment-filter rounded text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-700">Barbell</span>
+                        </label>
+                        <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                            <input type="checkbox" value="dumbbell" class="equipment-filter rounded text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-700">Dumbbells</span>
+                        </label>
+                        <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                            <input type="checkbox" value="bodyweight" class="equipment-filter rounded text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-700">Bodyweight</span>
+                        </label>
+                        <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                            <input type="checkbox" value="machine" class="equipment-filter rounded text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-700">Machine</span>
+                        </label>
+                        <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                            <input type="checkbox" value="kettlebell" class="equipment-filter rounded text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-700">Kettlebells</span>
+                        </label>
+                        <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                            <input type="checkbox" value="cable" class="equipment-filter rounded text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-700">Cables</span>
+                        </label>
+                        <label class="flex items-center hover:bg-gray-50 p-2 rounded cursor-pointer">
+                            <input type="checkbox" value="band" class="equipment-filter rounded text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-700">Band</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Active Filters -->
+<div id="activeFiltersBar" class="p-2">
+    <div class="flex items-center gap-3 flex-wrap">
+        <span class="text-sm font-medium text-gray-700 py-2">Active filters</span>
+        <div class="h-4 w-px bg-gray-300"></div>
+        <div id="activeFilterTags" class="flex flex-wrap gap-2"></div>
+    </div>
+</div>

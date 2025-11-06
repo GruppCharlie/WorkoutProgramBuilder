@@ -1,0 +1,8 @@
+@{
+    var message = ViewData["EmptyMessage"] as string ?? "No items found.";
+    var elementId = ViewData["EmptyStateId"] as string ?? "emptyState";
+}
+
+<div id="@elementId" class="hidden text-center py-12">
+    <p class="text-gray-600">@message</p>
+</div>

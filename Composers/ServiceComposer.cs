@@ -10,5 +10,7 @@ public class ServiceComposer : IComposer
     {
         builder.Services.AddHttpClient<IExerciseDbService, ExerciseDbService>();
         builder.Services.AddScoped<ISitemapService, SitemapService>();
+        builder.Services.AddScoped<IMemberFavoritesService, MemberFavoritesService>();
+        builder.Services.AddScoped<IMemberWorkoutsService, MemberWorkoutsService>();
     }
 }
