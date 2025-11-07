@@ -4,12 +4,12 @@ using WorkoutProgramBuilder.Business.Services;
 namespace WorkoutProgramBuilder.Controllers;
 
 [ApiController]
-[Route("umbraco/api/musclegroup")]
+[Route("api/musclegroup")]
 [Produces("application/json")]
 public class MuscleGroupController(IMuscleGroupApiService muscleGroupService, ILogger<MuscleGroupController> logger) : ControllerBase
 {
     // Get all available muscle groups
-    // GET  /umbraco/api/musclegroup/groups
+    // GET  /api/musclegroup/groups
     [HttpGet("groups")]
     [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -34,7 +34,7 @@ public class MuscleGroupController(IMuscleGroupApiService muscleGroupService, IL
     }
 
     // Get muscle visualization image
-    // GET  /umbraco/api/musclegroup/image
+    // GET  /api/musclegroup/image
     [HttpGet("image")]
     [Produces("image/png")]
     [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]

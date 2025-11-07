@@ -7,8 +7,7 @@ using WorkoutProgramBuilder.Business.Services;
 
 namespace WorkoutProgramBuilder.Controllers;
 
-// Controller for rendering the Favorites page 
-// API endpoints moved to FavoritesApiController
+// Controller for rendering the Favorites page
 [Route("favorites")]
 [Route("sv/favoriter")]
 public class FavoritesController(
@@ -29,21 +28,7 @@ public class FavoritesController(
     {
         var currentMember = await _memberManager.GetCurrentMemberAsync();
         if (currentMember == null)
-        {
-            if (!_contextAccessor.TryGetUmbracoContext(out var umbracoContext) || umbracoContext == null)
-                return Redirect("/login");
-
-            var contentCache = umbracoContext.Content;
-            var loginNode = contentCache
-                .GetAtRoot()
-                .SelectMany(r => r.DescendantsOrSelf())
-                .FirstOrDefault(x => x.ContentType.Alias == "loginPage");
-
-            var culture = System.Globalization.CultureInfo.CurrentCulture.Name;
-            var loginUrl = loginNode?.Url(culture: culture) ?? "/login";
-
-            return Redirect(loginUrl);
-        }
+            return RenderUmbraco404();
 
         var memberId = int.Parse(currentMember.Id);
 
@@ -65,44 +50,21 @@ public class FavoritesController(
         return CurrentTemplate(CurrentPage);
     }
 
-    // Backward compatibility endpoints - redirect to services
-    [HttpPost("save")]
-    [Obsolete("Use /api/favorites/exercise instead")]
-    public async Task<IActionResult> SaveFavoriteExercise([FromBody] Business.Dto.ExerciseDto exercise)
+    private IActionResult RenderUmbraco404()
     {
-        var currentMember = await _memberManager.GetCurrentMemberAsync();
-        if (currentMember == null)
-            return Unauthorized();
+        if (!_contextAccessor.TryGetUmbracoContext(out var umbracoContext))
+            return NotFound();
 
-        var memberId = int.Parse(currentMember.Id);
-        _favoritesService.ToggleFavoriteExercise(memberId, exercise);
-        return Ok();
-    }
+        var contentCache = umbracoContext.Content;
+        var candidates = contentCache.GetAtRoot().SelectMany(r => r.DescendantsOrSelf());
 
-    [HttpPost("save-workout")]
-    [Obsolete("Use /api/favorites/workout instead")]
-    public async Task<IActionResult> SaveFavoriteWorkout([FromBody] Business.Dto.SavedWorkoutDto workout)
-    {
-        var currentMember = await _memberManager.GetCurrentMemberAsync();
-        if (currentMember == null)
-            return Unauthorized();
+        var errorPage = candidates.FirstOrDefault(c => string.Equals(c.ContentType.Alias, "errorPage", StringComparison.OrdinalIgnoreCase));
 
-        var memberId = int.Parse(currentMember.Id);
-        _favoritesService.ToggleFavoriteWorkout(memberId, workout);
-        return Ok();
-    }
+        if (errorPage == null)
+            return NotFound();
 
-    [HttpPost]
-    [Route("/favorites/save-my-workout")]
-    [Obsolete("Use /api/favorites/my-workout instead")]
-    public async Task<IActionResult> SaveMyWorkout([FromBody] Business.Dto.SavedWorkoutDto workout)
-    {
-        var currentMember = await _memberManager.GetCurrentMemberAsync();
-        if (currentMember == null)
-            return Unauthorized();
+        Response.StatusCode = 404;
 
-        var memberId = int.Parse(currentMember.Id);
-        _workoutsService.ToggleMyWorkout(memberId, workout);
-        return Ok();
+        return View("~/Views/ErrorPage.cshtml", errorPage);
     }
 }

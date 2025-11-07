@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Umbraco.Cms.Core.Security;
 using WorkoutProgramBuilder.Business.Services;
 using WorkoutProgramBuilder.Business.Dto;
 
@@ -7,7 +8,11 @@ namespace WorkoutProgramBuilder.Controllers;
 [ApiController]
 [Route("api/workout")]
 [Produces("application/json")]
-public class WorkoutApiController(IRapidApiService rapidApiService, ILogger<WorkoutApiController> logger) : ControllerBase
+public class WorkoutApiController(
+    IRapidApiService rapidApiService, 
+    IMemberManager memberManager,
+    IMemberWorkoutsService workoutsService,
+    ILogger<WorkoutApiController> logger) : ControllerBase
 {
     private const int MinDescriptionLength = 4;
     private const int MaxDescriptionLength = 500;
@@ -86,6 +91,65 @@ public class WorkoutApiController(IRapidApiService rapidApiService, ILogger<Work
                 detail: "An unexpected error occurred while generating the workout",
                 statusCode: StatusCodes.Status500InternalServerError
             );
+        }
+    }
+
+    // Add/remove workout to/from My Workouts
+    // POST /api/workout/add
+    [HttpPost("add")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> AddWorkout([FromBody] SavedWorkoutDto workout)
+    {
+        try
+        {
+            var currentMember = await memberManager.GetCurrentMemberAsync();
+            if (currentMember == null)
+            {
+                logger.LogWarning("No current member found");
+                return Unauthorized();
+            }
+
+            if (string.IsNullOrWhiteSpace(workout.WorkoutId))
+            {
+                logger.LogWarning("Invalid workout payload");
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "Invalid Request",
+                    Detail = "WorkoutId is required",
+                    Status = StatusCodes.Status400BadRequest
+                });
+            }
+
+            logger.LogInformation("Adding workout: {WorkoutId} for member {MemberId}", 
+                workout.WorkoutId, currentMember.Id);
+
+            var success = workoutsService.ToggleMyWorkout(int.Parse(currentMember.Id), workout);
+            
+            if (!success)
+            {
+                logger.LogError("Failed to add workout for member {MemberId}", currentMember.Id);
+                return Problem(
+                    title: "Add Failed",
+                    detail: "Failed to add workout",
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
+
+            logger.LogInformation("Successfully added workout for member {MemberId}", currentMember.Id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error adding workout");
+            return StatusCode(500, new ProblemDetails
+            {
+                Title = "Internal Server Error",
+                Detail = "An unexpected error occurred while adding the workout",
+                Status = StatusCodes.Status500InternalServerError
+            });
         }
     }
 }
