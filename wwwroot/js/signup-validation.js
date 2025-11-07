@@ -25,21 +25,18 @@
                 invalidMismatch = input.value !== primaryInput.value;
             }
 
-            // Visa fel endast om fältet rörts ELLER formuläret skickats
             const shouldShow = group.dataset.touched === 'true' || form.dataset.submitted === 'true';
 
             if (requiredError) requiredError.hidden = !(shouldShow && invalidRequired);
             if (formatError) formatError.hidden = !(shouldShow && !invalidRequired && invalidFormat);
             if (patternError) patternError.hidden = !(shouldShow && !invalidRequired && invalidPattern);
 
-            // ✅ Visa mismatch-fel enbart EFTER att man försökt skicka formuläret
             if (mismatchError) {
                 const showMismatch = form.dataset.submitted === 'true' && invalidMismatch;
                 mismatchError.hidden = !showMismatch;
             }
         }
 
-        // blur = markera touched
         form.addEventListener('blur', (e) => {
             const group = e.target.closest('[data-validate]');
             if (!group) return;
@@ -47,7 +44,6 @@
             showOrHideError(group);
         }, true);
 
-        // input = validera live (men visa inte mismatch ännu)
         form.addEventListener('input', (e) => {
             const group = e.target.closest('[data-validate]');
             if (!group) return;
@@ -58,7 +54,6 @@
             }
         });
 
-        // submit
         form.addEventListener('submit', (e) => {
             form.dataset.submitted = 'true';
 
@@ -70,7 +65,6 @@
 
             let ok = form.checkValidity();
 
-            // extra kontroll för mismatch
             if (confirmGroup) {
                 const confirmInput = confirmGroup.querySelector('input');
                 if (primaryInput && confirmInput && confirmInput.value !== primaryInput.value) {

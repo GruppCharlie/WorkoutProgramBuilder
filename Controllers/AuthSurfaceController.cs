@@ -30,10 +30,10 @@ public class AuthSurfaceController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> HandleSignup(string username, string emailsignup, string createPassword, string confirmPassword)
+    public async Task<IActionResult> HandleSignup(string username, string emailSignup, string createPassword, string confirmPassword)
     {
         if (string.IsNullOrWhiteSpace(username) ||
-            string.IsNullOrWhiteSpace(emailsignup) ||
+            string.IsNullOrWhiteSpace(emailSignup) ||
             string.IsNullOrWhiteSpace(createPassword) ||
             string.IsNullOrWhiteSpace(confirmPassword))
         {
@@ -59,7 +59,7 @@ public class AuthSurfaceController(
             return RedirectToCurrentUmbracoPage();
         }
 
-        if (_memberService.GetByEmail(emailsignup) != null)
+        if (_memberService.GetByEmail(emailSignup) != null)
         {
             TempData["SignupError"] = "An account with that email already exists.";
             return RedirectToCurrentUmbracoPage();
@@ -68,7 +68,7 @@ public class AuthSurfaceController(
         const string memberTypeAlias = "member"; 
         var displayName = username;
 
-        var identityUser = MemberIdentityUser.CreateNew(username, emailsignup, memberTypeAlias, true, displayName);
+        var identityUser = MemberIdentityUser.CreateNew(username, emailSignup, memberTypeAlias, true, displayName);
         identityUser.EmailConfirmed = true; 
 
         var createResult = await _memberManager.CreateAsync(identityUser, createPassword);
