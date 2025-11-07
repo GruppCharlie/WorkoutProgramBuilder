@@ -10,6 +10,7 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Web.Common.Security;
+using Umbraco.Cms.Web.Common.UmbracoContext;
 using Umbraco.Cms.Web.Website.Controllers;
 
 public class AuthSurfaceController(
@@ -21,12 +22,16 @@ public class AuthSurfaceController(
     IPublishedUrlProvider publishedUrlProvider,
     IMemberSignInManager memberSignInManager,
     IMemberManager memberManager,
+    IUmbracoContextAccessor contextAccessor,
     IMemberService memberService)
     : SurfaceController(umbracoContextAccessor, databaseFactory, services, appCaches, profilingLogger, publishedUrlProvider)
 {
     private readonly IMemberSignInManager _memberSignInManager = memberSignInManager;
     private readonly IMemberManager _memberManager = memberManager;
     private readonly IMemberService _memberService = memberService;
+    private readonly IUmbracoContextAccessor _contextAccessor = contextAccessor;
+
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -102,36 +107,25 @@ public class AuthSurfaceController(
             return RedirectToCurrentUmbracoPage();
         }
 
-        return Redirect("/");
+        return Redirect(GetHomeUrlForCurrentCulture() ?? "/");
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> HandleLogin(string emaillogin, string password)
     {
-        if (string.IsNullOrWhiteSpace(emaillogin) || string.IsNullOrWhiteSpace(password))
-        {
-            TempData["LoginError"] = "Please enter both email and password.";
-            return RedirectToCurrentUmbracoPage();
-        }
-
         var member = _memberService.GetByEmail(emaillogin);
-        if (member == null)
-        {
-            TempData["LoginError"] = "No member found with that email.";
-            return RedirectToCurrentUmbracoPage();
-        }
 
-        var attempt = await _memberSignInManager.PasswordSignInAsync(member.Username, password, false, true);
+        var attempt = await _memberSignInManager.PasswordSignInAsync(member.Username, password, isPersistent: false, lockoutOnFailure: true);
 
         if (attempt.Succeeded)
         {
-            return Redirect("/");
+            return Redirect(GetHomeUrlForCurrentCulture() ?? "/");
         }
 
-        TempData["LoginError"] = "Invalid login attempt.";
         return RedirectToCurrentUmbracoPage();
     }
+
 
 
     [HttpPost]
@@ -139,6 +133,26 @@ public class AuthSurfaceController(
     public async Task<IActionResult> HandleLogout()
     {
         await _memberSignInManager.SignOutAsync();
-        return Redirect("/");
+        return Redirect(GetHomeUrlForCurrentCulture() ?? "/");
     }
+
+    private string? GetHomeUrlForCurrentCulture()
+    {
+        if (!_contextAccessor.TryGetUmbracoContext(out var umbracoContext) || umbracoContext == null)
+        {
+            return null;
+        }
+
+        var contentCache = umbracoContext.Content;
+
+        var homeNode = contentCache
+            .GetAtRoot()
+            .FirstOrDefault(x => x.ContentType.Alias == "modularPage");
+
+        var culture = System.Globalization.CultureInfo.CurrentCulture.Name;
+        var homeUrl = homeNode?.Url(culture: culture);
+
+        return homeUrl;
+    }
+
 }

@@ -28,7 +28,21 @@ public class FavoritesController(
     {
         var currentMember = await _memberManager.GetCurrentMemberAsync();
         if (currentMember == null)
-            return RenderUmbraco404();
+        {
+            if (!_contextAccessor.TryGetUmbracoContext(out var umbracoContext) || umbracoContext == null)
+                return Redirect("/login");
+
+            var contentCache = umbracoContext.Content;
+            var loginNode = contentCache
+                .GetAtRoot()
+                .SelectMany(r => r.DescendantsOrSelf())
+                .FirstOrDefault(x => x.ContentType.Alias == "loginPage");
+
+            var culture = System.Globalization.CultureInfo.CurrentCulture.Name;
+            var loginUrl = loginNode?.Url(culture: culture) ?? "/login";
+
+            return Redirect(loginUrl);
+        }
 
         var memberId = int.Parse(currentMember.Id);
 
@@ -48,23 +62,5 @@ public class FavoritesController(
         ViewData["Workouts"] = savedWorkouts;
 
         return CurrentTemplate(CurrentPage);
-    }
-
-    private IActionResult RenderUmbraco404()
-    {
-        if (!_contextAccessor.TryGetUmbracoContext(out var umbracoContext))
-            return NotFound();
-
-        var contentCache = umbracoContext.Content;
-        var candidates = contentCache.GetAtRoot().SelectMany(r => r.DescendantsOrSelf());
-
-        var errorPage = candidates.FirstOrDefault(c => string.Equals(c.ContentType.Alias, "errorPage", StringComparison.OrdinalIgnoreCase));
-
-        if (errorPage == null)
-            return NotFound();
-
-        Response.StatusCode = 404;
-
-        return View("~/Views/ErrorPage.cshtml", errorPage);
     }
 }
