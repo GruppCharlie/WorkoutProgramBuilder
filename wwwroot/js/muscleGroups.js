@@ -256,7 +256,7 @@ class MuscleGroupVisualizer {
         workoutContent.innerHTML = `
             <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm transition-shadow duration-300 cursor-pointer" data-workout-card>
                 <!-- Workout Card Header -->
-                <div class="relative p-6 bg-neutral-100">
+                <div class="relative p-6 bg-neutral-100 min-h-[180px]">
                     <div class="absolute top-4 right-4 flex gap-2 z-10">
                         <button type="button"
                                 class="text-gray-400 hover:text-primary focus:outline-none text-2xl add-to-my-workouts-btn"

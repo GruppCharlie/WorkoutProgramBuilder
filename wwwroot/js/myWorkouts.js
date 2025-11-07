@@ -223,11 +223,13 @@ function renderWorkouts() {
  */
 function createWorkoutCard(workout) {
     const imageUrl = generateMuscleVisualizationUrl(workout.muscles || []);
-    const isFavorited = workout.isSaved || false; // Use property from backend
+    const isFavorited = workout.isSaved || false;
+    const exercises = workout.exercises || [];
+    const exercisesJson = JSON.stringify(exercises).replace(/"/g, '&quot;');
     
     return `
         <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm transition-shadow duration-300 hover:shadow-md">
-            <div class="relative p-6 bg-neutral-100">
+            <div class="relative p-6 bg-neutral-100 min-h-[180px]">
                 <div class="absolute top-4 right-4 flex gap-2 z-10">
                     <button type="button"
                             class="text-gray-400 hover:text-red-500 focus:outline-none text-2xl"
@@ -236,6 +238,7 @@ function createWorkoutCard(workout) {
                             data-workout-description="${workout.description}"
                             data-workout-muscles="${(workout.muscles || []).join(',')}"
                             data-workout-equipment="${(workout.equipment || []).join(',')}"
+                            data-workout-exercises='${exercisesJson}'
                             onclick="toggleWorkoutFavorite(event, this)"
                             title="Add to Favorites">
                         <i class="fa-solid fa-heart ${isFavorited ? 'text-red-500' : ''}"></i>
@@ -248,8 +251,15 @@ function createWorkoutCard(workout) {
                     </button>
                 </div>
                 
-                <h4 class="text-xl font-bold text-gray-900 mb-2 pr-20">${workout.name}</h4>
-                <p class="text-gray-600 text-sm line-clamp-2">${workout.description}</p>
+                <h4 class="text-2xl font-bold text-gray-900 mb-2 pr-20">${workout.name}</h4>
+                <p class="text-gray-600 text-sm">${workout.description}</p>
+                
+                ${exercises.length > 0 ? `
+                <div class="mt-4 flex items-center gap-2 text-sm text-gray-500">
+                    <i class="fa-solid fa-dumbbell"></i>
+                    <span>${exercises.length} exercises</span>
+                </div>
+                ` : ''}
             </div>
 
             ${(workout.muscles || []).length > 0 ? `
