@@ -114,12 +114,12 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string SearchPlaceHolderText => this.Value<string>(_publishedValueFallback, "searchPlaceHolderText");
 
 		///<summary>
-		/// Sidebar Menu Items
+		/// Sidebar Navigation
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("sidebarMenuItems")]
-		public virtual global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link> SidebarMenuItems => this.Value<global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link>>(_publishedValueFallback, "sidebarMenuItems");
+		[ImplementPropertyType("sidebarNavigation")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel SidebarNavigation => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "sidebarNavigation");
 
 		///<summary>
 		/// Site Logotype
