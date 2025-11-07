@@ -12,7 +12,7 @@ async function toggleFavorite(event, button) {
     const exerciseData = getExerciseDataFromButton(button);
 
     try {
-        const response = await fetch('/favorites/save', {
+        const response = await fetch('/api/favorites/exercise', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(exerciseData)

@@ -4,12 +4,12 @@
  */
 
 const API_ENDPOINTS = {
-    MUSCLE_GROUPS: '/umbraco/api/musclegroup/groups',
-    MUSCLE_IMAGE: '/umbraco/api/musclegroup/image',
+    MUSCLE_GROUPS: '/api/musclegroup/groups',
+    MUSCLE_IMAGE: '/api/musclegroup/image',
     WORKOUT_GENERATE: '/api/workout/generate',
-    FAVORITES_SAVE: '/favorites/save',
-    FAVORITES_SAVE_WORKOUT: '/favorites/save-workout',
-    MY_WORKOUTS_SAVE: '/favorites/save-my-workout'
+    WORKOUT_ADD: '/api/workout/add',
+    FAVORITES_EXERCISE: '/api/favorites/exercise',
+    FAVORITES_WORKOUT: '/api/favorites/workout'
 };
 
 /**
@@ -60,7 +60,7 @@ async function generateWorkout({ muscleGroups, equipment, description }) {
  * returns {Promise<Response>} API response
  */
 async function saveWorkoutToFavorites(workout) {
-    return await fetch(API_ENDPOINTS.FAVORITES_SAVE_WORKOUT, {
+    return await fetch(API_ENDPOINTS.FAVORITES_WORKOUT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(workout)
@@ -68,12 +68,12 @@ async function saveWorkoutToFavorites(workout) {
 }
 
 /**
- * Save workout to My Workouts
+ * Add workout to My Workouts
  * {Object} workout - Workout data
  * returns {Promise<Response>} API response
  */
 async function saveWorkoutToMyWorkouts(workout) {
-    return await fetch(API_ENDPOINTS.MY_WORKOUTS_SAVE, {
+    return await fetch(API_ENDPOINTS.WORKOUT_ADD, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(workout)

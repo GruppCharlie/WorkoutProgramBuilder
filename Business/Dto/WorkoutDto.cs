@@ -40,6 +40,7 @@ public class SavedWorkoutDto
     public string Description { get; set; } = "";
     public List<string> Muscles { get; set; } = [];
     public List<string> Equipment { get; set; } = [];
+    public List<ExerciseResponse> Exercises { get; set; } = [];
     public bool IsSaved { get; set; }
     public bool IsInMyWorkouts { get; set; } 
 }

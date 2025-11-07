@@ -265,6 +265,7 @@ class MuscleGroupVisualizer {
                                 data-workout-description="${workout.description}"
                                 data-workout-muscles="${allMuscles.join(',')}"
                                 data-workout-equipment="${allEquipment.join(',')}"
+                                data-workout-exercises='${JSON.stringify(workout.exercises)}'
                                 onclick="addToMyWorkouts(event, this)"
                                 title="Add to My Workouts">
                             <i class="fa-solid fa-plus"></i>
@@ -276,6 +277,7 @@ class MuscleGroupVisualizer {
                                 data-workout-description="${workout.description}"
                                 data-workout-muscles="${allMuscles.join(',')}"
                                 data-workout-equipment="${allEquipment.join(',')}"
+                                data-workout-exercises='${JSON.stringify(workout.exercises)}'
                                 onclick="toggleWorkoutFavorite(event, this)"
                                 title="Add to Favorites">
                             <i class="fa-solid fa-heart"></i>
@@ -351,12 +353,16 @@ async function toggleWorkoutFavorite(event, button) {
     
     const heartIcon = button.querySelector('i');
     
+    const exercisesJson = button.getAttribute('data-workout-exercises');
+    const exercises = exercisesJson ? JSON.parse(exercisesJson) : [];
+    
     const workoutData = {
         WorkoutId: button.getAttribute('data-workout-id'),
         Name: button.getAttribute('data-workout-name'),
         Description: button.getAttribute('data-workout-description'),
         Muscles: button.getAttribute('data-workout-muscles').split(',').filter(Boolean),
-        Equipment: button.getAttribute('data-workout-equipment').split(',').filter(Boolean)
+        Equipment: button.getAttribute('data-workout-equipment').split(',').filter(Boolean),
+        Exercises: exercises
     };
     
     try {
@@ -394,12 +400,16 @@ async function toggleWorkoutFavorite(event, button) {
 async function addToMyWorkouts(event, button) {
     event.stopPropagation();
     
+    const exercisesJson = button.getAttribute('data-workout-exercises');
+    const exercises = exercisesJson ? JSON.parse(exercisesJson) : [];
+    
     const workoutData = {
         WorkoutId: button.getAttribute('data-workout-id'),
         Name: button.getAttribute('data-workout-name'),
         Description: button.getAttribute('data-workout-description'),
         Muscles: button.getAttribute('data-workout-muscles').split(',').filter(Boolean),
-        Equipment: button.getAttribute('data-workout-equipment').split(',').filter(Boolean)
+        Equipment: button.getAttribute('data-workout-equipment').split(',').filter(Boolean),
+        Exercises: exercises
     };
     
     try {

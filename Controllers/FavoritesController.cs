@@ -7,8 +7,7 @@ using WorkoutProgramBuilder.Business.Services;
 
 namespace WorkoutProgramBuilder.Controllers;
 
-// Controller for rendering the Favorites page 
-// API endpoints moved to FavoritesApiController
+// Controller for rendering the Favorites page
 [Route("favorites")]
 [Route("sv/favoriter")]
 public class FavoritesController(
@@ -51,48 +50,6 @@ public class FavoritesController(
         return CurrentTemplate(CurrentPage);
     }
 
-    // Backward compatibility endpoints - redirect to services
-    [HttpPost("save")]
-    [Obsolete("Use /api/favorites/exercise instead")]
-    public async Task<IActionResult> SaveFavoriteExercise([FromBody] Business.Dto.ExerciseDto exercise)
-    {
-        var currentMember = await _memberManager.GetCurrentMemberAsync();
-        if (currentMember == null)
-            return Unauthorized();
-
-        var memberId = int.Parse(currentMember.Id);
-        _favoritesService.ToggleFavoriteExercise(memberId, exercise);
-        return Ok();
-    }
-
-    [HttpPost("save-workout")]
-    [Obsolete("Use /api/favorites/workout instead")]
-    public async Task<IActionResult> SaveFavoriteWorkout([FromBody] Business.Dto.SavedWorkoutDto workout)
-    {
-        var currentMember = await _memberManager.GetCurrentMemberAsync();
-        if (currentMember == null)
-            return Unauthorized();
-
-        var memberId = int.Parse(currentMember.Id);
-        _favoritesService.ToggleFavoriteWorkout(memberId, workout);
-        return Ok();
-    }
-
-    [HttpPost]
-    [Route("/favorites/save-my-workout")]
-    [Obsolete("Use /api/favorites/my-workout instead")]
-    public async Task<IActionResult> SaveMyWorkout([FromBody] Business.Dto.SavedWorkoutDto workout)
-    {
-        var currentMember = await _memberManager.GetCurrentMemberAsync();
-        if (currentMember == null)
-            return Unauthorized();
-
-        var memberId = int.Parse(currentMember.Id);
-        _workoutsService.ToggleMyWorkout(memberId, workout);
-        return Ok();
-    }
-
-    [Obsolete]
     private IActionResult RenderUmbraco404()
     {
         if (!_contextAccessor.TryGetUmbracoContext(out var umbracoContext))
