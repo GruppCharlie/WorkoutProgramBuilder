@@ -9,6 +9,8 @@
 {
     var muscleGroups = workout.Muscles;
     var equipment = workout.Equipment;
+    var exercises = workout.Exercises;
+    var exercisesJson = System.Text.Json.JsonSerializer.Serialize(exercises);
     
     //MuscleMapper helper to get mapped muscles and image URL
     var mappedMuscles = MuscleMapper.MapToApiMuscleGroups(muscleGroups);
@@ -16,10 +18,18 @@
     
     <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm transition-shadow duration-300 cursor-pointer hover:shadow-md">
         <!-- Workout Card Header -->
-        <div class="relative p-6 bg-neutral-100">
+        <div class="relative p-6 bg-neutral-100 min-h-[180px]">
             
-            <h4 class="text-xl font-bold text-gray-900 mb-2 pr-20">@workout.Name</h4>
-            <p class="text-gray-600 text-sm line-clamp-2">@workout.Description</p>
+            <h4 class="text-2xl font-bold text-gray-900 mb-2 pr-20">@workout.Name</h4>
+            <p class="text-gray-600 text-sm">@workout.Description</p>
+            
+            @if (exercises.Any())
+            {
+                <div class="mt-4 flex items-center gap-2 text-sm text-gray-500">
+                    <i class="fa-solid fa-dumbbell"></i>
+                    <span>@exercises.Count exercises</span>
+                </div>
+            }
 
             <div class="absolute top-4 right-4 flex gap-2 z-10">
                 <button type="button"
@@ -29,6 +39,7 @@
                         data-workout-description="@workout.Description"
                         data-workout-muscles="@string.Join(",", muscleGroups)"
                         data-workout-equipment="@string.Join(",", equipment)"
+                        data-workout-exercises='@exercisesJson'
                         onclick="addToMyWorkouts(event, this)"
                         title="@(workout.IsInMyWorkouts ? "Added to My Workouts" : "Add to My Workouts")"
                         @(workout.IsInMyWorkouts ? "disabled" : "")>
@@ -41,6 +52,7 @@
                         data-workout-description="@workout.Description"
                         data-workout-muscles="@string.Join(",", muscleGroups)"
                         data-workout-equipment="@string.Join(",", equipment)"
+                        data-workout-exercises='@exercisesJson'
                         onclick="toggleWorkoutFavorite(event, this)"
                         title="Add to Favorites">
                     <i class="fa-solid fa-heart @(workout.IsSaved ? "text-red-500" : "")"></i>

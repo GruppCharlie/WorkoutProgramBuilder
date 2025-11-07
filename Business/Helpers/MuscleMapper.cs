@@ -76,6 +76,6 @@ public static class MuscleMapper
     {
         var mappedMuscles = MapToApiMuscleGroups(muscles);
         var muscleGroupsParam = string.Join(",", mappedMuscles);
-        return $"/umbraco/api/musclegroup/image?muscleGroups={Uri.EscapeDataString(muscleGroupsParam)}&color={Uri.EscapeDataString(color)}&transparentBackground=true";
+        return $"/api/musclegroup/image?muscleGroups={Uri.EscapeDataString(muscleGroupsParam)}&color={Uri.EscapeDataString(color)}&transparentBackground=true";
     }
 }

@@ -65,5 +65,5 @@ function mapMuscleNamesToGroups(muscles) {
 function generateMuscleVisualizationUrl(muscles, color = '131,115,218') {
     const validMuscleGroups = mapMuscleNamesToGroups(muscles);
     const muscleGroups = validMuscleGroups.join(',');
-    return `/umbraco/api/musclegroup/image?muscleGroups=${encodeURIComponent(muscleGroups)}&color=${encodeURIComponent(color)}&transparentBackground=true`;
+    return `/api/musclegroup/image?muscleGroups=${encodeURIComponent(muscleGroups)}&color=${encodeURIComponent(color)}&transparentBackground=true`;
 }
