@@ -1,0 +1,62 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
+@inject Umbraco.Cms.Core.Services.IMemberService MemberService
+
+@{
+    Layout = "mainLayout.cshtml";
+
+    var currentMember = await MemberManager.GetCurrentMemberAsync();
+    var isLoggedIn = currentMember != null;
+
+    string? memberDetails = null;
+
+    if (isLoggedIn)
+    {
+        var member = MemberService.GetById(int.Parse(currentMember!.Id));
+        memberDetails = member?.GetValue<string>("memberDetails");
+    }
+
+    var needsUserInput = !isLoggedIn || string.IsNullOrWhiteSpace(memberDetails);
+
+    var pleaseEnter = Model.Value("pleaseEnter");
+    var personalAge = Model.Value("personalAge");
+    var personalGender = Model.Value("personalGender");
+    var genderSelection = Model.Value<IEnumerable<string>>("genderSelection");
+    var personalWeight = Model.Value("personalWeight");
+    var personalHeight = Model.Value("personalHeight");
+    var continueButton = Model.Value("continueButton");
+
+}
+
+<section>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+
+        @if (needsUserInput)
+        {
+            <div id="userInputSection" class="text-center py-12">
+                <p>@pleaseEnter</p>
+                <form id="userDetailsForm" class="mt-4 space-y-4 max-w-xs mx-auto">
+                    <div><input type="number" name="age" id="userAgeInput" placeholder="@personalAge" min="10" max="100" class="border p-2 rounded w-full text-center" required /></div>
+                    <div>
+                        <select name="gender" id="userGenderInput" class="border p-2 rounded w-full text-center" required>
+                            <option value="">@personalGender</option>
+                            @if (genderSelection != null)
+                            {
+                                @foreach (var gender in genderSelection)
+                                {
+                                    <option value="@gender">@gender</option>
+                                }
+                            }
+                        </select>
+
+                    </div>
+                    <div><input type="number" name="weight" id="userWeightInput" placeholder="@personalWeight" min="30" max="250" class="border p-2 rounded w-full text-center" required /></div>
+                    <div><input type="number" name="height" id="userHeightInput" placeholder="@personalHeight" min="100" max="250" class="border p-2 rounded w-full text-center" required /></div>
+                    <button type="submit" id="generateBtn" class="w-full px-4 py-2 bg-primary text-white rounded">@continueButton</button>
+                </form>
+            </div>
+        }
+
+        <div id="visualizerSection" data-muscle-visualizer class="p-8" style="display:none;"></div>
+    </div>
+</section>
