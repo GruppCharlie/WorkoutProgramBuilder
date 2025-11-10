@@ -5,9 +5,9 @@
 
 /**
  * Show a toast notification
- * @param {string} message - The message to display
- * @param {string} type - Toast type: 'success', 'error', 'info', 'warning'
- * @param {number} duration - Duration in milliseconds (default: 3000)
+ * {string} message - The message to display
+ * {string} type - Toast type: 'success', 'error', 'info', 'warning'
+ * {number} duration - Duration in milliseconds (default: 3000)
  */
 function showToast(message, type = 'success', duration = 3000) {
     const toast = document.createElement('div');
@@ -39,7 +39,7 @@ function showToast(message, type = 'success', duration = 3000) {
 
 /**
  * Show success toast
- * @param {string} message - Success message
+ * {string} message - Success message
  */
 function showSuccessToast(message) {
     showToast(message, 'success');
@@ -47,7 +47,7 @@ function showSuccessToast(message) {
 
 /**
  * Show error toast
- * @param {string} message - Error message
+ * {string} message - Error message
  */
 function showErrorToast(message) {
     showToast(message, 'error');
@@ -55,7 +55,7 @@ function showErrorToast(message) {
 
 /**
  * Show info toast
- * @param {string} message - Info message
+ * {string} message - Info message
  */
 function showInfoToast(message) {
     showToast(message, 'info');
@@ -63,7 +63,7 @@ function showInfoToast(message) {
 
 /**
  * Show warning toast
- * @param {string} message - Warning message
+ * {string} message - Warning message
  */
 function showWarningToast(message) {
     showToast(message, 'warning');
