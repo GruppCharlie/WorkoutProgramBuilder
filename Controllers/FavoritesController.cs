@@ -51,6 +51,12 @@ public class FavoritesController(
         var savedWorkouts = _favoritesService.GetFavoriteWorkouts(memberId);
         var myWorkouts = _workoutsService.GetMyWorkouts(memberId);
 
+        // Mark exercises as saved
+        foreach (var exercise in savedExercises)
+        {
+            exercise.IsSaved = true;
+        }
+
         // Mark workouts with their status
         foreach (var workout in savedWorkouts)
         {
