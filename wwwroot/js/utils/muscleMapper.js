@@ -8,12 +8,21 @@ const MUSCLE_MAPPING = {
     'hamstrings': 'hamstring',
     'glutes': 'gluteus',
     'upperback': 'back_upper', 
-    'lowerback': 'back_lower', 
+    'lowerback': 'back_lower',
+    'backupper': 'back_upper',
+    'backlower': 'back_lower',
+    'back': 'latissimus',
     'lats': 'latissimus',
     'calves': 'calfs',
     'abdominals': 'abs',
     'traps': 'back_upper',
     'trapezius': 'back_upper',
+    'corelower': 'core_lower',
+    'coreupper': 'core_upper',
+    'shouldersback': 'shoulders_back',
+    'shouldersfront': 'shoulders_front',
+    'shoulderback': 'shoulders_back',
+    'shoulderfront': 'shoulders_front',
     // Extra aliases for AI responses
     'quads': 'quadriceps',
     'pecs': 'chest',
@@ -25,8 +34,9 @@ const MUSCLE_MAPPING = {
 // Valid API muscle groups
 const VALID_MUSCLE_GROUPS = new Set([
     'quadriceps', 'hamstring', 'gluteus', 'chest', 'shoulders', 'triceps', 'biceps',
-    'back_upper', 'back_lower', 'latissimus', 'calfs', 'abs', 'core', 'forearms',
-    'neck', 'hands', 'legs', 'adductors', 'abductors'
+    'back_upper', 'back_lower', 'back', 'latissimus', 'calfs', 'abs', 'core', 'core_upper', 'core_lower',
+    'shoulders_front', 'shoulders_back', 'forearms', 'neck', 'hands', 'legs', 'adductors', 'abductors',
+    'all', 'all_upper', 'all_lower'
 ]);
 
 /**

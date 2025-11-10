@@ -10,13 +10,23 @@ public static class MuscleMapper
     {
         { "HAMSTRINGS", "hamstring" },
         { "GLUTES", "gluteus" },
+        { "BACK", "latissimus" },
         { "UPPERBACK", "back_upper" },  
-        { "LOWERBACK", "back_lower" }, 
+        { "LOWERBACK", "back_lower" },
+        { "BACKUPPER", "back_upper" },
+        { "BACKLOWER", "back_lower" },
         { "LATS", "latissimus" },
         { "CALVES", "calfs" },
         { "ABDOMINALS", "abs" },
         { "TRAPS", "back_upper" },
-        { "TRAPEZIUS", "back_upper" }
+        { "TRAPEZIUS", "back_upper" },
+        { "CORE", "core" },
+        { "CORELOWER", "core_lower" },
+        { "COREUPPER", "core_upper" },
+        { "SHOULDERSBACK", "shoulders_back" },
+        { "SHOULDERSFRONT", "shoulders_front" },
+        { "SHOULDERBACK", "shoulders_back" },
+        { "SHOULDERFRONT", "shoulders_front" }
     };
 
     // Special muscle groups that expand to multiple muscles
@@ -32,8 +42,9 @@ public static class MuscleMapper
     private static readonly HashSet<string> ValidMuscleGroups = new()
     {
         "quadriceps", "hamstring", "gluteus", "chest", "shoulders", "triceps", "biceps",
-        "back_upper", "back_lower", "latissimus", "calfs", "abs", "core", "forearms",
-        "neck", "hands", "legs", "adductors", "abductors"
+        "back_upper", "back_lower", "back", "latissimus", "calfs", "abs", "core", "core_upper", "core_lower",
+        "shoulders_front", "shoulders_back", "forearms", "neck", "hands", "legs", "adductors", "abductors",
+        "all", "all_upper", "all_lower"
     };
 
     // Map muscle names to valid API muscle group names
