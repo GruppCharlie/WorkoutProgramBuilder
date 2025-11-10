@@ -1,4 +1,4 @@
-// Special muscle groups that expand to multiple muscles
+﻿// Special muscle groups that expand to multiple muscles
 const SPECIAL_MUSCLE_GROUPS = {
     'ALL': ['QUADRICEPS', 'HAMSTRINGS', 'GLUTES', 'CHEST', 'SHOULDERS', 'TRICEPS', 'BICEPS', 'UPPER_BACK', 'LOWER_BACK', 'LATS', 'CALVES', 'ABDOMINALS', 'FOREARMS'],
     'ALL_UPPER': ['CHEST', 'SHOULDERS', 'TRICEPS', 'BICEPS', 'UPPER_BACK', 'LATS', 'ABDOMINALS', 'FOREARMS'],
@@ -210,7 +210,9 @@ class MuscleGroupVisualizer {
         const selectedMuscleGroups = Array.from(muscleGroupsSelect.selectedOptions)
             .map(opt => opt.value)
             .filter(m => m !== 'any');
-        const description = promptTextarea.value.trim();
+
+        const description = await getFullDescription();
+
 
         // Show loading state
         setButtonLoading(generateBtn, true);
@@ -222,7 +224,7 @@ class MuscleGroupVisualizer {
             const workout = await generateWorkout({
                 muscleGroups: selectedMuscleGroups,
                 equipment: ['any'],
-                description
+                description: description
             });
             
             this.displayWorkout(workout);
@@ -437,6 +439,107 @@ async function addToMyWorkouts(event, button) {
         console.error('Error saving to My Workouts:', error);
     }
 }
+
+
+
+const userForm = document.querySelector('#userDetailsForm');
+const userInputSection = document.querySelector('#userInputSection');
+const visualizerDiv = document.querySelector('#visualizerSection');
+
+let memberDetails = null;
+
+
+// Hämta members data
+(async () => {
+    try {
+        const res = await fetch('/api/member/details');
+        if (res.ok) {
+            const data = await res.json();
+            if (data.memberDetails) {
+                memberDetails = JSON.parse(data.memberDetails);
+            }
+        }
+    } catch (err) {
+        console.error('Failed to fetch member details:', err);
+    }
+
+    if (!userForm && memberDetails) {
+        const fullDescription = await getFullDescription();
+        showVisualizer(fullDescription);
+    }
+})();
+
+
+//om användaren inte är inloggad eller inte fyllt i formuläret använda det som skrivs in i formuläret
+async function getFullDescription() {
+    const promptTextarea = document.querySelector('#promptTextarea');
+    const description = promptTextarea?.value.trim() || '';
+
+    let storedAge = memberDetails?.Age;
+    let storedGender = memberDetails?.Gender;
+    let storedWeight = memberDetails?.Weight;
+    let storedHeight = memberDetails?.Height;
+
+    const ageInput = document.querySelector('#userAgeInput');
+    const genderInput = document.querySelector('#userGenderInput');
+    const weightInput = document.querySelector('#userWeightInput');
+    const heightInput = document.querySelector('#userHeightInput');
+
+    if (ageInput?.value) storedAge = parseInt(ageInput.value, 10);
+    if (genderInput?.value) storedGender = genderInput.value;
+    if (weightInput?.value) storedWeight = parseFloat(weightInput.value);
+    if (heightInput?.value) storedHeight = parseFloat(heightInput.value);
+
+    const parts = [];
+    if (storedAge) parts.push(`${storedAge} years old`);
+    if (storedGender) parts.push(storedGender);
+    if (storedWeight) parts.push(`weighs ${storedWeight}kg`);
+    if (storedHeight) parts.push(`is ${storedHeight}cm tall`);
+
+    const prefix = parts.length ? `The user is ${parts.join(', ')}. ` : '';
+    return prefix + description;
+}
+
+function showVisualizer(fullDescription) {
+    if (visualizerDiv) visualizerDiv.style.display = 'block';
+    if (userInputSection) userInputSection.style.display = 'none';
+    new MuscleGroupVisualizer('[data-muscle-visualizer]', { description: fullDescription });
+}
+
+if (userForm) {
+    userForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const ageInput = document.querySelector('#userAgeInput');
+        const genderInput = document.querySelector('#userGenderInput');
+        const weightInput = document.querySelector('#userWeightInput');
+        const heightInput = document.querySelector('#userHeightInput');
+
+        const details = {
+            Age: parseInt(ageInput.value, 10),
+            Gender: genderInput.value,
+            Weight: parseFloat(weightInput.value),
+            Height: parseFloat(heightInput.value)
+        };
+        //om avnänder är inloggad och redan anget data i fomruläret hämta från endpoinet och använd det datat
+        try {
+            const res = await fetch('/api/member/details', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(details)
+            });
+
+            if (res.ok) memberDetails = details;
+            else console.error('Failed to save member details');
+        } catch (err) {
+            console.error('Error saving member details:', err);
+        }
+
+        const fullDescription = await getFullDescription();
+        showVisualizer(fullDescription);
+    });
+}
+
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
