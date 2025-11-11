@@ -130,6 +130,38 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string CompletedAllAchivments => this.Value<string>(_publishedValueFallback, "completedAllAchivments");
 
 		///<summary>
+		/// Edit Personal Profile
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("editPersonalProfile")]
+		public virtual string EditPersonalProfile => this.Value<string>(_publishedValueFallback, "editPersonalProfile");
+
+		///<summary>
+		/// Edit Personal Profile Cancel
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("editPersonalProfileCancel")]
+		public virtual string EditPersonalProfileCancel => this.Value<string>(_publishedValueFallback, "editPersonalProfileCancel");
+
+		///<summary>
+		/// Edit Personal Profile Confirm
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("editPersonalProfileConfirm")]
+		public virtual string EditPersonalProfileConfirm => this.Value<string>(_publishedValueFallback, "editPersonalProfileConfirm");
+
+		///<summary>
+		/// Gender Personal Profile
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("genderPersonalProfile")]
+		public virtual global::System.Collections.Generic.IEnumerable<string> GenderPersonalProfile => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "genderPersonalProfile");
+
+		///<summary>
 		/// Member Since
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -144,6 +176,62 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("modalText")]
 		public virtual string ModalText => this.Value<string>(_publishedValueFallback, "modalText");
+
+		///<summary>
+		/// Personal Age Profile
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("personalAgeProfile")]
+		public virtual string PersonalAgeProfile => this.Value<string>(_publishedValueFallback, "personalAgeProfile");
+
+		///<summary>
+		/// Personal Gender Profile
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("personalGenderProfile")]
+		public virtual string PersonalGenderProfile => this.Value<string>(_publishedValueFallback, "personalGenderProfile");
+
+		///<summary>
+		/// Personal Height Profile
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("personalHeightProfile")]
+		public virtual string PersonalHeightProfile => this.Value<string>(_publishedValueFallback, "personalHeightProfile");
+
+		///<summary>
+		/// Personal Info
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("personalInfo")]
+		public virtual string PersonalInfo => this.Value<string>(_publishedValueFallback, "personalInfo");
+
+		///<summary>
+		/// Personal Info Error
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("personalInfoError")]
+		public virtual string PersonalInfoError => this.Value<string>(_publishedValueFallback, "personalInfoError");
+
+		///<summary>
+		/// Personal Info Saved
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("personalInfoSaved")]
+		public virtual string PersonalInfoSaved => this.Value<string>(_publishedValueFallback, "personalInfoSaved");
+
+		///<summary>
+		/// Personal Weight Profile
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("personalWeightProfile")]
+		public virtual string PersonalWeightProfile => this.Value<string>(_publishedValueFallback, "personalWeightProfile");
 
 		///<summary>
 		/// Profile Details

@@ -42,31 +42,46 @@ public class AuthSurfaceController(
             string.IsNullOrWhiteSpace(createPassword) ||
             string.IsNullOrWhiteSpace(confirmPassword))
         {
-            TempData["SignupError"] = "Please fill in all fields.";
+            TempData["SignupErrorKey"] = "Signup.Validation.FillAllFields";
+            TempData["SignupErrorDefault"] = "Please fill in all fields.";
             return RedirectToCurrentUmbracoPage();
         }
 
         if (!string.Equals(createPassword, confirmPassword))
         {
-            TempData["SignupError"] = "Passwords do not match.";
+            TempData["SignupErrorKey"] = "Signup.Validation.PasswordMismatch";
+            TempData["SignupErrorDefault"] = "Passwords do not match.";
             return RedirectToCurrentUmbracoPage();
         }
 
         if (!System.Text.RegularExpressions.Regex.IsMatch(username, @"^[a-zA-Z0-9_]{3,20}$"))
         {
-            TempData["SignupError"] = "Username must be 3–20 characters (letters, numbers, underscore).";
+            TempData["SignupErrorKey"] = "Signup.Validation.UsernameFormat";
+            TempData["SignupErrorDefault"] = "Username must be 3–20 characters (letters, numbers, underscore).";
             return RedirectToCurrentUmbracoPage();
         }
 
-        if (_memberService.GetByUsername(username) != null)
+        var usernameExists = _memberService.GetByUsername(username) != null;
+        var emailExists = _memberService.GetByEmail(emailSignup) != null;
+
+        if (usernameExists && emailExists)
         {
-            TempData["SignupError"] = "That username is already taken.";
+            TempData["SignupErrorKey"] = "Signup.Validation.UsernameAndEmailTaken";
+            TempData["SignupErrorDefault"] = "Both the username and email address are already taken.";
             return RedirectToCurrentUmbracoPage();
         }
 
-        if (_memberService.GetByEmail(emailSignup) != null)
+        if (usernameExists)
         {
-            TempData["SignupError"] = "An account with that email already exists.";
+            TempData["SignupErrorKey"] = "Signup.Validation.UsernameTaken";
+            TempData["SignupErrorDefault"] = "That username is already taken.";
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        if (emailExists)
+        {
+            TempData["SignupErrorKey"] = "Signup.Validation.EmailTaken";
+            TempData["SignupErrorDefault"] = "An account with that email already exists.";
             return RedirectToCurrentUmbracoPage();
         }
 
@@ -90,7 +105,6 @@ public class AuthSurfaceController(
         var member = _memberService.GetByKey(identityUser.Key);
         if (member != null)
         {
-            // sätt både visningsnamn och username
             if (!string.Equals(member.Name, username, StringComparison.Ordinal))
                 member.Name = username;
 
@@ -103,7 +117,8 @@ public class AuthSurfaceController(
         var attempt = await _memberSignInManager.PasswordSignInAsync(identityUser.UserName, createPassword, false, true);
         if (!attempt.Succeeded)
         {
-            TempData["SignupSuccess"] = "Account created. Please log in.";
+            TempData["SignupSuccessKey"] = "Signup.Validation.AccountCreated";
+            TempData["SignupSuccessDefault"] = "Account created. Please log in.";
             return RedirectToCurrentUmbracoPage();
         }
 

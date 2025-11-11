@@ -30,11 +30,20 @@
            autocomplete="@autoComplete"
            autocapitalize="none"
            spellcheck="false"
-           @(isRequired ? "required" : null) />
+           @(isRequired ? "required" : null) 
+           @(isEmailField ? null : new HtmlString(@"pattern=""^[A-Za-z0-9_]{3,20}$""")) />
 
-    @if(isRequired && !string.IsNullOrWhiteSpace(errorMessage)) {
+    @if(isRequired && !string.IsNullOrWhiteSpace(errorMessage)) 
+    {
         <span data-error="required" hidden class="text-sm text-red-600 mt-1">@errorMessage</span>
     }
 
-    <span data-error="format" hidden class="text-sm text-red-600 mt-1">@formatMessage</span>
+    @if (isEmailField)
+    {
+        <span data-error="format" hidden class="text-sm text-red-600 mt-1">@formatMessage</span>
+    }
+    else
+    {
+        <span data-error="pattern" hidden class="text-sm text-red-600 mt-1">@formatMessage</span>
+    }
 </div>

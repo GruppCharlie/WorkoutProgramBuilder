@@ -2,6 +2,7 @@
 @using Umbraco.Cms.Web.Common.PublishedModels;
 @using Umbraco.Cms.Core.Models.Blocks
 @using Umbraco.Cms.Core.Models.PublishedContent
+@using WorkoutProgramBuilder.Business.Dto
 @inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
 @inject Umbraco.Cms.Core.Services.IMemberService MemberService
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
@@ -35,6 +36,19 @@
     var profileEmail = profileNode?.Value<string>("profileEmail") ?? "Profile Email";
     var profileLastLogin = profileNode?.Value<string>("profileLastLogin") ?? "Profile Last Login";
 
+    var personalInfo = profileNode?.Value<string>("personalInfo") ?? "Personal Info";
+    var personalInfoEdit = profileNode?.Value<string>("editPersonalProfile") ?? "Edit";
+    var personalAgeProfile = profileNode?.Value<string>("personalAgeProfile") ?? "Age:";
+    var personalGenderProfile = profileNode?.Value<string>("personalGenderProfile") ?? "Gender:";
+    var genderSelection = profileNode?.Value<IEnumerable<string>>("genderPersonalProfile") ?? new List<string> { "Male", "Female", "Other" };
+    var personalWeightProfile = profileNode?.Value<string>("personalWeightProfile") ?? "Weight:";
+    var personalHeightProfile = profileNode?.Value<string>("personalHeightProfile") ?? "Height:"; 
+    var editPersonalProfileConfirm = profileNode?.Value<string>("editPersonalProfileConfirm") ?? "Confirm";
+    var editPersonalProfileCancel = profileNode?.Value<string>("editPersonalProfileCancel") ?? "Cancel";
+    var personalInfoSaved = profileNode?.Value<string>("personalInfoSaved") ?? "Personal Info Saved";
+    var personalInfoError = profileNode?.Value<string>("personalInfoError") ?? "Something went wrong";
+
+
     var achievementsHeader = profileNode?.Value<string>("achievementsHeader") ?? "Achievements";
     var amountSavedExercises = profileNode?.Value<string>("amountSavedExercises") ?? "Exercises saved:";
     var amountSavedWorkouts = profileNode?.Value<string>("amountSavedWorkouts") ?? "Workouts saved:";
@@ -48,8 +62,11 @@
     var achievementsModalButtonText = profileNode?.Value<string>("achievementsModalButtonText") ?? "Got it";
 
     int exercisesSaved = member!.GetValue<int?>("amountOfSavedExercises") ?? 0; 
-    int workoutsSaved = member!.GetValue<int?>("amountOfMyWorkouts") ?? 0; 
+    int workoutsSaved = member!.GetValue<int?>("amountOfMyWorkouts") ?? 0;
 
+
+    var memberDetailsJson = member.GetValue<string>("memberDetails") ?? "{}";
+    var memberDetails = System.Text.Json.JsonSerializer.Deserialize<MemberDetailsDto>(memberDetailsJson) ?? new MemberDetailsDto();
 
     var achievements = profileNode?.Value<IEnumerable<BlockListItem>>("achivmentBlock") ?? Enumerable.Empty<BlockListItem>();
 
@@ -70,95 +87,146 @@
 
 
 <section class="container px-6 py-8 mx-auto mt-10 relative">
-    <div class="bg-white rounded-lg shadow-md p-5">
-    <div class="flex items-center gap-6 mb-6">
-            <div class="bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-semibold">
+    <div class="bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8">
+            <div class="bg-primary text-white rounded-full w-20 h-20 flex items-center justify-center text-3xl font-semibold">
                 @currentMember.UserName?.Substring(0, 1)
             </div>
 
-            <div class="space-y-1">
-                <h1 class="text-2xl font-bold leading-tight">@currentMember.Name</h1>
+            <div class="space-y-1 text-center sm:text-left">
+                <h1 class="text-3xl font-bold leading-tight text-gray-900">@currentMember.Name</h1>
                 <p class="text-gray-600">@currentMember.Email</p>
                 <p class="text-sm text-gray-500">@memberSince @currentMember.CreatedDateUtc.ToString("MMMM yyyy")</p>
- 
             </div>
         </div>
 
+        <div class="border-t border-gray-200 pt-8 grid md:grid-cols-2 gap-10">
+            <!-- LEFT -->
+            <div>
+                <h2 class="text-xl font-semibold mb-4 text-gray-900">@profileDetails</h2>
+                <ul class="space-y-2 text-gray-700">
+                    <li><strong class="text-gray-900">@username</strong> @currentMember.UserName</li>
+                    <li><strong class="text-gray-900">@profileEmail</strong> @currentMember.Email</li>
+                    <li>
+                        <strong class="text-gray-900">@profileLastLogin</strong>
+                        @(currentMember?.LastLoginDateUtc?.ToLocalTime().ToString("MMMM d, yyyy 'at' h:mm tt") ?? "Never")
+                    </li>
+                    <li><strong class="text-gray-900">@amountSavedExercises</strong> @exercisesSaved</li>
+                    <li><strong class="text-gray-900">@amountSavedWorkouts</strong> @workoutsSaved</li>
+                </ul>
+            </div>
 
-        <div class="border-t pt-6">
-            <h2 class="text-lg font-semibold mb-3">@profileDetails</h2>
-            <ul class="space-y-1 text-gray-700">
-                <li><strong>@username</strong> @currentMember.UserName</li>
-                <li><strong>@profileEmail</strong> @currentMember.Email</li>
-                <li>
-                    <strong>@profileLastLogin</strong>
-                    @(currentMember?.LastLoginDateUtc?.ToLocalTime().ToString("MMMM d, yyyy 'at' h:mm tt") ?? "Never")
-                </li>
-                <li>
-                    <strong>@amountSavedExercises</strong> @exercisesSaved
-                </li>
-                <li>
-                    <strong>@amountSavedWorkouts</strong> @workoutsSaved
-                </li>
-            </ul>
+            <!-- RIGHT -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-900">@personalInfo</h2>
+                    <button id="editPersonalInfoBtn"
+                            class="px-3 py-1.5 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 transition">
+                        @personalInfoEdit
+                    </button>
+                </div>
+
+                <div id="personalInfoDisplay" class="space-y-2 text-gray-700">
+                    <p><strong class="text-gray-900">@personalAgeProfile</strong> @memberDetails.Age</p>
+                    <p><strong class="text-gray-900">@personalGenderProfile</strong> @memberDetails.Gender</p>
+                    <p><strong class="text-gray-900">@personalWeightProfile</strong> @memberDetails.Weight</p>
+                    <p><strong class="text-gray-900">@personalHeightProfile</strong> @memberDetails.Height</p>
+                </div>
+
+                <form id="userForm" class="space-y-4 hidden mt-4">
+                    <div>
+                        <label for="userAgeInput" class="block text-sm font-medium text-gray-700">@personalAgeProfile</label>
+                        <input type="number" id="userAgeInput" name="age" value="@memberDetails.Age"
+                               class="w-full mt-1 p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+                    </div>
+
+                    <div>
+                        <label for="userGenderInput" class="block text-sm font-medium text-gray-700">@personalGenderProfile</label>
+                        <select id="userGenderInput" name="gender"
+                                class="w-full mt-1 p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/40 focus:outline-none">
+                            @foreach (var gender in genderSelection)
+                            {
+                                var isSelected = gender == memberDetails.Gender ? "selected" : null;
+                                <option value="@gender" selected="@(isSelected != null ? "selected" : null)">@gender</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div id="personalInfoSection" data-success-text="@personalInfoSaved" data-error-text="@personalInfoError"></div>
+
+                    <div>
+                        <label for="userWeightInput" class="block text-sm font-medium text-gray-700">@personalWeightProfile</label>
+                        <input type="number" id="userWeightInput" name="weight" step="0.1" value="@memberDetails.Weight"
+                               class="w-full mt-1 p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+                    </div>
+
+                    <div>
+                        <label for="userHeightInput" class="block text-sm font-medium text-gray-700">@personalHeightProfile</label>
+                        <input type="number" id="userHeightInput" name="height" value="@memberDetails.Height"
+                               class="w-full mt-1 p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+                    </div>
+
+                    <div class="flex gap-3 mt-5">
+                        <button type="submit" class="px-5 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition">
+                            @editPersonalProfileConfirm
+                        </button>
+                        <button type="button" id="cancelEditBtn"
+                                class="px-5 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                            @editPersonalProfileCancel
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
 
-
-        <div class="border-t pt-6 mt-6">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-lg font-semibold flex items-center gap-2">
+        <div class="border-t border-gray-200 pt-8 mt-10">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-xl font-semibold flex items-center gap-2 text-gray-900">
                     @achievementsHeader
                     <button id="openModalBtn"
-                            class="w-6 h-6 flex items-center justify-center border border-gray-400 rounded-full text-gray-600 text-sm hover:bg-gray-100"
+                            class="w-6 h-6 flex items-center justify-center border border-gray-300 rounded-full text-gray-600 text-sm hover:bg-gray-100 transition"
                             title="How achievements work">
                         @modalText
                     </button>
                 </h2>
             </div>
 
-            <div class="space-y-3">
-
-
+            <div class="space-y-4">
                 <div class="flex flex-wrap gap-3">
                     @foreach (var a in achievements ?? Enumerable.Empty<BlockListItem>())
                     {
                         var achievementName = a.Content.Value<string>("achievementName") ?? "Achievement";
                         var achievementIcon = a.Content.Value<IPublishedContent>("achievementIcon")?.Url();
-
                         var required = a.Content.Value<int?>("achievementThreshold") ?? 0;
                         var unlocked = workoutsSaved >= required;
 
-                        <div class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-sm
-                            @(unlocked ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500")">
-                                @if (!string.IsNullOrEmpty(achievementIcon))
-                                {
-                                    <img src="@achievementIcon" alt="@achievementName" class="w-6 h-6 object-contain" />
-                                }
+                        <div class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-sm transition
+                                @(unlocked ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500")">
+                            @if (!string.IsNullOrEmpty(achievementIcon))
+                            {
+                                <img src="@achievementIcon" alt="@achievementName" class="w-6 h-6 object-contain" />
+                            }
                             <span>@achievementName</span>
                             @required
                         </div>
                     }
                 </div>
 
-                <p class="text-gray-500 text-sm mb-2">
-                    @nextAchievementText
-                </p>
+                <p class="text-gray-500 text-sm mb-2">@nextAchievementText</p>
             </div>
         </div>
 
-
-        <div id="achievementModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div id="achievementModal" class="fixed inset-0 bg-black/50 hidden z-50">
             <div class="flex items-center justify-center min-h-screen">
-                <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6 relative">
-                    <h3 class="text-xl font-semibold mb-4">@achievementsModalHeadline</h3>
-                    <p class="text-gray-700 mb-4">
-                        @achievementsModalText
-                    </p>
-                    <p class="text-gray-600 text-sm">
-                        @achievementsModalSubText
-                    </p>
+                <div class="bg-white rounded-2xl shadow-2xl w-11/12 max-w-md p-6 relative">
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-900">@achievementsModalHeadline</h3>
+                    <p class="text-gray-700 mb-4">@achievementsModalText</p>
+                    <p class="text-gray-600 text-sm">@achievementsModalSubText</p>
                     <div class="text-right mt-6">
-                        <button id="closeModalBtn" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/80">@achievementsModalButtonText</button>
+                        <button id="closeModalBtn"
+                                class="px-5 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition">
+                            @achievementsModalButtonText
+                        </button>
                     </div>
                 </div>
             </div>
