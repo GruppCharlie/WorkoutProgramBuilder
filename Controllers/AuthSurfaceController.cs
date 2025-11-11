@@ -127,20 +127,40 @@ public class AuthSurfaceController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> HandleLogin(string emaillogin, string password)
+    public async Task<IActionResult> HandleLogin(string emailLogin, string password)
     {
-        var member = _memberService.GetByEmail(emaillogin);
-
-        var attempt = await _memberSignInManager.PasswordSignInAsync(member.Username, password, isPersistent: false, lockoutOnFailure: true);
-
-        if (attempt.Succeeded)
+        if (string.IsNullOrWhiteSpace(emailLogin) || string.IsNullOrWhiteSpace(password))
         {
-            return Redirect(GetHomeUrlForCurrentCulture() ?? "/");
+            TempData["LoginErrorKey"] = "Login.Validation.FillAllFields";
+            TempData["LoginErrorDefault"] = "Please fill in all fields.";
+            return RedirectToCurrentUmbracoPage();
         }
 
+        var member = _memberService.GetByEmail(emailLogin);
+        if (member == null)
+        {
+            TempData["LoginErrorKey"] = "Login.Validation.InvalidCredentials";
+            TempData["LoginErrorDefault"] = "Invalid email or password.";
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        var attempt = await _memberSignInManager.PasswordSignInAsync(
+            member.Username, password, isPersistent: false, lockoutOnFailure: true);
+
+        if (attempt.Succeeded)
+            return Redirect(GetHomeUrlForCurrentCulture() ?? "/");
+
+        if (attempt.IsLockedOut)
+        {
+            TempData["LoginErrorKey"] = "Login.Validation.LockedOut";
+            TempData["LoginErrorDefault"] = "Too many failed attempts. Please try again later.";
+            return RedirectToCurrentUmbracoPage();
+        }
+
+        TempData["LoginErrorKey"] = "Login.Validation.InvalidCredentials";
+        TempData["LoginErrorDefault"] = "Invalid email or password.";
         return RedirectToCurrentUmbracoPage();
     }
-
 
 
     [HttpPost]
