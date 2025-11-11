@@ -68,4 +68,34 @@ article.bg-white.rounded-2xl {
   border-color: color-mix(in oklab, var(--color-neutral-200) 92%, white);
 }
 
+/* Block grid spacing - respects Umbraco's column spans */
+.block-grid-with-spacing {
+  & .umb-block-grid__layout-container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+  }
+  
+  & .umb-block-grid__layout-item {
+    grid-column: span var(--umb-block-grid--item-column-span);
+  }
+  
+  /* Tablet: 2 cards per row */
+  @media (max-width: 1024px) {
+    & .umb-block-grid__layout-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    & .umb-block-grid__layout-item {
+      grid-column: span 1;
+    }
+  }
+  
+  /* Mobile: 1 card per row */
+  @media (max-width: 640px) {
+    & .umb-block-grid__layout-container {
+      grid-template-columns: 1fr;
+    }
+  }
+}
 
