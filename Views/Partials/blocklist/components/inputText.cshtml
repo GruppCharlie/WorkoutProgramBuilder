@@ -10,7 +10,9 @@
     var isRequired = Model.Content.Value<bool>("isRequired");
     var errorMessage = Model?.Content.Value<string>("errorMessage");
 
-    var isEmailField = string.Equals(uniqueName, "emailSignup", StringComparison.OrdinalIgnoreCase);
+    var isEmailField =
+        !string.IsNullOrWhiteSpace(uniqueName) &&
+        uniqueName.Contains("email", StringComparison.OrdinalIgnoreCase);
     var inputType = isEmailField ? "email" : "text";
     var autoComplete = isEmailField ? "email" : "username";
 
