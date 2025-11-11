@@ -15,9 +15,9 @@ public class ServiceComposer : IComposer
         builder.Services.AddScoped<IMemberWorkoutsService, MemberWorkoutsService>();
         builder.Services.Configure<IdentityOptions>(options =>
         {
-            options.Lockout.AllowedForNewUsers = true;
-            options.Lockout.MaxFailedAccessAttempts = 6;
-            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+            options.Lockout.AllowedForNewUsers = false;
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
         });
     }
 }
