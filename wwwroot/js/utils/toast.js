@@ -13,7 +13,7 @@ function showToast(message, type = 'success', duration = 3000) {
     const toast = document.createElement('div');
     
     // Base classes
-    const baseClasses = 'fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300';
+    const baseClasses = 'fixed top-20 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300';
     
     // Type-specific classes
     const typeClasses = {

@@ -81,6 +81,9 @@ public class WorkoutApiController(
                 );
             }
 
+            // Generate unique ID for the workout if not already set
+            workout.Id ??= Guid.NewGuid().ToString();
+
             return Ok(workout);
         }
         catch (Exception ex)
@@ -148,6 +151,65 @@ public class WorkoutApiController(
             {
                 Title = "Internal Server Error",
                 Detail = "An unexpected error occurred while adding the workout",
+                Status = StatusCodes.Status500InternalServerError
+            });
+        }
+    }
+
+    // Remove workout from My Workouts
+    // DELETE /api/workout/remove/{workoutId}
+    [HttpDelete("remove/{workoutId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RemoveWorkout(string workoutId)
+    {
+        try
+        {
+            var currentMember = await memberManager.GetCurrentMemberAsync();
+            if (currentMember == null)
+            {
+                logger.LogWarning("No current member found");
+                return Unauthorized();
+            }
+
+            if (string.IsNullOrWhiteSpace(workoutId))
+            {
+                logger.LogWarning("Invalid workoutId");
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "Invalid Request",
+                    Detail = "WorkoutId is required",
+                    Status = StatusCodes.Status400BadRequest
+                });
+            }
+
+            logger.LogInformation("Removing workout: {WorkoutId} for member {MemberId}", 
+                workoutId, currentMember.Id);
+
+            var success = workoutsService.RemoveMyWorkout(int.Parse(currentMember.Id), workoutId);
+            
+            if (!success)
+            {
+                logger.LogError("Failed to remove workout for member {MemberId}", currentMember.Id);
+                return Problem(
+                    title: "Remove Failed",
+                    detail: "Failed to remove workout",
+                    statusCode: StatusCodes.Status500InternalServerError
+                );
+            }
+
+            logger.LogInformation("Successfully removed workout for member {MemberId}", currentMember.Id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error removing workout");
+            return StatusCode(500, new ProblemDetails
+            {
+                Title = "Internal Server Error",
+                Detail = "An unexpected error occurred while removing the workout",
                 Status = StatusCodes.Status500InternalServerError
             });
         }

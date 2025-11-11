@@ -12,25 +12,11 @@ const API_ENDPOINTS = {
     FAVORITES_WORKOUT: '/api/favorites/workout'
 };
 
-/**
- * Fetch muscle groups from API
- * returns {Promise<string[]>} Array of muscle group names
- */
-async function fetchMuscleGroups() {
-    const response = await fetch(API_ENDPOINTS.MUSCLE_GROUPS);
-    
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    return await response.json();
-}
 
 /**
  * Generate workout using AI
  * {Object} params - Workout generation parameters
  * {string[]} params.muscleGroups - Target muscle groups
- * {string[]} params.equipment - Available equipment
  * {string} params.description - Workout description
  * returns {Promise<Object>} Generated workout
  */
@@ -78,4 +64,35 @@ async function saveWorkoutToMyWorkouts(workout) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(workout)
     });
+}
+
+/**
+ * Save member details
+ * {Object} details - Member details (Age, Gender, Weight, Height)
+ * returns {Promise<Response>} API response
+ */
+async function saveMemberDetails(details) {
+    return await fetch('/api/member/details', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(details)
+    });
+}
+
+/**
+ * Get member details
+ * returns {Promise<Object|null>} Member details or null
+ */
+async function getMemberDetails() {
+    try {
+        const res = await fetch('/api/member/details');
+        if (res.ok) {
+            const data = await res.json();
+            return data.memberDetails ? JSON.parse(data.memberDetails) : null;
+        }
+        return null;
+    } catch (err) {
+        console.error('Failed to fetch member details:', err);
+        return null;
+    }
 }

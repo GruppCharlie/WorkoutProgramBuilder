@@ -1,8 +1,10 @@
+@using WorkoutProgramBuilder.Business.Dto
 @using WorkoutProgramBuilder.Business.Helpers
+@using System.Text.Json
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 
 @{
-    var workouts = ViewData["Workouts"] as List<WorkoutProgramBuilder.Business.Dto.SavedWorkoutDto> ?? [];
+    var workouts = ViewData["Workouts"] as List<SavedWorkoutDto> ?? [];
 }
 
 @foreach (var workout in workouts)
@@ -10,22 +12,26 @@
     var muscleGroups = workout.Muscles;
     var equipment = workout.Equipment;
     var exercises = workout.Exercises;
-    var exercisesJson = System.Text.Json.JsonSerializer.Serialize(exercises);
+    var exercisesJson = JsonSerializer.Serialize(exercises);
     
     //MuscleMapper helper to get mapped muscles and image URL
     var mappedMuscles = MuscleMapper.MapToApiMuscleGroups(muscleGroups);
     var imageUrl = MuscleMapper.GenerateMuscleVisualizationUrl(muscleGroups);
     
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm transition-shadow duration-300 cursor-pointer hover:shadow-md">
+    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm transition-shadow duration-300 cursor-pointer hover:shadow-md workout-card w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]" 
+         data-workout-id="@workout.WorkoutId"
+         data-workout-muscles="@string.Join(",", muscleGroups)"
+         data-workout-equipment="@string.Join(",", equipment)"
+         onclick="navigateToWorkoutDetail('@workout.WorkoutId')">
         <!-- Workout Card Header -->
-        <div class="relative p-6 bg-neutral-100 min-h-[180px]">
+        <div class="relative p-6 bg-neutral-100 h-[200px] flex flex-col">
             
-            <h4 class="text-2xl font-bold text-gray-900 mb-2 pr-20">@workout.Name</h4>
-            <p class="text-gray-600 text-sm">@workout.Description</p>
+            <h4 class="text-2xl font-bold text-gray-900 mb-2 pr-20 line-clamp-2">@workout.Name</h4>
+            <p class="text-gray-600 text-sm flex-1 line-clamp-3">@workout.Description</p>
             
             @if (exercises.Any())
             {
-                <div class="mt-4 flex items-center gap-2 text-sm text-gray-500">
+                <div class="mt-auto flex items-center gap-2 text-sm text-gray-500">
                     <i class="fa-solid fa-dumbbell"></i>
                     <span>@exercises.Count exercises</span>
                 </div>
@@ -40,9 +46,8 @@
                         data-workout-muscles="@string.Join(",", muscleGroups)"
                         data-workout-equipment="@string.Join(",", equipment)"
                         data-workout-exercises='@exercisesJson'
-                        onclick="addToMyWorkouts(event, this)"
-                        title="@(workout.IsInMyWorkouts ? "Added to My Workouts" : "Add to My Workouts")"
-                        @(workout.IsInMyWorkouts ? "disabled" : "")>
+                        onclick="@(workout.IsInMyWorkouts ? "removeFromMyWorkouts(event, this)" : "addToMyWorkouts(event, this)")"
+                        title="@(workout.IsInMyWorkouts ? "Remove from My Workouts" : "Add to My Workouts")">
                     <i class="fa-solid @(workout.IsInMyWorkouts ? "fa-check" : "fa-plus")"></i>
                 </button>
                 <button type="button"

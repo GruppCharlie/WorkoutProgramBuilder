@@ -1,45 +1,44 @@
-@using System.Text.Json
 @using WorkoutProgramBuilder.Business.Dto
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
-
 @{
-    Layout = "mainLayout.cshtml";
-    ViewData["ShowSortFavorites"] = true;
-    ViewData["ShowEquipmentFilter"] = true;
-    ViewData["LoadingMessage"] = "Loading workouts...";
-    ViewData["EmptyMessage"] = "No workouts found. Add workouts from the Workout Generator!";
-    ViewData["EmptyStateId"] = "emptyState";
+	Layout = "mainLayout.cshtml";
+	ViewData["ShowSortFavorites"] = true;
+	ViewData["ShowEquipmentFilter"] = true;
     
-
-    var workouts = ViewData["Workouts"] as List<SavedWorkoutDto> ?? [];
-    
-    var options = new JsonSerializerOptions 
-    { 
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
-    };
-    var workoutsJson = JsonSerializer.Serialize(workouts, options);
+	var workouts = ViewData["Workouts"] as List<SavedWorkoutDto> ?? [];
 }
 
 <section class="">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+	<div class="container mx-auto px-4 sm:px-6 lg:px-8">
         
-        <!-- Filters -->
-        <div class="mt-8">
-            @await Html.PartialAsync("_FilterBar")
+		<!-- Filters -->
+		<div class="mt-8">
+			@await Html.PartialAsync("_FilterBar")
 
-            <!-- My Workouts Grid -->
-            <div id="myWorkoutsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-
-            </div>
-
-            @await Html.PartialAsync("_EmptyState")
-            @await Html.PartialAsync("_LoadingState")
-        </div>
-    </div>
+			<!-- My Workouts Grid -->
+			<div id="myWorkoutsGrid" class="flex flex-wrap gap-6 mt-6">
+				@if (workouts.Any())
+				{
+					@await Html.PartialAsync("_WorkoutCard")
+				}
+				else
+				{
+					<div class="flex flex-col items-center justify-center text-center py-12 w-full">
+						<div class="max-w-md mx-auto">
+							<i class="fas fa-dumbbell text-6xl text-gray-300 mb-4"></i>
+							<h3 class="text-xl font-semibold text-gray-700 mb-2">No workouts found</h3>
+							<p class="text-sm text-gray-500 mt-4">
+								Add workouts from the <a href="/workouts/generator" class="text-primary hover:underline">Workout Generator</a>!
+							</p>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
 </section>
 
-<script>
-    // Pass workouts data from server to JavaScript
-    window.MY_WORKOUTS_DATA = @Html.Raw(workoutsJson);
-</script>
+<script src="/js/utils/filterHelpers.js"></script>
+<script src="/js/workoutCard.js"></script>
+<script src="/js/workoutFiltering.js"></script>
 <script src="/js/myWorkouts.js"></script>

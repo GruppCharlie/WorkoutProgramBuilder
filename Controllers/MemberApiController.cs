@@ -25,7 +25,7 @@ public class MemberApiController(IMemberManager memberManager, IMemberService me
             if (member == null)
                 return NotFound();
 
-        var json = System.Text.Json.JsonSerializer.Serialize(details);
+            var json = System.Text.Json.JsonSerializer.Serialize(details);
             member.SetValue("memberDetails", json);
             _memberService.Save(member);
 
