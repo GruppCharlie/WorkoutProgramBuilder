@@ -1,5 +1,6 @@
 ﻿namespace WorkoutProgramBuilder.Controllers;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Cache;
@@ -30,8 +31,6 @@ public class AuthSurfaceController(
     private readonly IMemberManager _memberManager = memberManager;
     private readonly IMemberService _memberService = memberService;
     private readonly IUmbracoContextAccessor _contextAccessor = contextAccessor;
-
-
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -145,7 +144,7 @@ public class AuthSurfaceController(
         }
 
         var attempt = await _memberSignInManager.PasswordSignInAsync(
-            member.Username, password, isPersistent: false, lockoutOnFailure: true);
+            member.Username, password, isPersistent: false, lockoutOnFailure: false);
 
         if (attempt.Succeeded)
             return Redirect(GetHomeUrlForCurrentCulture() ?? "/");
