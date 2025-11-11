@@ -1,4 +1,4 @@
-﻿// Special muscle groups that expand to multiple muscles
+// Special muscle groups that expand to multiple muscles
 const SPECIAL_MUSCLE_GROUPS = {
     'ALL': ['QUADRICEPS', 'HAMSTRINGS', 'GLUTES', 'CHEST', 'SHOULDERS', 'TRICEPS', 'BICEPS', 'BACK_UPPER', 'BACK_LOWER', 'LATS', 'CALVES', 'ABDOMINALS', 'FOREARMS', 'CORE'],
     'ALL_UPPER': ['CHEST', 'SHOULDERS', 'TRICEPS', 'BICEPS', 'BACK_UPPER', 'LATS', 'ABDOMINALS', 'FOREARMS', 'CORE'],
@@ -22,11 +22,10 @@ function expandMuscleGroups(muscles) {
     return [...new Set(result)]; // Remove duplicates
 }
 
-// Muscle Group Visualizer
+// Muscle Group Visualizer (Server-rendered version)
 class MuscleGroupVisualizer {
     constructor(containerSelector, options = {}) {
         this.container = document.querySelector(containerSelector);
-        this.muscleGroups = [];
         this.selectedMuscles = [];
         this.color = options.color || '131,115,218'; // RGB format - Secondary Purple
         void this.init();
@@ -38,51 +37,14 @@ class MuscleGroupVisualizer {
             return;
         }
         
-        this.showLoading();
-        await this.loadMuscleGroups();
-        this.render();
-    }
-
-    showLoading() {
-        if (this.container) {
-            this.container.innerHTML = createLoadingSpinner('Loading muscle groups...');
-        }
-    }
-
-    async loadMuscleGroups() {
-        try {
-            this.muscleGroups = await fetchMuscleGroups();
-        } catch (error) {
-            console.error('Failed to load muscle groups:', error);
-            this.showError('Failed to load muscle groups. Please try again later.');
-        }
-    }
-
-    showError(message) {
-        if (this.container) {
-            this.container.innerHTML = createErrorMessage(message);
-        }
+        // Form is already rendered by server, just attach event listeners
+        this.attachEventListeners();
     }
     async updateImage() {
-        const imgContainer = this.container.querySelector('.muscle-image-container');
-        if (!imgContainer) return;
+        const img = document.getElementById('muscleVisualizationImage');
+        if (!img) return;
 
         const displayImageUrl = generateMuscleVisualizationUrl(this.selectedMuscles, this.color);
-        
-        // Find existing image element
-        let img = imgContainer.querySelector('img');
-        
-        if (!img) {
-            // First load - create image element
-            imgContainer.innerHTML = `
-                <div class="flex justify-center">
-                    <img alt="Muscle groups visualization" 
-                         class="w-full h-auto mx-auto transition-opacity duration-300"
-                         style="opacity: 1; max-width: 500px;"  src="${displayImageUrl}"/>
-                </div>
-            `;
-            img = imgContainer.querySelector('img');
-        }
         
         // Preload new image before swapping
         const tempImg = new Image();
@@ -105,82 +67,14 @@ class MuscleGroupVisualizer {
         tempImg.src = displayImageUrl;
     }
 
-    render() {
-        if (!this.container) return;
-
-        this.container.innerHTML = `
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- AI Workout Generator Form -->
-                <div>
-                    <h3 class="text-xl font-bold mb-4">Generate Workout with AI</h3>
-                    
-                    <form class="workout-generator-form space-y-4">
-                        <!-- Muscle Groups Selection -->
-                        <div>
-                            <label class="block text-sm font-semibold text-neutral-700 mb-2">Target Muscle Groups</label>
-                            <select multiple class="muscle-groups-select w-full px-4 py-2 border-2 border-neutral-300 rounded-lg focus:outline-none focus:border-gray-500" size="8">
-                                <option value="any" selected>Any</option>
-                                ${this.muscleGroups.map(muscle => `
-                                    <option value="${muscle}">${muscle.replace(/_/g, ' ').toUpperCase()}</option>
-                                `).join('')}
-                            </select>
-                            <p class="text-xs text-neutral-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
-                        </div>
-
-                        <!-- Workout Description Prompt -->
-                        <div>
-                            <label class="block text-sm font-semibold text-neutral-700 mb-2">Describe Your Workout</label>
-                            <textarea 
-                                class="workout-prompt w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:outline-none focus:border-gray-500 resize-none" 
-                                rows="5" 
-                                placeholder="E.g., A intermediate push workout, A beginner full body workout, An advanced leg day..."
-                                required
-                            ></textarea>
-                        </div>
-
-                        <!-- Generate Button -->
-                        <button type="submit" class="generate-btn w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:bg-neutral-400 disabled:cursor-not-allowed">
-                            Generate Workout
-                        </button>
-
-                        <!-- Loading State -->
-                        <div class="loading-state hidden text-center py-4">
-                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                            <p class="mt-2 text-sm text-neutral-600">Generating your workout...</p>
-                        </div>
-
-                        <!-- Error Message -->
-                        <div class="error-message hidden p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>
-                    </form>
-                </div>
-
-                <!-- Muscle Visualization -->
-                <div>
-                    <h3 class="text-xl font-bold mb-4">Muscle Visualization</h3>
-                    <div class="muscle-image-container">
-                        <div class="flex justify-center">
-                            <div class="w-full h-96 bg-neutral-100 rounded-lg flex items-center justify-center">
-                                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Generated Workout Display -->
-            <div class="workout-results mt-8 hidden">
-                <h3 class="text-2xl font-bold mb-4">Your Generated Workout</h3>
-                <div class="workout-content"></div>
-            </div>
-        `;
-
-        this.attachEventListeners();
-        void this.updateImage(); // Load base image immediately
-    }
-
     attachEventListeners() {
-        const form = this.container.querySelector('.workout-generator-form');
-        const muscleGroupsSelect = this.container.querySelector('.muscle-groups-select');
+        const form = document.getElementById('workoutGeneratorForm');
+        const muscleGroupsSelect = document.getElementById('muscleGroupsSelect');
+        
+        if (!form || !muscleGroupsSelect) {
+            console.error('Form elements not found');
+            return;
+        }
         
         // Handle muscle group selection for visualization
         muscleGroupsSelect.addEventListener('change', (e) => {
@@ -200,12 +94,11 @@ class MuscleGroupVisualizer {
     }
 
     async generateWorkout() {
-        const muscleGroupsSelect = this.container.querySelector('.muscle-groups-select');
-        const promptTextarea = this.container.querySelector('.workout-prompt');
-        const generateBtn = this.container.querySelector('.generate-btn');
-        const loadingState = this.container.querySelector('.loading-state');
-        const errorMessage = this.container.querySelector('.error-message');
-        const workoutResults = this.container.querySelector('.workout-results');
+        const muscleGroupsSelect = document.getElementById('muscleGroupsSelect');
+        const generateBtn = document.querySelector('.generate-btn');
+        const loadingState = document.querySelector('.loading-state');
+        const errorMessage = document.querySelector('.error-message');
+        const workoutResults = document.querySelector('.workout-results');
 
         const selectedMuscleGroups = Array.from(muscleGroupsSelect.selectedOptions)
             .map(opt => opt.value)
@@ -239,65 +132,68 @@ class MuscleGroupVisualizer {
     }
 
     /**
-     * Display generated workout as a single card
-     * Workout object from API
-     * Workout name
-     * Workout description
-     * Array of exercise objects
+     * Display generated workout
      */
-    displayWorkout(workout) {
-        const workoutResults = this.container.querySelector('.workout-results');
-        const workoutContent = this.container.querySelector('.workout-content');
+    async displayWorkout(workout) {
+        const workoutResults = document.querySelector('.workout-results');
+        const workoutContent = document.querySelector('.workout-content');
 
         // Collect all unique muscles and equipment from all exercises
         const allMuscles = [...new Set(workout.exercises.flatMap(ex => ex.muscleGroups || []))];
         const allEquipment = [...new Set(workout.exercises.flatMap(ex => ex.equipment || []))];
         
         const muscleVisualizationHTML = this.generateMuscleVisualization(allMuscles);
-
+        const exercisesJson = JSON.stringify(workout.exercises).replace(/"/g, '&quot;');
+        const workoutId = workout.id || Date.now().toString();
+        
+        // Create workout card HTML using same structure as _WorkoutCard.cshtml
         workoutContent.innerHTML = `
-            <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm transition-shadow duration-300 cursor-pointer" data-workout-card>
+            <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm transition-shadow duration-300 cursor-pointer hover:shadow-md workout-card w-full" 
+                 data-workout-id="${workoutId}"
+                 data-workout-muscles="${allMuscles.join(',')}"
+                 data-workout-equipment="${allEquipment.join(',')}"
+                 onclick="navigateToWorkoutDetail('${workoutId}')">
                 <!-- Workout Card Header -->
-                <div class="relative p-6 bg-neutral-100 min-h-[180px]">
+                <div class="relative p-6 bg-neutral-100 h-[200px] flex flex-col">
                     <div class="absolute top-4 right-4 flex gap-2 z-10">
                         <button type="button"
                                 class="text-gray-400 hover:text-primary focus:outline-none text-2xl add-to-my-workouts-btn"
-                                data-workout-id="${workout.id || Date.now()}"
+                                data-workout-id="${workoutId}"
                                 data-workout-name="${workout.name}"
                                 data-workout-description="${workout.description}"
                                 data-workout-muscles="${allMuscles.join(',')}"
                                 data-workout-equipment="${allEquipment.join(',')}"
-                                data-workout-exercises='${JSON.stringify(workout.exercises)}'
+                                data-workout-exercises="${exercisesJson}"
                                 onclick="addToMyWorkouts(event, this)"
                                 title="Add to My Workouts">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                         <button type="button"
                                 class="text-gray-400 hover:text-red-500 focus:outline-none text-2xl"
-                                data-workout-id="${workout.id || Date.now()}"
+                                data-workout-id="${workoutId}"
                                 data-workout-name="${workout.name}"
                                 data-workout-description="${workout.description}"
                                 data-workout-muscles="${allMuscles.join(',')}"
                                 data-workout-equipment="${allEquipment.join(',')}"
-                                data-workout-exercises='${JSON.stringify(workout.exercises)}'
+                                data-workout-exercises="${exercisesJson}"
                                 onclick="toggleWorkoutFavorite(event, this)"
                                 title="Add to Favorites">
                             <i class="fa-solid fa-heart"></i>
                         </button>
                     </div>
                     
-                    <h4 class="text-2xl font-bold text-gray-900 mb-2 pr-20">${workout.name}</h4>
-                    <p class="text-gray-600 text-sm">${workout.description}</p>
+                    <h4 class="text-2xl font-bold text-gray-900 mb-2 pr-20 line-clamp-2">${workout.name}</h4>
+                    <p class="text-gray-600 text-sm flex-1 line-clamp-3">${workout.description}</p>
                     
-                    <div class="mt-4 flex items-center gap-2 text-sm text-gray-500">
+                    <div class="mt-auto flex items-center gap-2 text-sm text-gray-500">
                         <i class="fa-solid fa-dumbbell"></i>
                         <span>${workout.exercises.length} exercises</span>
                     </div>
                 </div>
 
-                <!-- Muscle Visualization -->
+                <!-- Targeted Muscles Visualization -->
                 <div class="p-6 bg-white border-t border-gray-100">
-                    <h5 class="text-sm font-semibold text-gray-700 mb-3">Targeted Muscles</h5>
+                    <h5 class="text-sm font-semibold text-gray-700 mb-3">Targeted Muscles Visualization</h5>
                     ${muscleVisualizationHTML}
                 </div>
 
@@ -307,7 +203,7 @@ class MuscleGroupVisualizer {
                         <span class="text-xs font-semibold text-gray-500 block mb-2">Muscles:</span>
                         <div class="flex flex-wrap gap-2">
                             ${allMuscles.map(muscle => `
-                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">${muscle}</span>
+                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium uppercase">${muscle}</span>
                             `).join('')}
                         </div>
                     </div>
@@ -316,7 +212,7 @@ class MuscleGroupVisualizer {
                         <span class="text-xs font-semibold text-gray-500 block mb-2">Equipment:</span>
                         <div class="flex flex-wrap gap-2">
                             ${allEquipment.map(eq => `
-                                <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">${eq}</span>
+                                <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium capitalize">${eq}</span>
                             `).join('')}
                         </div>
                     </div>
@@ -335,7 +231,6 @@ class MuscleGroupVisualizer {
      */
     generateMuscleVisualization(muscles) {
         const imageUrl = generateMuscleVisualizationUrl(muscles);
-        const validMuscleGroups = mapMuscleNamesToGroups(muscles);
         
         return `
             <div class="flex justify-center">
@@ -349,98 +244,8 @@ class MuscleGroupVisualizer {
 
 }
 
-// Global function to toggle workout favorite
-async function toggleWorkoutFavorite(event, button) {
-    event.stopPropagation();
-    
-    const heartIcon = button.querySelector('i');
-    
-    const exercisesJson = button.getAttribute('data-workout-exercises');
-    const exercises = exercisesJson ? JSON.parse(exercisesJson) : [];
-    
-    const workoutData = {
-        WorkoutId: button.getAttribute('data-workout-id'),
-        Name: button.getAttribute('data-workout-name'),
-        Description: button.getAttribute('data-workout-description'),
-        Muscles: button.getAttribute('data-workout-muscles').split(',').filter(Boolean),
-        Equipment: button.getAttribute('data-workout-equipment').split(',').filter(Boolean),
-        Exercises: exercises
-    };
-    
-    try {
-        const response = await saveWorkoutToFavorites(workoutData);
-
-        if (response.status === 401) {
-            showLoginModal();
-            return;
-        }
-
-        if (response.ok) {
-            const isFavorited = heartIcon.classList.toggle('text-red-500');
-            
-            // Show toast based on action
-            if (isFavorited) {
-                showSuccessToast('Added to Favorites!');
-            } else {
-                showInfoToast('Removed from Favorites');
-            }
-            
-            // Dispatch event for other pages to update
-            window.dispatchEvent(new CustomEvent('workoutFavoriteToggled', {
-                detail: { 
-                    workoutId: workoutData.WorkoutId, 
-                    isFavorited 
-                }
-            }));
-        }
-    } catch (error) {
-        console.error('Error saving workout:', error);
-    }
-}
-
-// Global function to add workout to My Workouts
-async function addToMyWorkouts(event, button) {
-    event.stopPropagation();
-    
-    const exercisesJson = button.getAttribute('data-workout-exercises');
-    const exercises = exercisesJson ? JSON.parse(exercisesJson) : [];
-    
-    const workoutData = {
-        WorkoutId: button.getAttribute('data-workout-id'),
-        Name: button.getAttribute('data-workout-name'),
-        Description: button.getAttribute('data-workout-description'),
-        Muscles: button.getAttribute('data-workout-muscles').split(',').filter(Boolean),
-        Equipment: button.getAttribute('data-workout-equipment').split(',').filter(Boolean),
-        Exercises: exercises
-    };
-    
-    try {
-        const response = await saveWorkoutToMyWorkouts(workoutData);
-
-        if (response.status === 401) {
-            showLoginModal();
-            return;
-        }
-
-        if (response.ok) {
-            // Visual feedback - keep checkmark permanently
-            const icon = button.querySelector('i');
-            icon.classList.remove('fa-plus');
-            icon.classList.add('fa-check');
-            button.classList.remove('text-gray-400', 'hover:text-primary');
-            button.classList.add('text-green-500');
-            button.disabled = true;
-            button.title = 'Added to My Workouts';
-            
-            // Show success toast
-            showSuccessToast('Added to My Workouts!');
-        }
-    } catch (error) {
-        console.error('Error saving to My Workouts:', error);
-    }
-}
-
-
+// toggleWorkoutFavorite, addToMyWorkouts, and removeFromMyWorkouts
+// are defined in workoutCard.js and available globally
 
 const userForm = document.querySelector('#userDetailsForm');
 const userInputSection = document.querySelector('#userInputSection');
@@ -449,28 +254,21 @@ const visualizerDiv = document.querySelector('#visualizerSection');
 let memberDetails = null;
 
 
-// Hämta members data
-(async () => {
-    try {
-        const res = await fetch('/api/member/details');
-        if (res.ok) {
-            const data = await res.json();
-            if (data.memberDetails) {
-                memberDetails = JSON.parse(data.memberDetails);
-            }
+// Only run on WorkoutGenerator page
+if (visualizerDiv) {
+    // Hämta members data
+    (async () => {
+        memberDetails = await getMemberDetails();
+
+        if (!userForm && memberDetails) {
+            const fullDescription = await getFullDescription();
+            showVisualizer(fullDescription);
         }
-    } catch (err) {
-        console.error('Failed to fetch member details:', err);
-    }
-
-    if (!userForm && memberDetails) {
-        const fullDescription = await getFullDescription();
-        showVisualizer(fullDescription);
-    }
-})();
+    })();
+}
 
 
-//om användaren inte är inloggad eller inte fyllt i formuläret använda det som skrivs in i formuläret
+// if user is not logged in or has not filled out the form, use the text in the form
 async function getFullDescription() {
     const promptTextarea = document.querySelector('#promptTextarea');
     const description = promptTextarea?.value.trim() || '';
@@ -501,9 +299,14 @@ async function getFullDescription() {
 }
 
 function showVisualizer(fullDescription) {
+    // Show visualizer before initializing (element needs to be visible)
     if (visualizerDiv) visualizerDiv.style.display = 'block';
     if (userInputSection) userInputSection.style.display = 'none';
-    new MuscleGroupVisualizer('[data-muscle-visualizer]', { description: fullDescription });
+    
+    // Wait for next tick to ensure DOM is ready
+    setTimeout(() => {
+        new MuscleGroupVisualizer('[data-muscle-visualizer]', { description: fullDescription });
+    }, 0);
 }
 
 if (userForm) {
@@ -521,14 +324,9 @@ if (userForm) {
             Weight: parseFloat(weightInput.value),
             Height: parseFloat(heightInput.value)
         };
-        //om avnänder är inloggad och redan anget data i fomruläret hämta från endpoinet och använd det datat
+        
         try {
-            const res = await fetch('/api/member/details', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(details)
-            });
-
+            const res = await saveMemberDetails(details);
             if (res.ok) memberDetails = details;
             else console.error('Failed to save member details');
         } catch (err) {

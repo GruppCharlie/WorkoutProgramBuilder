@@ -2,6 +2,9 @@
 
 @{
     Layout = "mainLayout.cshtml";
+    ViewData["ShowSortFavorites"] = false; // Already on favorites page
+    ViewData["ShowEquipmentFilter"] = true;
+    
     var exercises = ViewData["Exercises"] as List<WorkoutProgramBuilder.Business.Dto.ExerciseDto>;
     var workouts = ViewData["Workouts"] as List<WorkoutProgramBuilder.Business.Dto.SavedWorkoutDto>;
 
@@ -21,16 +24,21 @@
     }
     else
     {
+        @* Filter Bar *@
+        <div class="mb-6">
+            @await Html.PartialAsync("_FilterBar")
+        </div>
+
         @* Saved Workouts Section *@
-        @if (hasWorkouts)
-        {
-            <div class="mb-10">
-                <h2 class="text-xl font-semibold mb-4">Saved Workouts</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="mb-10">
+            <h2 class="text-xl font-semibold mb-4">Saved Workouts</h2>
+            <div id="favoritesWorkoutsGrid" class="flex flex-wrap gap-6">
+                @if (hasWorkouts)
+                {
                     @await Html.PartialAsync("_WorkoutCard")
-                </div>
+                }
             </div>
-        }
+        </div>
 
         @* Saved Exercises Section *@
         @if (hasExercises)
@@ -44,3 +52,8 @@
         }
     }
 </section>
+
+<script src="/js/utils/filterHelpers.js"></script>
+<script src="/js/workoutCard.js"></script>
+<script src="/js/workoutFiltering.js"></script>
+<script src="/js/favorites.js"></script>

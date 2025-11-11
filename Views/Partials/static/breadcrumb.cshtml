@@ -1,4 +1,4 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @using Umbraco.Cms.Core.PublishedCache
 @using Umbraco.Cms.Core.Routing
 @using Umbraco.Cms.Core.Services.Navigation
@@ -8,6 +8,7 @@
 @inject IPublishedUrlProvider PublishedUrlProvider
 
 @{
+    var customBreadcrumbs = ViewData["CustomBreadcrumbs"] as List<(string Name, string? Url)>;
     var selection = Model.Ancestors(PublishedContentCache, DocumentNavigationQueryService).ToArray();
 
     var culture = Model.GetCultureFromDomains() ?? "en";
@@ -30,15 +31,41 @@
 
                 <nav class="text-sm">
                     <ol class="inline-flex items-center gap-2 text-neutral-500">
-                        @foreach (var item in selection.OrderBy(x => x.Level))
+                        @if (customBreadcrumbs != null)
                         {
-                            var displayName = item.Level == 1 ? homePageDisplayName : item.Name;
-                            <li>
-                                <a href="@item.Url(PublishedUrlProvider)" class="underline-offset-2 hover:underline">@displayName</a>
-                            </li>
-                            <li class="text-neutral-400">›</li>
+                            @* Use custom breadcrumbs from controller *@
+                            @for (int i = 0; i < customBreadcrumbs.Count; i++)
+                            {
+                                var crumb = customBreadcrumbs[i];
+                                <li>
+                                    @if (crumb.Url != null)
+                                    {
+                                        <a href="@crumb.Url" class="underline-offset-2 hover:underline">@crumb.Name</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="font-medium text-neutral-400">@crumb.Name</span>
+                                    }
+                                </li>
+                                @if (i < customBreadcrumbs.Count - 1)
+                                {
+                                    <li class="text-neutral-400">›</li>
+                                }
+                            }
                         }
-                        <li class="font-medium text-neutral-400">@Model.Name</li>
+                        else
+                        {
+                            @* Use default Umbraco breadcrumbs *@
+                            @foreach (var item in selection.OrderBy(x => x.Level))
+                            {
+                                var displayName = item.Level == 1 ? homePageDisplayName : item.Name;
+                                <li>
+                                    <a href="@item.Url(PublishedUrlProvider)" class="underline-offset-2 hover:underline">@displayName</a>
+                                </li>
+                                <li class="text-neutral-400">›</li>
+                            }
+                            <li class="font-medium text-neutral-400">@Model.Name</li>
+                        }
                     </ol>
                 </nav>
             </div>

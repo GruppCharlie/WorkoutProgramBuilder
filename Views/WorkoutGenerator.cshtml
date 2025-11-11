@@ -1,4 +1,4 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
 @inject Umbraco.Cms.Core.Services.IMemberService MemberService
 
@@ -25,7 +25,8 @@
     var personalWeight = Model.Value("personalWeight");
     var personalHeight = Model.Value("personalHeight");
     var continueButton = Model.Value("continueButton");
-
+    
+    var muscleGroups = ViewData["MuscleGroups"] as List<string> ?? [];
 }
 
 <section>
@@ -57,6 +58,77 @@
             </div>
         }
 
-        <div id="visualizerSection" data-muscle-visualizer class="p-8" style="display:none;"></div>
+        <!-- Workout Generator -->
+        <div id="visualizerSection" data-muscle-visualizer class="p-8" style="@(needsUserInput ? "display:none;" : "")">
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- AI Workout Generator Form -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Generate Workout with AI</h3>
+                    
+                    <form id="workoutGeneratorForm" class="workout-generator-form space-y-4">
+                        <!-- Muscle Groups Selection -->
+                        <div>
+                            <label class="block text-sm font-semibold text-neutral-700 mb-2">Target Muscle Groups</label>
+                            <select multiple id="muscleGroupsSelect" class="muscle-groups-select w-full px-4 py-2 border-2 border-neutral-300 rounded-lg focus:outline-none focus:border-primary bg-white" size="8" style="min-height: 200px;">
+                                <option value="any" selected>Any</option>
+                                @foreach (var muscle in muscleGroups)
+                                {
+                                    <option value="@muscle" class="py-1 px-2 hover:bg-primary/10 cursor-pointer">@muscle.Replace("_", " ").ToUpper()</option>
+                                }
+                            </select>
+                            <p class="text-xs text-neutral-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
+                        </div>
+
+                        <!-- Workout Description Prompt -->
+                        <div>
+                            <label class="block text-sm font-semibold text-neutral-700 mb-2">Describe Your Workout</label>
+                            <textarea 
+                                id="promptTextarea"
+                                class="workout-prompt w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:outline-none focus:border-gray-500 resize-none" 
+                                rows="5" 
+                                placeholder="E.g., A intermediate push workout, A beginner full body workout, An advanced leg day..."
+                                required
+                            ></textarea>
+                        </div>
+
+                        <!-- Generate Button -->
+                        <button type="submit" class="generate-btn w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:bg-neutral-400 disabled:cursor-not-allowed">
+                            Generate Workout
+                        </button>
+
+                        <!-- Loading State -->
+                        <div class="loading-state hidden text-center py-4">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                            <p class="mt-2 text-sm text-neutral-600">Generating your workout...</p>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div class="error-message hidden p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>
+                    </form>
+                </div>
+
+                <!-- Muscle Visualization -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Muscle Visualization</h3>
+                    <div class="muscle-image-container">
+                        <div class="flex justify-center">
+                            <img alt="Muscle groups visualization" 
+                                 id="muscleVisualizationImage"
+                                 class="w-full h-auto mx-auto transition-opacity duration-300"
+                                 style="opacity: 1; max-width: 500px;" 
+                                 src="/api/musclegroup/image?muscleGroups=&color=131,115,218&transparentBackground=true"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generated Workout Display -->
+            <div class="workout-results mt-8 hidden">
+                <h3 class="text-2xl font-bold mb-4">Your Generated Workout</h3>
+                <div class="workout-content"></div>
+            </div>
+        </div>
     </div>
 </section>
+
+<script src="/js/workoutCard.js"></script>

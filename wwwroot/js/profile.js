@@ -1,4 +1,4 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
 const modal = document.getElementById("achievementModal");
 const openBtn = document.getElementById("openModalBtn");
@@ -66,14 +66,9 @@ if (modal && openBtn && closeBtn) {
         };
 
         try {
-            const res = await fetch('/api/member/details', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(details)
-            });
+            const res = await saveMemberDetails(details);
 
             if (res.ok) {
-
                 document.querySelector('#personalInfoDisplay p:nth-child(1) strong').nextSibling.textContent = ` ${details.Age}`;
                 document.querySelector('#personalInfoDisplay p:nth-child(2) strong').nextSibling.textContent = ` ${details.Gender}`;
                 document.querySelector('#personalInfoDisplay p:nth-child(3) strong').nextSibling.textContent = ` ${details.Weight}`;
@@ -83,8 +78,7 @@ if (modal && openBtn && closeBtn) {
                 displaySection.classList.remove('hidden');
                 form.classList.add('hidden');
                 editBtn.classList.remove('hidden');
-            }
-else {
+            } else {
                 showErrorToast(errorText);
                 console.error(await res.text());
             }
