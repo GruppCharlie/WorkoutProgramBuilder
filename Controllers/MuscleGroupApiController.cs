@@ -6,7 +6,7 @@ namespace WorkoutProgramBuilder.Controllers;
 [ApiController]
 [Route("api/musclegroup")]
 [Produces("application/json")]
-public class MuscleGroupController(IMuscleGroupApiService muscleGroupService, ILogger<MuscleGroupController> logger) : ControllerBase
+public class MuscleGroupApiController(IMuscleGroupApiService muscleGroupService, ILogger<MuscleGroupApiController> logger) : ControllerBase
 {
     // Get all available muscle groups
     // GET  /api/musclegroup/groups
