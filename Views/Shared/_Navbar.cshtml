@@ -93,13 +93,13 @@
                 }
                 else if (isLoggedIn)
                 {
-                    <form method="post" asp-controller="AuthSurface" asp-action="HandleLogout" class="inline">
-                        @Html.AntiForgeryToken()
+                    @using (Html.BeginUmbracoForm("HandleLogout", "AuthSurface", FormMethod.Post, new { @class = "inline", id = "logoutForm" }))
+                    {
                         <button type="submit"
                                 class="text-primaryText font-medium hover:text-primary transition-colors bg-transparent border-none cursor-pointer">
                             @navbarLogout
                         </button>
-                    </form>
+                    }
                 }
 
             </div>
