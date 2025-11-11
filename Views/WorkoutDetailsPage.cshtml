@@ -87,7 +87,7 @@
                                         {
                                             <div class="mb-4">
                                                 <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Instructions:</h4>
-                                                <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700 max-h-40">
+                                                <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700 max-h-44 overflow-y-auto pr-2">
                                                     @foreach (var instruction in exercise.Instructions)
                                                     {
                                                         <li class="pl-4">@instruction</li>
@@ -138,18 +138,17 @@
                     </div>
                 </div>
 
-                <!-- Navigation Arrows -->
-                @if (exercises.Count > 3)
-                {
-                    <button onclick="scrollExercises(-1)" 
-                            class="absolute -left-12 top-1/2 -translate-y-1/2 -translate-x-4 bg-white shadow-sm rounded-full px-5 py-3 hover:bg-gray-50 transition-colors z-10">
-                        <i class="fa-solid fa-chevron-left text-gray-700"></i>
-                    </button>
-                    <button onclick="scrollExercises(1)" 
-                            class="absolute -right-12 top-1/2 -translate-y-1/2 translate-x-4 bg-white shadow-sm rounded-full px-5 py-3 hover:bg-gray-50 transition-colors z-10">
-                        <i class="fa-solid fa-chevron-right text-gray-700"></i>
-                    </button>
-                }
+                <!-- Pagination Dots -->
+                <div class="flex justify-center gap-2 mt-6">
+                    @for (int i = 0; i < exercises.Count; i++)
+                    {
+                        <button onclick="scrollToExercise(@i)" 
+                                class="exercise-dot w-2 h-2 rounded-full transition-all duration-300 @(i == 0 ? "bg-primary w-8" : "bg-gray-300 hover:bg-gray-400")"
+                                data-index="@i"
+                                aria-label="Go to exercise @(i + 1)">
+                        </button>
+                    }
+                </div>
             </div>
         </div>
     }
@@ -171,16 +170,4 @@
     }
 </style>
 
-<script>
-    function scrollExercises(direction) {
-        const slider = document.getElementById('exerciseSlider');
-        const cardWidth = slider.querySelector('.flex-none').offsetWidth;
-        const gap = 24;
-        const scrollAmount = (cardWidth + gap) * 3; // Scroll 3 cards at a time
-        
-        slider.scrollBy({
-            left: direction * scrollAmount,
-            behavior: 'smooth'
-        });
-    }
-</script>
+<script src="/js/workoutDetails.js"></script>

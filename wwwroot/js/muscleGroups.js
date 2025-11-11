@@ -237,7 +237,7 @@ class MuscleGroupVisualizer {
                 <img src="${imageUrl}" 
                      alt="Targeted muscles visualization" 
                      class="w-full h-auto mx-auto"
-                     style="max-width: 400px;" />
+                     style="max-width: 200px;" />
             </div>
         `;
     }
