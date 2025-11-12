@@ -19,7 +19,7 @@
     string ListOrFallback(List<string>? list) => (list != null && list.Any()) ? string.Join(", ", list) : notAvailable;
 }
 
-<div class="container mx-auto px-6 py-10">
+<div class="container mx-auto px-6 py-16">
     <div class="border bg-white shadow-sm border-primaryBorder rounded-xl p-8 md:p-12">
         <h1 class="text-4xl font-bold text-primaryText text-center mb-10 capitalize">
             @(exercise?.Name ?? titleFallback)

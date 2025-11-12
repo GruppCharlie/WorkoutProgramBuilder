@@ -34,7 +34,7 @@ tailwind.config = {
                 primary: '#2a9ecd',
                 primaryHover: '#2a9ecdBF',
                 primaryGray: '#d9d9de',
-                primaryBorder: '#999aa5',
+                primaryBorder: '#c6c7ce',
                 primaryText: '#18181b',
                 secondary: '#8373da',
                 muted: '#4a4b53',

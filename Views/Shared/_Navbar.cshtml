@@ -87,7 +87,7 @@
 
                 @if (!isLoggedIn)
                 {
-                    <a href="@loginUrl" class="text-primaryText font-medium hover:text-primary transition-colors">
+                    <a href="@loginUrl" class="hidden md:block text-primaryText font-medium hover:text-primary transition-colors">
                         @navbarLogin
                     </a>
                 }
@@ -138,8 +138,28 @@
                     </li>
                 }
             }
+            @if (isLoggedIn)
+            {
+            <li>
+            @using (Html.BeginUmbracoForm("HandleLogout", "AuthSurface", FormMethod.Post, new { @class = "inline", id = "logoutForm" }))
+            {
+                <button type="submit"
+                            class="w-full text-left px-4 py-2 text-primaryText hover:bg-muted/20 hover:text-primary transition-colors duration-200 font-medium border-b border-primaryBorder">
+                        @navbarLogout
+                </button>
+            }
+                </li>
+            } else if (!isLoggedIn)
+            {
+                <li>
+                    <a href="@loginUrl"
+                       class="block px-4 py-2 text-primaryText hover:bg-muted/20 hover:text-primary transition-colors duration-200 font-medium border-b border-primaryBorder">
+                        @navbarLogin
+                    </a>
+                </li>
 
-            </ul>
+            }
+        </ul>
     </nav>
 </div>
 
