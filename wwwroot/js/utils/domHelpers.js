@@ -80,7 +80,7 @@ const WORKOUT_BUTTON_STATES = {
         NOT_SAVED: {
             icon: 'fa-heart',
             iconClasses: '',
-            buttonClasses: 'text-gray-700 hover:bg-gray-50 border-gray-300',
+            buttonClasses: 'text-gray-700 hover:text-red-500 hover:bg-gray-50 border-gray-300',
             text: 'Favorite',
             title: 'Add to Favorites'
         },

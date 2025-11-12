@@ -1,6 +1,6 @@
 @using WorkoutProgramBuilder.Business.Dto
-@using WorkoutProgramBuilder.Business.Helpers
-@inherits UmbracoViewPageBase<IPublishedContent>
+@using WorkoutProgramBuilder.ViewModels
+@inherits UmbracoViewPageBase<WorkoutDetailsPage>
 
 @{
     Layout = "mainLayout.cshtml";
@@ -20,6 +20,21 @@
     // Get page URLs using base class helper
     var myWorkoutsUrl = GetPageUrl("myWorkoutsPage", "/workouts/my-workouts");
     var workoutGeneratorUrl = GetPageUrl("workoutGeneratorPage", "/workouts/workout-generator");
+    
+    // CMS-editable text labels with fallbacks
+    var addToMyWorkoutsText = GetTextOrFallback(Model.AddToMyWorkoutsText, "Add to My Workouts");
+    var inMyWorkoutsText = GetTextOrFallback(Model.InMyWorkoutsText, "In My Workouts");
+    var favoriteText = GetTextOrFallback(Model.FavoriteText, "Favorite");
+    var favoritedText = GetTextOrFallback(Model.FavoritedText, "Favorited");
+    var exercisesText = GetTextOrFallback(Model.ExercisesText, "exercises");
+    
+    var visualizationTitle = GetTextOrFallback(Model.VisualizationTitle,"Targeted Muscles Visualization"); 
+    var instructionsLabel = GetTextOrFallback(Model.InstructionsLabel, "Instructions:");
+    var setsRepsLabel = GetTextOrFallback(Model.SetsRepsLabel, "Sets & Reps:");
+    var setsText = GetTextOrFallback(Model.SetsText, "Sets");
+    var repsText = GetTextOrFallback(Model.RepsText, "Reps");
+    var musclesLabel = GetTextOrFallback(Model.MusclesLabel, "Muscles:");
+    var equipmentsLabel = GetTextOrFallback(Model.EquipmentsLabel, "Equipments:");
 }
 
 @if (!isAuthenticated)
@@ -48,22 +63,22 @@
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-2 text-gray-600">
                     <i class="fa-solid fa-dumbbell text-xl"></i>
-                    <span class="text-lg font-medium"><span class="exercise-count"></span> exercises</span>
+                    <span class="text-lg font-medium"><span class="exercise-count"></span> @exercisesText</span>
                 </div>
                 <div class="flex gap-2 sm:gap-3">
                     <button type="button"
                             class="flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 rounded-lg transition-colors bg-primary text-white hover:bg-primary/90"
                             onclick="showLoginModal()"
-                            title="Add to My Workouts">
+                            title="@addToMyWorkoutsText">
                         <i class="fa-solid fa-plus"></i>
-                        <span class="hidden sm:inline">Add to My Workouts</span>
+                        <span class="hidden sm:inline">@addToMyWorkoutsText</span>
                     </button>
                     <button type="button"
                             class="flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 border border-gray-300 rounded-lg transition-colors text-gray-700 hover:bg-gray-50"
                             onclick="showLoginModal()"
-                            title="Add to Favorites">
+                            title="@favoriteText">
                         <i class="fa-solid fa-heart"></i>
-                        <span class="hidden sm:inline">Favorite</span>
+                        <span class="hidden sm:inline">@favoriteText</span>
                     </button>
                 </div>
             </div>
@@ -104,7 +119,7 @@
                     
                     <div class="space-y-3 mt-auto">
                         <div>
-                            <span class="text-xs font-semibold text-gray-500 block mb-2">Sets & Reps:</span>
+                            <span class="text-xs font-semibold text-gray-500 block mb-2">@setsRepsLabel</span>
                             <div class="flex flex-wrap gap-2">
                                 <span class="exercise-sets px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium"></span>
                                 <span class="exercise-reps px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium"></span>
@@ -137,8 +152,7 @@ else
             @* <h1 class="text-3xl font-bold text-gray-900 mb-2">@workout.Name</h1> *@
             <p class="text-gray-600 text-lg">@workout.Description</p>
         </div>
-
-        <!-- Exercises Slider -->
+        
         @if (workout.Exercises.Any())
         {
             <div class="mt-8">
@@ -146,7 +160,7 @@ else
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center gap-2 text-gray-600">
                         <i class="fa-solid fa-dumbbell text-xl"></i>
-                        <span class="text-lg font-medium">@workout.Exercises.Count exercises</span>
+                        <span class="text-lg font-medium">@workout.Exercises.Count @exercisesText</span>
                     </div>
                     <div class="flex gap-2 sm:gap-3">
                         <button type="button"
@@ -158,12 +172,12 @@ else
                                 data-workout-equipment="@string.Join(",", workout.Equipment)"
                                 data-workout-exercises='@System.Text.Json.JsonSerializer.Serialize(workout.Exercises)'
                                 onclick="@(workout.IsInMyWorkouts ? "removeFromMyWorkoutsDetails(event, this)" : "addToMyWorkoutsDetails(event, this)")"
-                                title="@(workout.IsInMyWorkouts ? "Remove from My Workouts" : "Add to My Workouts")">
+                                title="@(workout.IsInMyWorkouts ? inMyWorkoutsText : addToMyWorkoutsText)">
                             <i class="fa-solid @(workout.IsInMyWorkouts ? "fa-check" : "fa-plus")"></i>
-                            <span class="hidden sm:inline">@(workout.IsInMyWorkouts ? "In My Workouts" : "Add to My Workouts")</span>
+                            <span class="hidden sm:inline">@(workout.IsInMyWorkouts ? inMyWorkoutsText : addToMyWorkoutsText)</span>
                         </button>
                         <button type="button"
-                                class="favorite-workout-btn flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 border border-gray-300 rounded-lg transition-colors @(workout.IsSaved ? "text-red-500 border-red-500 hover:bg-red-50" : "text-gray-700 hover:bg-gray-50")"
+                                class="favorite-workout-btn flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 border border-gray-300 rounded-lg transition-colors @(workout.IsSaved ? "text-red-500 border-red-500 hover:bg-red-50" : "text-gray-700 hover:text-red-500 hover:bg-gray-50")"
                                 data-workout-id="@workout.WorkoutId"
                                 data-workout-name="@workout.Name"
                                 data-workout-description="@workout.Description"
@@ -171,9 +185,9 @@ else
                                 data-workout-equipment="@string.Join(",", workout.Equipment)"
                                 data-workout-exercises='@System.Text.Json.JsonSerializer.Serialize(workout.Exercises)'
                                 onclick="toggleWorkoutFavoriteDetails(event, this)"
-                                title="@(workout.IsSaved ? "Remove from Favorites" : "Add to Favorites")">
+                                title="@(workout.IsSaved ? favoritedText : favoriteText)">
                             <i class="fa-solid fa-heart @(workout.IsSaved ? "text-red-500" : "")"></i>
-                            <span class="hidden sm:inline">@(workout.IsSaved ? "Favorited" : "Favorite")</span>
+                            <span class="hidden sm:inline">@(workout.IsSaved ? favoritedText : favoriteText)</span>
                         </button>
                     </div>
                 </div>
@@ -185,90 +199,18 @@ else
                         <div class="flex gap-6 py-2 px-1">
                             @for (int i = 0; i < workout.Exercises.Count; i++)
                             {
-                                var exercise = workout.Exercises[i];
-                                var exerciseNumber = i + 1;
-                                var exerciseMuscles = MuscleMapper.MapToApiMuscleGroups(exercise.MuscleGroups);
-                                var exerciseImageUrl = MuscleMapper.GenerateMuscleVisualizationUrl(exercise.MuscleGroups);
-                                
-                                <div class="flex-none w-[calc(33.333%-1rem)] min-w-[400px] h-[800px]">
-                                    <div class="bg-white shadow-sm rounded-lg flex flex-col h-full overflow-hidden">
-                                        <!-- Header Section -->
-                                        <div class="relative p-6 bg-neutral-100 h-32 flex flex-col">
-                                            <div class="flex items-start justify-between gap-3 mb-2">
-                                                <h3 class="text-xl font-bold text-gray-900 line-clamp-1 flex-1">@exercise.Name</h3>
-                                                <span class="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">@exerciseNumber</span>
-                                            </div>
-                                            @if (!string.IsNullOrWhiteSpace(exercise.Description))
-                                            {
-                                                <p class="text-gray-600 text-sm line-clamp-2">@exercise.Description</p>
-                                            }
-                                        </div>
-                                        
-                                        <div class="p-6 flex flex-col flex-1">
-                                            @if (exerciseMuscles.Any())
-                                            {
-                                                <div class="p-4">
-                                                    <div class="flex justify-center">
-                                                        <img src="@exerciseImageUrl" 
-                                                             alt="@exercise.Name muscles" 
-                                                             class="w-full h-auto"
-                                                             style="max-width: 200px;" />
-                                                    </div>
-                                                </div>
-                                            }
-
-                                            <!-- Instructions -->
-                                            @if (exercise.Instructions.Any())
-                                            {
-                                                <div class="mb-4">
-                                                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Instructions:</h4>
-                                                    <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700 max-h-44 overflow-y-auto pr-2">
-                                                        @foreach (var instruction in exercise.Instructions)
-                                                        {
-                                                            <li class="pl-4">@instruction</li>
-                                                        }
-                                                    </ol>
-                                                </div>
-                                            }
-
-                                            <!-- Exercise Details -->
-                                            <div class="space-y-3 mt-auto">
-                                                <!-- Sets & Reps -->
-                                                <div>
-                                                    <span class="text-xs font-semibold text-gray-500 block mb-2">Sets & Reps:</span>
-                                                    <div class="flex flex-wrap gap-2">
-                                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">@exercise.Sets Sets</span>
-                                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">@exercise.Reps Reps</span>
-                                                    </div>
-                                                </div>
-                                                @if (exercise.MuscleGroups.Any())
-                                                {
-                                                    <div>
-                                                        <span class="text-xs font-semibold text-gray-500 block mb-2">Muscles:</span>
-                                                        <div class="flex flex-wrap gap-2">
-                                                            @foreach (var muscle in exercise.MuscleGroups)
-                                                            {
-                                                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium uppercase">@muscle</span>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                }
-                                                @if (exercise.Equipment.Any())
-                                                {
-                                                    <div>
-                                                        <span class="text-xs font-semibold text-gray-500 block mb-2">Equipments:</span>
-                                                        <div class="flex flex-wrap gap-2">
-                                                            @foreach (var equipment in exercise.Equipment)
-                                                            {
-                                                                <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">@equipment</span>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                @await Html.PartialAsync("_WorkoutExerciseCard", new WorkoutExerciseCardViewModel
+                                {
+                                    Exercise = workout.Exercises[i],
+                                    ExerciseNumber = i + 1,
+                                    VisualizationTitle = visualizationTitle,
+                                    InstructionsLabel = instructionsLabel,
+                                    SetsRepsLabel = setsRepsLabel,
+                                    SetsText = setsText,
+                                    RepsText = repsText,
+                                    MusclesLabel = musclesLabel,
+                                    EquipmentsLabel = equipmentsLabel
+                                })
                             }
                         </div>
                     </div>
