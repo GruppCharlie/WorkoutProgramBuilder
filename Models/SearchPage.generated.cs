@@ -114,6 +114,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string NoResults => this.Value<string>(_publishedValueFallback, "noResults");
 
 		///<summary>
+		/// PageText
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("pageText")]
+		public virtual string PageText => this.Value<string>(_publishedValueFallback, "pageText");
+
+		///<summary>
 		/// Previous Button Text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]

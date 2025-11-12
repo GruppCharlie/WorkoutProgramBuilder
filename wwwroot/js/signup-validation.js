@@ -46,11 +46,22 @@
 
         form.addEventListener('input', (e) => {
             const group = e.target.closest('[data-validate]');
-            if (!group) return;
-            showOrHideError(group);
+            if (group) {
+                showOrHideError(group);
+                if (group.hasAttribute('data-password-primary') && confirmGroup) {
+                    showOrHideError(confirmGroup);
+                }
+            }
 
-            if (group.hasAttribute('data-password-primary') && confirmGroup) {
-                showOrHideError(confirmGroup);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const spinner = submitBtn ? submitBtn.querySelector('.btn-spinner') : null;
+            const btnText = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+
+            if (submitBtn && submitBtn.disabled) {
+                submitBtn.disabled = false;
+                submitBtn.removeAttribute('aria-busy');
+                if (spinner) spinner.classList.add('hidden');
+                if (btnText) btnText.classList.remove('invisible');
             }
         });
 
@@ -73,10 +84,28 @@
                 }
             }
 
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const spinner = submitBtn ? submitBtn.querySelector('.btn-spinner') : null;
+            const btnText = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+
             if (!ok) {
                 e.preventDefault();
                 e.stopPropagation();
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.removeAttribute('aria-busy');
+                }
+                if (spinner) spinner.classList.add('hidden');
+                if (btnText) btnText.classList.remove('invisible');
+                return;
             }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.setAttribute('aria-busy', 'true');
+            }
+            if (spinner) spinner.classList.remove('hidden');
+            if (btnText) btnText.classList.add('invisible');
         });
     }
 

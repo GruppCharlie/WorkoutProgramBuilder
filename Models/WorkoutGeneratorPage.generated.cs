@@ -58,12 +58,52 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string ContinueButton => this.Value<string>(_publishedValueFallback, "continueButton");
 
 		///<summary>
+		/// Describe Your Workout
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("describeYourWorkout")]
+		public virtual string DescribeYourWorkout => this.Value<string>(_publishedValueFallback, "describeYourWorkout");
+
+		///<summary>
 		/// Gender Selection
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("genderSelection")]
 		public virtual global::System.Collections.Generic.IEnumerable<string> GenderSelection => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "genderSelection");
+
+		///<summary>
+		/// Generate Workout
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("generateWorkout")]
+		public virtual string GenerateWorkout => this.Value<string>(_publishedValueFallback, "generateWorkout");
+
+		///<summary>
+		/// Generating your workout
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("generatingYourWorkout")]
+		public virtual string GeneratingYourWorkout => this.Value<string>(_publishedValueFallback, "generatingYourWorkout");
+
+		///<summary>
+		/// Hold Ctrl/Cmd
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("holdCtrlCmd")]
+		public virtual string HoldCtrlCmd => this.Value<string>(_publishedValueFallback, "holdCtrlCmd");
+
+		///<summary>
+		/// Muscle Visualization
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("muscleVisualization")]
+		public virtual string MuscleVisualization => this.Value<string>(_publishedValueFallback, "muscleVisualization");
 
 		///<summary>
 		/// Personal Age
@@ -104,6 +144,30 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("pleaseEnter")]
 		public virtual string PleaseEnter => this.Value<string>(_publishedValueFallback, "pleaseEnter");
+
+		///<summary>
+		/// Target Muscle Groups
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("targetMuscleGroups")]
+		public virtual string TargetMuscleGroups => this.Value<string>(_publishedValueFallback, "targetMuscleGroups");
+
+		///<summary>
+		/// Workout Generator input placeholder
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("workoutGeneratorInputPlaceholder")]
+		public virtual string WorkoutGeneratorInputPlaceholder => this.Value<string>(_publishedValueFallback, "workoutGeneratorInputPlaceholder");
+
+		///<summary>
+		/// Your Generated Workout
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("yourGeneratedWorkout")]
+		public virtual string YourGeneratedWorkout => this.Value<string>(_publishedValueFallback, "yourGeneratedWorkout");
 
 		///<summary>
 		/// Exclude From Sitemap: Check to exclude this page from sitemap
