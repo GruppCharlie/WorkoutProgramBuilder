@@ -21,12 +21,17 @@ function toggleElement(element, show) {
  */
 function setButtonLoading(button, loading) {
     if (!button) return;
-    
+
     button.disabled = loading;
     if (loading) {
-        button.dataset.originalText = button.textContent;
+        if (!button.dataset.originalText) {
+            button.dataset.originalText = button.textContent;
+        }
         button.textContent = 'Loading...';
-    } else if (button.dataset.originalText) {
-        button.textContent = button.dataset.originalText;
+    } else {
+        if (button.dataset.originalText) {
+            button.textContent = button.dataset.originalText;
+            delete button.dataset.originalText;
+        }
     }
 }

@@ -27,7 +27,7 @@ class MuscleGroupVisualizer {
     constructor(containerSelector, options = {}) {
         this.container = document.querySelector(containerSelector);
         this.selectedMuscles = [];
-        this.color = options.color || '131,115,218'; // RGB format - Secondary Purple
+        this.color = options.color || '42, 158, 205'; // RGB format - Secondary Purple
         void this.init();
     }
 
@@ -328,11 +328,9 @@ if (userForm) {
         try {
             const res = await saveMemberDetails(details);
             if (res.ok) memberDetails = details;
-            else console.error('Failed to save member details');
         } catch (err) {
             console.error('Error saving member details:', err);
         }
-
         const fullDescription = await getFullDescription();
         showVisualizer(fullDescription);
     });
