@@ -23,14 +23,14 @@
 @if (!isHome && !hideBreadcrumbs)
 {
     <section class="pt-16">
-        <div class="relative bg-gradient-to-b from-neutral-100 to-neutral-50 border-b border-neutral-200 py-6">
+        <div class="relative bg-gradient-to-b from-neutral-100 to-neutral-50 border-b border-primaryBorder py-6">
             <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-                <h1 class="text-3xl sm:text-4xl font-extrabold text-neutral-800 mb-3 pt-4">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-primaryText mb-3 pt-4">
                     @(ViewBag.Title ?? Model.Name)
                 </h1>
 
                 <nav class="text-sm">
-                    <ol class="inline-flex items-center gap-2 text-neutral-500">
+                    <ol class="inline-flex items-center gap-2 ">
                         @if (customBreadcrumbs != null)
                         {
                             @* Use custom breadcrumbs from controller *@
@@ -40,16 +40,16 @@
                                 <li>
                                     @if (crumb.Url != null)
                                     {
-                                        <a href="@crumb.Url" class="underline-offset-2 hover:underline">@crumb.Name</a>
+                                        <a href="@crumb.Url" class="text-muted underline-offset-2 hover:text-primary">@crumb.Name</a>
                                     }
                                     else
                                     {
-                                        <span class="font-medium text-neutral-400">@crumb.Name</span>
+                                        <span class="font-medium text-primary">@crumb.Name</span>
                                     }
                                 </li>
                                 @if (i < customBreadcrumbs.Count - 1)
                                 {
-                                    <li class="text-neutral-400">›</li>
+                                    <li class="text-primaryText">›</li>
                                 }
                             }
                         }
@@ -60,11 +60,11 @@
                             {
                                 var displayName = item.Level == 1 ? homePageDisplayName : item.Name;
                                 <li>
-                                    <a href="@item.Url(PublishedUrlProvider)" class="underline-offset-2 hover:underline">@displayName</a>
+                                    <a href="@item.Url(PublishedUrlProvider)" class="text-muted underline-offset-2 hover:text-primary">@displayName</a>
                                 </li>
-                                <li class="text-neutral-400">›</li>
+                                <li class="text-primaryText">›</li>
                             }
-                            <li class="font-medium text-neutral-400">@Model.Name</li>
+                            <li class="font-medium text-primary">@Model.Name</li>
                         }
                     </ol>
                 </nav>

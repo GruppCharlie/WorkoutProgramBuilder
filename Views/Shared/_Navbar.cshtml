@@ -156,7 +156,7 @@
 
                 @if (!isLoggedIn)
                 {
-                    <a href="@loginUrl" class="text-primaryText font-medium hover:text-primary transition-colors">
+                    <a href="@loginUrl" class="hidden md:block text-primaryText font-medium hover:text-primary transition-colors">
                         @navbarLogin
                     </a>
                 }
@@ -216,7 +216,16 @@
                         @navbarLogout
                 </button>
             }
-            </li>
+                </li>
+            } else if (!isLoggedIn)
+            {
+                <li>
+                    <a href="@loginUrl"
+                       class="block px-4 py-2 text-primaryText hover:bg-muted/20 hover:text-primary transition-colors duration-200 font-medium border-b border-primaryBorder">
+                        @navbarLogin
+                    </a>
+                </li>
+
             }
         </ul>
     </nav>
