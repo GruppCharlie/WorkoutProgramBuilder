@@ -11,7 +11,4 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-
-    // Initialize login modal
-    initializeLoginModal();
 });

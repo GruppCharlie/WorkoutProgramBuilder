@@ -41,3 +41,6 @@ function initializeLoginModal() {
         });
     }
 }
+
+// Auto-initialize on page load
+document.addEventListener('DOMContentLoaded', initializeLoginModal);

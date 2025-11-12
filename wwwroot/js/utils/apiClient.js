@@ -3,13 +3,27 @@
  * Centralized API calls with error handling
  */
 
+/**
+ * API Endpoints Configuration
+ */
 const API_ENDPOINTS = {
     MUSCLE_GROUPS: '/api/musclegroup/groups',
     MUSCLE_IMAGE: '/api/musclegroup/image',
     WORKOUT_GENERATE: '/api/workout/generate',
     WORKOUT_ADD: '/api/workout/add',
+    WORKOUT_REMOVE: (workoutId) => `/api/workout/remove/${workoutId}`,
     FAVORITES_EXERCISE: '/api/favorites/exercise',
-    FAVORITES_WORKOUT: '/api/favorites/workout'
+    FAVORITES_WORKOUT: '/api/favorites/workout',
+    MEMBER_DETAILS: '/api/member/details'
+};
+
+/**
+ * Page Routes Configuration
+ */
+const PAGE_ROUTES = {
+    WORKOUT_DETAILS: (workoutId) => `/workouts/workout-details?workoutId=${workoutId}`,
+    WORKOUT_GENERATOR: '/workouts/workout-generator',
+    MY_WORKOUTS: '/workouts/my-workouts'
 };
 
 
@@ -17,8 +31,9 @@ const API_ENDPOINTS = {
  * Generate workout using AI
  * {Object} params - Workout generation parameters
  * {string[]} params.muscleGroups - Target muscle groups
- * {string} params.description - Workout description
- * returns {Promise<Object>} Generated workout
+ * {string[]} params.equipment - Required equipment
+ * {string} params.description - Workout description/instructions
+ * returns {Promise<Object>} Generated workout with exercises
  */
 async function generateWorkout({ muscleGroups, equipment, description }) {
     const response = await fetch(API_ENDPOINTS.WORKOUT_GENERATE, {
@@ -72,7 +87,7 @@ async function saveWorkoutToMyWorkouts(workout) {
  * returns {Promise<Response>} API response
  */
 async function saveMemberDetails(details) {
-    return await fetch('/api/member/details', {
+    return await fetch(API_ENDPOINTS.MEMBER_DETAILS, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(details)
@@ -85,7 +100,7 @@ async function saveMemberDetails(details) {
  */
 async function getMemberDetails() {
     try {
-        const res = await fetch('/api/member/details');
+        const res = await fetch(API_ENDPOINTS.MEMBER_DETAILS);
         if (res.ok) {
             const data = await res.json();
             return data.memberDetails ? JSON.parse(data.memberDetails) : null;

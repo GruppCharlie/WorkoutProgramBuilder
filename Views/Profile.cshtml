@@ -1,12 +1,9 @@
-﻿@using System.Globalization
-@using Umbraco.Cms.Web.Common.PublishedModels;
+@using System.Globalization
 @using Umbraco.Cms.Core.Models.Blocks
-@using Umbraco.Cms.Core.Models.PublishedContent
 @using WorkoutProgramBuilder.Business.Dto
 @inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
 @inject Umbraco.Cms.Core.Services.IMemberService MemberService
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
-
+@inherits UmbracoViewPageBase<IPublishedContent>
 
 @{
     Layout = "mainLayout.cshtml";
@@ -14,8 +11,7 @@
 
     var allNodes = Umbraco.ContentAtRoot().SelectMany(r => r.DescendantsOrSelf());
     var profileNode = allNodes.FirstOrDefault(x => x.ContentType.Alias == "profile");
-    var loginNode = allNodes.FirstOrDefault(x => x.ContentType.Alias == "loginPage");
-    var loginUrl = loginNode?.Url(culture: currentCulture) ?? "/login";
+    var loginUrl = GetPageUrl("loginPage", "/login");
 
 
     var currentMember = await MemberManager.GetCurrentMemberAsync();

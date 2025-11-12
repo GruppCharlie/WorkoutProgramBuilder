@@ -1,158 +1,294 @@
 @using WorkoutProgramBuilder.Business.Dto
 @using WorkoutProgramBuilder.Business.Helpers
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits UmbracoViewPageBase<IPublishedContent>
 
 @{
     Layout = "mainLayout.cshtml";
-
-    if (ViewData["Workout"] is not SavedWorkoutDto workout)
-    {
-        <div class="container mx-auto px-4 py-10">
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                <p class="text-yellow-700">Workout not found. Please select a workout from My Workouts.</p>
-                <a href="/workouts/my-workouts" class="text-primary hover:underline mt-2 inline-block">← Back to My Workouts</a>
-            </div>
-        </div>
-        return;
-    }
-
-    var muscleGroups = workout.Muscles;
-    var exercises = workout.Exercises;
-    System.Text.Json.JsonSerializer.Serialize(exercises);
-
-    MuscleMapper.MapToApiMuscleGroups(muscleGroups);
-    MuscleMapper.GenerateMuscleVisualizationUrl(muscleGroups);
     
-    // Page title for breadcrumbs
-    ViewBag.Title = workout.Name;
+    var isAuthenticated = ViewData["IsAuthenticated"] as bool? ?? true;
+    
+    // For authenticated users, get workout from ViewData
+    SavedWorkoutDto? workout = null;
+    
+    if (isAuthenticated && ViewData["Workout"] is SavedWorkoutDto savedWorkout)
+    {
+        workout = savedWorkout;
+        ViewBag.Title = workout.Name;
+    }
+    // For unauthenticated users, workout will be loaded from sessionStorage via JavaScript
+    
+    // Get page URLs using base class helper
+    var myWorkoutsUrl = GetPageUrl("myWorkoutsPage", "/workouts/my-workouts");
+    var workoutGeneratorUrl = GetPageUrl("workoutGeneratorPage", "/workouts/workout-generator");
 }
 
-<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <!-- Workout Description -->
-    <div class="mb-8 flex items-center justify-center">
-        <p class="text-gray-600 text-lg">@workout.Description</p>
+@if (!isAuthenticated)
+{
+    <!-- Unauthenticated user: Load from sessionStorage via JavaScript -->
+    <div id="unauthWorkoutContainer" class="container mx-auto px-4 sm:px-6 lg:px-8 py-10" style="display: none;">
+        <div class="mb-8 flex flex-col items-center justify-center">
+            <p id="unauthWorkoutDescription" class="text-gray-600 text-lg"></p>
+        </div>
+        <div id="unauthExercisesContainer">
+            <!-- Exercises will be rendered here by JavaScript using data from sessionStorage -->
+        </div>
     </div>
-
-    <!-- Exercises Slider -->
-    @if (exercises.Any())
-    {
+    
+    <div id="noWorkoutMessage" class="container mx-auto px-4 py-10" style="display: none;">
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+            <p class="text-yellow-700">No workout found. Please generate a workout first.</p>
+            <a href="@workoutGeneratorUrl" class="text-primary hover:underline mt-2 inline-block">← Back to Workout Generator</a>
+        </div>
+    </div>
+    
+    <!-- Hidden template for entire workout structure (used by JavaScript for unauthenticated users) -->
+    <template id="workoutStructureTemplate">
         <div class="mt-8">
-            <!-- Exercise Count -->
-            <div class="flex items-center gap-2 text-gray-600 mb-6">
-                <i class="fa-solid fa-dumbbell text-xl"></i>
-                <span class="text-lg font-medium">@exercises.Count exercises</span>
+            <!-- Exercise Count with Buttons -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2 text-gray-600">
+                    <i class="fa-solid fa-dumbbell text-xl"></i>
+                    <span class="text-lg font-medium"><span class="exercise-count"></span> exercises</span>
+                </div>
+                <div class="flex gap-2 sm:gap-3">
+                    <button type="button"
+                            class="flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 rounded-lg transition-colors bg-primary text-white hover:bg-primary/90"
+                            onclick="showLoginModal()"
+                            title="Add to My Workouts">
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="hidden sm:inline">Add to My Workouts</span>
+                    </button>
+                    <button type="button"
+                            class="flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 border border-gray-300 rounded-lg transition-colors text-gray-700 hover:bg-gray-50"
+                            onclick="showLoginModal()"
+                            title="Add to Favorites">
+                        <i class="fa-solid fa-heart"></i>
+                        <span class="hidden sm:inline">Favorite</span>
+                    </button>
+                </div>
             </div>
             
             <!-- Slider Container -->
             <div class="relative">
                 <!-- Slider -->
                 <div class="overflow-x-auto scrollbar-hide" id="exerciseSlider">
-                    <div class="flex gap-6 py-2 px-1">
-                        @for (int i = 0; i < exercises.Count; i++)
-                        {
-                            var exercise = exercises[i];
-                            var exerciseNumber = i + 1;
-                            var exerciseMuscles = MuscleMapper.MapToApiMuscleGroups(exercise.MuscleGroups);
-                            var exerciseImageUrl = MuscleMapper.GenerateMuscleVisualizationUrl(exercise.MuscleGroups);
-                            
-                            <div class="flex-none w-[calc(33.333%-1rem)] min-w-[400px] h-[800px]">
-                                <div class="bg-white shadow-sm rounded-lg flex flex-col h-full overflow-hidden">
-                                    <!-- Header Section -->
-                                    <div class="relative p-6 bg-neutral-100 h-32 flex flex-col">
-                                        <div class="flex items-start justify-between gap-3 mb-2">
-                                            <h3 class="text-xl font-bold text-gray-900 line-clamp-1 flex-1">@exercise.Name</h3>
-                                            <span class="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">@exerciseNumber</span>
-                                        </div>
-                                        @if (!string.IsNullOrWhiteSpace(exercise.Description))
-                                        {
-                                            <p class="text-gray-600 text-sm line-clamp-2">@exercise.Description</p>
-                                        }
-                                    </div>
-                                    
-                                    <div class="p-6 flex flex-col flex-1">
-                                        @if (exerciseMuscles.Any())
-                                        {
-                                            <div class="p-4">
-                                                <div class="flex justify-center">
-                                                    <img src="@exerciseImageUrl" 
-                                                         alt="@exercise.Name muscles" 
-                                                         class="w-full h-auto"
-                                                         style="max-width: 200px;" />
-                                                </div>
-                                            </div>
-                                        }
-
-                                        <!-- Instructions -->
-                                        @if (exercise.Instructions.Any())
-                                        {
-                                            <div class="mb-4">
-                                                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Instructions:</h4>
-                                                <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700 max-h-44 overflow-y-auto pr-2">
-                                                    @foreach (var instruction in exercise.Instructions)
-                                                    {
-                                                        <li class="pl-4">@instruction</li>
-                                                    }
-                                                </ol>
-                                            </div>
-                                        }
-
-                                        <!-- Exercise Details -->
-                                        <div class="space-y-3 mt-auto">
-                                            <!-- Sets & Reps -->
-                                            <div>
-                                                <span class="text-xs font-semibold text-gray-500 block mb-2">Sets & Reps:</span>
-                                                <div class="flex flex-wrap gap-2">
-                                                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">@exercise.Sets Sets</span>
-                                                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">@exercise.Reps Reps</span>
-                                                </div>
-                                            </div>
-                                            @if (exercise.MuscleGroups.Any())
-                                            {
-                                                <div>
-                                                    <span class="text-xs font-semibold text-gray-500 block mb-2">Muscles:</span>
-                                                    <div class="flex flex-wrap gap-2">
-                                                        @foreach (var muscle in exercise.MuscleGroups)
-                                                        {
-                                                            <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium uppercase">@muscle</span>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            }
-                                            @if (exercise.Equipment.Any())
-                                            {
-                                                <div>
-                                                    <span class="text-xs font-semibold text-gray-500 block mb-2">Equipment:</span>
-                                                    <div class="flex flex-wrap gap-2">
-                                                        @foreach (var eq in exercise.Equipment)
-                                                        {
-                                                            <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">@eq</span>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        }
+                    <div class="flex gap-6 py-2 px-1" id="exerciseCardsContainer">
+                        <!-- Exercise cards will be inserted here -->
                     </div>
                 </div>
 
                 <!-- Pagination Dots -->
-                <div class="flex justify-center gap-2 mt-6">
-                    @for (int i = 0; i < exercises.Count; i++)
-                    {
-                        <button onclick="scrollToExercise(@i)" 
-                                class="exercise-dot w-2 h-2 rounded-full transition-all duration-300 @(i == 0 ? "bg-primary w-8" : "bg-gray-300 hover:bg-gray-400")"
-                                data-index="@i"
-                                aria-label="Go to exercise @(i + 1)">
-                        </button>
-                    }
+                <div class="flex justify-center gap-2 mt-6" id="paginationDotsContainer">
+                    <!-- Pagination dots will be inserted here -->
                 </div>
             </div>
         </div>
-    }
-</div>
+    </template>
+    
+    <!-- Hidden template for individual exercise cards (used by JavaScript) -->
+    <template id="exerciseCardTemplate">
+        <div class="flex-none w-[calc(33.333%-1rem)] min-w-[400px] h-[800px]">
+            <div class="bg-white shadow-sm rounded-lg flex flex-col h-full overflow-hidden">
+                <div class="relative p-6 bg-neutral-100 h-32 flex flex-col">
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <h3 class="exercise-name text-xl font-bold text-gray-900 line-clamp-1 flex-1"></h3>
+                        <span class="exercise-number flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm"></span>
+                    </div>
+                    <p class="exercise-description text-gray-600 text-sm line-clamp-2"></p>
+                </div>
+                
+                <div class="p-6 flex flex-col flex-1">
+                    <div class="exercise-image-container p-4"></div>
+                    
+                    <div class="exercise-instructions mb-4"></div>
+                    
+                    <div class="space-y-3 mt-auto">
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 block mb-2">Sets & Reps:</span>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="exercise-sets px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium"></span>
+                                <span class="exercise-reps px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium"></span>
+                            </div>
+                        </div>
+                        <div class="exercise-muscles"></div>
+                        <div class="exercise-equipment"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+}
+else if (workout == null)
+{
+    <!-- Authenticated user but workout not found -->
+    <div class="container mx-auto px-4 py-10">
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+            <p class="text-yellow-700">Workout not found. Please select a workout from My Workouts.</p>
+            <a href="@myWorkoutsUrl" class="text-primary hover:underline mt-2 inline-block">← Back to My Workouts</a>
+        </div>
+    </div>
+}
+else
+{
+    <!-- Authenticated user with workout -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <!-- Header -->
+        <div class="mb-8 flex flex-col items-center justify-center">
+            @* <h1 class="text-3xl font-bold text-gray-900 mb-2">@workout.Name</h1> *@
+            <p class="text-gray-600 text-lg">@workout.Description</p>
+        </div>
+
+        <!-- Exercises Slider -->
+        @if (workout.Exercises.Any())
+        {
+            <div class="mt-8">
+                <!-- Exercise Count with Buttons -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-2 text-gray-600">
+                        <i class="fa-solid fa-dumbbell text-xl"></i>
+                        <span class="text-lg font-medium">@workout.Exercises.Count exercises</span>
+                    </div>
+                    <div class="flex gap-2 sm:gap-3">
+                        <button type="button"
+                                class="add-to-my-workouts-btn flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 rounded-lg transition-colors @(workout.IsInMyWorkouts ? "bg-green-600 text-white hover:bg-green-700" : "bg-primary text-white hover:bg-primary/90")"
+                                data-workout-id="@workout.WorkoutId"
+                                data-workout-name="@workout.Name"
+                                data-workout-description="@workout.Description"
+                                data-workout-muscles="@string.Join(",", workout.Muscles)"
+                                data-workout-equipment="@string.Join(",", workout.Equipment)"
+                                data-workout-exercises='@System.Text.Json.JsonSerializer.Serialize(workout.Exercises)'
+                                onclick="@(workout.IsInMyWorkouts ? "removeFromMyWorkoutsDetails(event, this)" : "addToMyWorkoutsDetails(event, this)")"
+                                title="@(workout.IsInMyWorkouts ? "Remove from My Workouts" : "Add to My Workouts")">
+                            <i class="fa-solid @(workout.IsInMyWorkouts ? "fa-check" : "fa-plus")"></i>
+                            <span class="hidden sm:inline">@(workout.IsInMyWorkouts ? "In My Workouts" : "Add to My Workouts")</span>
+                        </button>
+                        <button type="button"
+                                class="favorite-workout-btn flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 border border-gray-300 rounded-lg transition-colors @(workout.IsSaved ? "text-red-500 border-red-500 hover:bg-red-50" : "text-gray-700 hover:bg-gray-50")"
+                                data-workout-id="@workout.WorkoutId"
+                                data-workout-name="@workout.Name"
+                                data-workout-description="@workout.Description"
+                                data-workout-muscles="@string.Join(",", workout.Muscles)"
+                                data-workout-equipment="@string.Join(",", workout.Equipment)"
+                                data-workout-exercises='@System.Text.Json.JsonSerializer.Serialize(workout.Exercises)'
+                                onclick="toggleWorkoutFavoriteDetails(event, this)"
+                                title="@(workout.IsSaved ? "Remove from Favorites" : "Add to Favorites")">
+                            <i class="fa-solid fa-heart @(workout.IsSaved ? "text-red-500" : "")"></i>
+                            <span class="hidden sm:inline">@(workout.IsSaved ? "Favorited" : "Favorite")</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Slider Container -->
+                <div class="relative">
+                    <!-- Slider -->
+                    <div class="overflow-x-auto scrollbar-hide" id="exerciseSlider">
+                        <div class="flex gap-6 py-2 px-1">
+                            @for (int i = 0; i < workout.Exercises.Count; i++)
+                            {
+                                var exercise = workout.Exercises[i];
+                                var exerciseNumber = i + 1;
+                                var exerciseMuscles = MuscleMapper.MapToApiMuscleGroups(exercise.MuscleGroups);
+                                var exerciseImageUrl = MuscleMapper.GenerateMuscleVisualizationUrl(exercise.MuscleGroups);
+                                
+                                <div class="flex-none w-[calc(33.333%-1rem)] min-w-[400px] h-[800px]">
+                                    <div class="bg-white shadow-sm rounded-lg flex flex-col h-full overflow-hidden">
+                                        <!-- Header Section -->
+                                        <div class="relative p-6 bg-neutral-100 h-32 flex flex-col">
+                                            <div class="flex items-start justify-between gap-3 mb-2">
+                                                <h3 class="text-xl font-bold text-gray-900 line-clamp-1 flex-1">@exercise.Name</h3>
+                                                <span class="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">@exerciseNumber</span>
+                                            </div>
+                                            @if (!string.IsNullOrWhiteSpace(exercise.Description))
+                                            {
+                                                <p class="text-gray-600 text-sm line-clamp-2">@exercise.Description</p>
+                                            }
+                                        </div>
+                                        
+                                        <div class="p-6 flex flex-col flex-1">
+                                            @if (exerciseMuscles.Any())
+                                            {
+                                                <div class="p-4">
+                                                    <div class="flex justify-center">
+                                                        <img src="@exerciseImageUrl" 
+                                                             alt="@exercise.Name muscles" 
+                                                             class="w-full h-auto"
+                                                             style="max-width: 200px;" />
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            <!-- Instructions -->
+                                            @if (exercise.Instructions.Any())
+                                            {
+                                                <div class="mb-4">
+                                                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Instructions:</h4>
+                                                    <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700 max-h-44 overflow-y-auto pr-2">
+                                                        @foreach (var instruction in exercise.Instructions)
+                                                        {
+                                                            <li class="pl-4">@instruction</li>
+                                                        }
+                                                    </ol>
+                                                </div>
+                                            }
+
+                                            <!-- Exercise Details -->
+                                            <div class="space-y-3 mt-auto">
+                                                <!-- Sets & Reps -->
+                                                <div>
+                                                    <span class="text-xs font-semibold text-gray-500 block mb-2">Sets & Reps:</span>
+                                                    <div class="flex flex-wrap gap-2">
+                                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">@exercise.Sets Sets</span>
+                                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">@exercise.Reps Reps</span>
+                                                    </div>
+                                                </div>
+                                                @if (exercise.MuscleGroups.Any())
+                                                {
+                                                    <div>
+                                                        <span class="text-xs font-semibold text-gray-500 block mb-2">Muscles:</span>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            @foreach (var muscle in exercise.MuscleGroups)
+                                                            {
+                                                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium uppercase">@muscle</span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (exercise.Equipment.Any())
+                                                {
+                                                    <div>
+                                                        <span class="text-xs font-semibold text-gray-500 block mb-2">Equipments:</span>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            @foreach (var equipment in exercise.Equipment)
+                                                            {
+                                                                <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">@equipment</span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Pagination Dots -->
+                    <div class="flex justify-center gap-2 mt-6">
+                        @for (int i = 0; i < workout.Exercises.Count; i++)
+                        {
+                            <button onclick="scrollToExercise(@i)" 
+                                    class="exercise-dot w-2 h-2 rounded-full transition-all duration-300 @(i == 0 ? "bg-primary w-8" : "bg-gray-300 hover:bg-gray-400")"
+                                    data-index="@i"
+                                    aria-label="Go to exercise @(i + 1)">
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
 
 <style>
     .scrollbar-hide::-webkit-scrollbar {
@@ -170,4 +306,5 @@
     }
 </style>
 
+<script src="/js/workoutCard.js"></script>
 <script src="/js/workoutDetails.js"></script>

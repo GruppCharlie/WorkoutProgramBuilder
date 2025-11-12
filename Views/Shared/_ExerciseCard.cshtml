@@ -1,16 +1,7 @@
-@using System.Globalization
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits UmbracoViewPageBase<IPublishedContent>
 
 @{
-    var root = Umbraco.ContentAtRoot().FirstOrDefault();
-    var allPages = root?.DescendantsOrSelf() ?? Enumerable.Empty<IPublishedContent>();
-
-    var currentCulture = CultureInfo.CurrentCulture.Name;
-
-    var exerciseNode = allPages.FirstOrDefault(x => x.ContentType.Alias == "exercisePage");
-
-    var exerciseCardLink = exerciseNode?.Url(culture: currentCulture) ?? "/exercise";
-
+    var exerciseCardLink = GetPageUrl("exercisePage", "/exercise");
     var exercises = ViewData["Exercises"] as List<WorkoutProgramBuilder.Business.Dto.ExerciseDto> ?? [];
 }
 

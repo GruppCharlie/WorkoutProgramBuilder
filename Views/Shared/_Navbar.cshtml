@@ -1,7 +1,5 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits UmbracoViewPageBase<IPublishedContent>
 @using System.Globalization
-@using Umbraco.Cms.Core.Models.PublishedContent
-@using Umbraco.Cms.Web.Common.PublishedModels
 @using CoreLink = Umbraco.Cms.Core.Models.Link
 @inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
 
@@ -18,18 +16,10 @@
     var sidebarLinks = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("sidebarNavigation");
     var NavbarlanguageSelector = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("languageSelector");
 
-
-    var searchNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "searchPage");
-    var searchUrl = searchNode?.Url(culture: currentCulture) ?? "/search";
-
-    var homeNode = contentAtRoot.FirstOrDefault(x => x.ContentType.Alias == "modularPage");
-    var homeUrl = homeNode?.Url(culture: currentCulture) ?? "/";
-
-    var loginNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "loginPage");
-    var loginUrl = loginNode?.Url(culture: currentCulture) ?? "/login";
-
-    var profileNode = contentAtRoot.SelectMany(x => x.DescendantsOrSelf()).FirstOrDefault(x => x.ContentType.Alias == "profile");
-    var profileUrl = profileNode?.Url(culture: currentCulture) ?? "/profile";
+    var searchUrl = GetPageUrl("searchPage", "/search");
+    var homeUrl = GetPageUrl("modularPage", "/");
+    var loginUrl = GetPageUrl("loginPage", "/login");
+    var profileUrl = GetPageUrl("profile", "/profile");
 
     var currentMember = await MemberManager.GetCurrentMemberAsync();
     var isLoggedIn = currentMember != null;
