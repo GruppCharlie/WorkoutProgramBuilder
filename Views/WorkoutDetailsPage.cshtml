@@ -1,6 +1,6 @@
 @using WorkoutProgramBuilder.Business.Dto
 @using WorkoutProgramBuilder.Business.Helpers
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits UmbracoViewPageBase<IPublishedContent>
 
 @{
     Layout = "mainLayout.cshtml";
@@ -15,19 +15,11 @@
         workout = savedWorkout;
         ViewBag.Title = workout.Name;
     }
-    
     // For unauthenticated users, workout will be loaded from sessionStorage via JavaScript
     
-    // Get page URLs
-    var root = Umbraco.ContentAtRoot().FirstOrDefault();
-    var allPages = root?.DescendantsOrSelf() ?? [];
-    var currentCulture = System.Globalization.CultureInfo.CurrentCulture.Name;
-    
-    var myWorkoutsPage = allPages.FirstOrDefault(x => x.ContentType.Alias == "myWorkoutsPage");
-    var workoutGeneratorPage = allPages.FirstOrDefault(x => x.ContentType.Alias == "workoutGeneratorPage");
-    
-    var myWorkoutsUrl = myWorkoutsPage?.Url(culture: currentCulture) ?? "/workouts/my-workouts";
-    var workoutGeneratorUrl = workoutGeneratorPage?.Url(culture: currentCulture) ?? "/workouts/workout-generator";
+    // Get page URLs using base class helper
+    var myWorkoutsUrl = GetPageUrl("myWorkoutsPage", "/workouts/my-workouts");
+    var workoutGeneratorUrl = GetPageUrl("workoutGeneratorPage", "/workouts/workout-generator");
 }
 
 @if (!isAuthenticated)

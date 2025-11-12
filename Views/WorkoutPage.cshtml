@@ -1,9 +1,10 @@
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits UmbracoViewPageBase<IPublishedContent>
 
 @{
     Layout = "mainLayout.cshtml";
     
     // Load CMS-created workout templates from Umbraco
+    var workoutGeneratorUrl = GetPageUrl("workoutGeneratorPage", "/workouts/generator");
 }
 
 <section class="">
@@ -18,7 +19,7 @@
                     <i class="fas fa-dumbbell text-6xl text-gray-300 mb-4"></i>
                     <h3 class="text-xl font-semibold text-gray-700 mb-2">Workout Templates Coming Soon!</h3>
                     <p class="text-sm text-gray-500 mt-4">
-                        For now, try our <a href="/workouts/generator" class="text-primary hover:underline">AI Workout Generator</a> 
+                        For now, try our <a href="@workoutGeneratorUrl" class="text-primary hover:underline">AI Workout Generator</a> 
                         to create custom workouts!
                     </p>
                 </div>

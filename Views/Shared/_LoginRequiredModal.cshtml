@@ -1,15 +1,8 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits UmbracoViewPageBase<IPublishedContent>
 
 @{
-    var currentCulture = System.Globalization.CultureInfo.CurrentCulture.Name;
-    var root = Umbraco.ContentAtRoot().FirstOrDefault();
-    var allPages = root?.DescendantsOrSelf() ?? Enumerable.Empty<Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>();
-
-    var loginPage = allPages.FirstOrDefault(x => x.ContentType.Alias == "loginPage");
-    var signUpPage = allPages.FirstOrDefault(x => x.ContentType.Alias == "signUpPage");
-
-    var loginLink = loginPage?.Url(culture: currentCulture) ?? "/login";
-    var signUpLink = signUpPage?.Url(culture: currentCulture) ?? "/signup";
+    var loginLink = GetPageUrl("loginPage", "/login");
+    var signUpLink = GetPageUrl("signUpPage", "/signup");
 
     var header = Model.Value("exersiceModalHeader") ?? "Login Required";
     var text = Model.Value("exersiceModalText") ?? "You need to log in or sign up to add exercises to your favorites.";
