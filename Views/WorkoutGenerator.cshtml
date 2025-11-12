@@ -19,12 +19,12 @@
     var needsUserInput = !isLoggedIn || string.IsNullOrWhiteSpace(memberDetails);
 
     var pleaseEnter = Model.PleaseEnter;
-    var personalAge = Model.Value("personalAge");
-    var personalGender = Model.Value("personalGender");
-    var genderSelection = Model.Value<IEnumerable<string>>("genderSelection");
-    var personalWeight = Model.Value("personalWeight");
-    var personalHeight = Model.Value("personalHeight");
-    var continueButton = Model.Value("continueButton");
+    var personalAge = Model.PersonalAge;
+    var personalGender = Model.PersonalGender;
+    var genderSelection = Model.GenderSelection;
+    var personalWeight = Model.PersonalWeight;
+    var personalHeight = Model.PersonalHeight;
+    var continueButton = Model.ContinueButton;
 
     
     var muscleGroups = ViewData["MuscleGroups"] as List<string> ?? [];

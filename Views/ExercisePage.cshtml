@@ -1,22 +1,22 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ExercisePage>
 @{
     Layout = "mainLayout.cshtml";
 
     var exercise = ViewData["Exercise"] as WorkoutProgramBuilder.Business.Dto.ExerciseDto;
 
 
-    var titleFallback = Model.Value("title")?.ToString();
-    var bodyPartsLabel = Model.Value("bodyParts")?.ToString() ?? "";
-    var targetMusclesLabel = Model.Value("targetMuscles")?.ToString() ?? "";
-    var equipmentLabel = Model.Value("equipment")?.ToString() ?? "";
-    var secondaryMusclesLabel = Model.Value("secondaryMuscles")?.ToString() ?? "";
-    var instructionsLabel = Model.Value("instructions")?.ToString() ?? "";
-    var notAvailable = Model.Value("notAvailable")?.ToString() ?? "Not available";
+    var titleFallback = Model.Title;
+    var bodyPartsLabel = Model.BodyParts;
+    var targetMusclesLabel = Model.TargetMuscles;
+    var equipmentLabel = Model.Equipment;
+    var secondaryMusclesLabel = Model.SecondaryMuscles;
+    var instructionsLabel = Model.Instructions;
+    var notAvailable = Model.NotAvailable;
 
 
-    var instructions = exercise?.Instructions ?? new List<string>();
+    var instructions = exercise?.Instructions ?? [];
 
-    string ListOrFallback(List<string>? list) => (list != null && list.Any()) ? string.Join(", ", list) : notAvailable;
+    string? ListOrFallback(List<string>? list) => list != null && list.Any() ? string.Join(", ", list) : notAvailable;
 }
 
 <div class="container mx-auto px-6 py-16">

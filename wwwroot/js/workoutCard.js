@@ -1,8 +1,8 @@
 /**
  * Workout Card Navigation
  * Handles click events on workout cards
- * Navigate to workout detail page
- * First saves the workout to My Workouts if not already added, then navigates
+ * For authenticated users: saves to My Workouts then navigates
+ * For unauthenticated users: saves to sessionStorage and navigates directly
  */
 async function navigateToWorkoutDetail(workoutId) {
     if (!workoutId) return;
@@ -14,12 +14,25 @@ async function navigateToWorkoutDetail(workoutId) {
         return;
     }
     
-    // Get the "Add to My Workouts" button
+    // Check if user is authenticated
+    const isAuthenticated = await isUserAuthenticated();
+    
+    if (!isAuthenticated) {
+        // For unauthenticated users: save to sessionStorage and navigate
+        const addButton = workoutCard.querySelector('.add-to-my-workouts-btn');
+        if (addButton) {
+            const workoutData = extractWorkoutDataFromButton(addButton);
+            saveTemporaryWorkout(workoutData);
+        }
+        
+        window.location.href = PAGE_ROUTES.WORKOUT_DETAILS(workoutId);
+        return;
+    }
+    
+    // For authenticated users: save to My Workouts if needed
     const addButton = workoutCard.querySelector('.add-to-my-workouts-btn');
     
-    // Only add to My Workouts if not already added (not disabled)
     if (addButton && !addButton.disabled) {
-        // Check if it's not already in My Workouts
         const icon = addButton.querySelector('i');
         const isNotInMyWorkouts = icon && icon.classList.contains('fa-plus');
         
@@ -27,14 +40,14 @@ async function navigateToWorkoutDetail(workoutId) {
             await addToMyWorkouts(new Event('click'), addButton);
             
             setTimeout(() => {
-                window.location.href = `/workouts/workout-details?workoutId=${workoutId}`;
+                window.location.href = PAGE_ROUTES.WORKOUT_DETAILS(workoutId);
             }, 500);
             return;
         }
     }
     
-    // If already in My Workouts, navigate directly
-    window.location.href = `/workouts/workout-details?workoutId=${workoutId}`;
+    // If already in My Workouts, navigate 
+    window.location.href = PAGE_ROUTES.WORKOUT_DETAILS(workoutId);
 }
 
 /**
@@ -44,19 +57,7 @@ async function toggleWorkoutFavorite(event, button) {
     event.stopPropagation();
     
     const heartIcon = button.querySelector('i');
-    
-    const exercisesJson = button.getAttribute('data-workout-exercises');
-    const decodedJson = exercisesJson ? exercisesJson.replace(/&quot;/g, '"') : '[]';
-    const exercises = JSON.parse(decodedJson);
-    
-    const workoutData = {
-        WorkoutId: button.getAttribute('data-workout-id'),
-        Name: button.getAttribute('data-workout-name'),
-        Description: button.getAttribute('data-workout-description'),
-        Muscles: button.getAttribute('data-workout-muscles').split(',').filter(Boolean),
-        Equipment: button.getAttribute('data-workout-equipment').split(',').filter(Boolean),
-        Exercises: exercises
-    };
+    const workoutData = extractWorkoutDataFromButton(button);
     
     try {
         const response = await saveWorkoutToFavorites(workoutData);
@@ -84,6 +85,7 @@ async function toggleWorkoutFavorite(event, button) {
         }
     } catch (error) {
         console.error('Error saving workout:', error);
+        showErrorToast('Failed to update favorites. Please try again.');
     }
 }
 
@@ -93,18 +95,7 @@ async function toggleWorkoutFavorite(event, button) {
 async function addToMyWorkouts(event, button) {
     event.stopPropagation();
     
-    const exercisesJson = button.getAttribute('data-workout-exercises');
-    const decodedJson = exercisesJson ? exercisesJson.replace(/&quot;/g, '"') : '[]';
-    const exercises = JSON.parse(decodedJson);
-    
-    const workoutData = {
-        WorkoutId: button.getAttribute('data-workout-id'),
-        Name: button.getAttribute('data-workout-name'),
-        Description: button.getAttribute('data-workout-description'),
-        Muscles: button.getAttribute('data-workout-muscles').split(',').filter(Boolean),
-        Equipment: button.getAttribute('data-workout-equipment').split(',').filter(Boolean),
-        Exercises: exercises
-    };
+    const workoutData = extractWorkoutDataFromButton(button);
     
     try {
         const response = await saveWorkoutToMyWorkouts(workoutData);
@@ -115,6 +106,9 @@ async function addToMyWorkouts(event, button) {
         }
 
         if (response.ok) {
+            // Clear temporary workout from sessionStorage (now in DB)
+            clearTemporaryWorkout();
+            
             const icon = button.querySelector('i');
             icon.classList.remove('fa-plus');
             icon.classList.add('fa-check');
@@ -127,6 +121,7 @@ async function addToMyWorkouts(event, button) {
         }
     } catch (error) {
         console.error('Error saving to My Workouts:', error);
+        showErrorToast('Failed to save workout. Please try again.');
     }
 }
 
@@ -139,7 +134,7 @@ async function removeFromMyWorkouts(event, button) {
     const workoutId = button.getAttribute('data-workout-id');
     
     try {
-        const response = await fetch(`/api/workout/remove/${workoutId}`, {
+        const response = await fetch(API_ENDPOINTS.WORKOUT_REMOVE(workoutId), {
             method: 'DELETE'
         });
 
@@ -159,11 +154,13 @@ async function removeFromMyWorkouts(event, button) {
             
             showInfoToast('Removed from My Workouts');
             
+            
             window.dispatchEvent(new CustomEvent('workoutRemovedFromMyWorkouts', {
                 detail: { workoutId }
             }));
         }
     } catch (error) {
-        console.error('Error removing from My Workouts:', error);
+        console.error('Error removing workout:', error);
+        showErrorToast('Failed to remove workout. Please try again.');
     }
 }

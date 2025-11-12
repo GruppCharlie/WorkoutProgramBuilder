@@ -120,7 +120,7 @@ class MuscleGroupVisualizer {
                 description: description
             });
             
-            this.displayWorkout(workout);
+            await this.displayWorkout(workout);
         } catch (error) {
             console.error('Error generating workout:', error);
             errorMessage.textContent = `Failed to generate workout: ${error.message}. Please try again.`;
@@ -256,13 +256,17 @@ let memberDetails = null;
 
 // Only run on WorkoutGenerator page
 if (visualizerDiv) {
-    // Hämta members data
+    // get members data only if user is authenticated
     (async () => {
-        memberDetails = await getMemberDetails();
+        const isAuthenticated = await isUserAuthenticated();
+        
+        if (isAuthenticated) {
+            memberDetails = await getMemberDetails();
 
-        if (!userForm && memberDetails) {
-            const fullDescription = await getFullDescription();
-            showVisualizer(fullDescription);
+            if (!userForm && memberDetails) {
+                const fullDescription = await getFullDescription();
+                showVisualizer(fullDescription);
+            }
         }
     })();
 }

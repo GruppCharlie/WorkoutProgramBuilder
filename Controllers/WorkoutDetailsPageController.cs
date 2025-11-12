@@ -21,28 +21,31 @@ public class WorkoutDetailsPageController(
         // Allow page to load without workoutId (for Umbraco routing)
         if (string.IsNullOrWhiteSpace(workoutId))
         {
-            // Just render the page without workout data
             return CurrentTemplate(CurrentPage);
         }
 
         var currentMember = await memberManager.GetCurrentMemberAsync();
+        
+        // Allow unauthenticated users to view workouts (from sessionStorage)
         if (currentMember == null)
         {
-            logger.LogWarning("No current member found");
-            return Redirect("/login");
+            logger.LogInformation("Unauthenticated user viewing workout: {WorkoutId}", workoutId);
+            ViewData["IsAuthenticated"] = false;
+            ViewData["WorkoutId"] = workoutId;
+            return CurrentTemplate(CurrentPage);
         }
-
+        
         var memberId = int.Parse(currentMember.Id);
+        
+        var workout = workoutsService.GetWorkoutById(memberId, workoutId);
         
         logger.LogInformation("Looking for workout: {WorkoutId} for member: {MemberId}", workoutId, memberId);
         
-        var workout = workoutsService.GetWorkoutById(memberId, workoutId);
 
         if (workout == null)
         {
             logger.LogWarning("Workout not found: {WorkoutId} for member: {MemberId}", workoutId, memberId);
             
-            // Log all available workouts for debugging
             var allWorkouts = workoutsService.GetMyWorkouts(memberId);
             logger.LogWarning("Available workouts: {Count}", allWorkouts.Count);
             foreach (var w in allWorkouts.Take(5))
@@ -50,7 +53,6 @@ public class WorkoutDetailsPageController(
                 logger.LogWarning("  - WorkoutId: {Id}, Name: {Name}", w.WorkoutId, w.Name);
             }
             
-            // Still render the page with error message
             return CurrentTemplate(CurrentPage);
         }
 
@@ -60,6 +62,7 @@ public class WorkoutDetailsPageController(
         workout.IsInMyWorkouts = true; // Already in My Workouts
 
         ViewData["Workout"] = workout;
+        ViewData["IsAuthenticated"] = true;
         
         // Override breadcrumbs - only shown when logged in
         ViewData["CustomBreadcrumbs"] = new List<(string Name, string? Url)>

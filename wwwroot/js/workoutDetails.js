@@ -3,6 +3,108 @@
  */
 
 /**
+ * Add workout to My Workouts (for full button with text)
+ */
+async function addToMyWorkoutsDetails(event, button) {
+    event.stopPropagation();
+    
+    const workoutData = extractWorkoutDataFromButton(button);
+    
+    try {
+        const response = await saveWorkoutToMyWorkouts(workoutData);
+
+        if (response.status === 401) {
+            showLoginModal();
+            return;
+        }
+
+        if (response.ok) {
+            // Clear temporary workout from sessionStorage (now in DB)
+            clearTemporaryWorkout();
+            
+            updateMyWorkoutsButtonState(button, true);
+            button.onclick = (e) => removeFromMyWorkoutsDetails(e, button);
+            showSuccessToast('Added to My Workouts!');
+        }
+    } catch (error) {
+        console.error('Error saving to My Workouts:', error);
+        showErrorToast('Failed to save workout. Please try again.');
+    }
+}
+
+/**
+ * Remove workout from My Workouts (for full button with text)
+ */
+async function removeFromMyWorkoutsDetails(event, button) {
+    event.stopPropagation();
+    
+    const workoutId = button.getAttribute('data-workout-id');
+    
+    try {
+        const response = await fetch(API_ENDPOINTS.WORKOUT_REMOVE(workoutId), {
+            method: 'DELETE'
+        });
+
+        if (response.status === 401) {
+            showLoginModal();
+            return;
+        }
+
+        if (response.ok) {
+            updateMyWorkoutsButtonState(button, false);
+            button.onclick = (e) => addToMyWorkoutsDetails(e, button);
+            showInfoToast('Removed from My Workouts');
+        }
+    } catch (error) {
+        console.error('Error removing from My Workouts:', error);
+        showErrorToast('Failed to remove workout. Please try again.');
+    }
+}
+
+/**
+ * Toggle workout favorite (for full button with text)
+ */
+async function toggleWorkoutFavoriteDetails(event, button) {
+    event.stopPropagation();
+    
+    const workoutData = extractWorkoutDataFromButton(button);
+    
+    try {
+        const response = await saveWorkoutToFavorites(workoutData);
+
+        if (response.status === 401) {
+            showLoginModal();
+            return;
+        }
+
+        if (response.ok) {
+            const icon = button.querySelector('i');
+            
+            // Toggle the red color on the icon to determine current state
+            const isFavorited = icon.classList.toggle('text-red-500');
+            
+            updateFavoriteButtonState(button, isFavorited);
+            
+            if (isFavorited) {
+                showSuccessToast('Added to Favorites!');
+            } else {
+                showInfoToast('Removed from Favorites');
+            }
+            
+            window.dispatchEvent(new CustomEvent('workoutFavoriteToggled', {
+                detail: { 
+                    workoutId: workoutData.WorkoutId, 
+                    isFavorited 
+                }
+            }));
+        }
+    } catch (error) {
+        console.error('Error toggling favorite:', error);
+        showErrorToast('Failed to update favorites. Please try again.');
+    }
+}
+
+/**
  * Scroll to specific exercise card
  */
 function scrollToExercise(index) {
@@ -24,9 +126,9 @@ function scrollToExercise(index) {
 }
 
 /**
- * Initialize exercise slider pagination dots
+ * Initialize pagination for exercise slider
  */
-document.addEventListener('DOMContentLoaded', () => {
+function initializePagination() {
     const slider = document.getElementById('exerciseSlider');
     const dots = document.querySelectorAll('.exercise-dot');
     
@@ -72,4 +174,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     slider.addEventListener('scroll', updateActiveDot);
     updateActiveDot(); // Initial update
+}
+
+/**
+ * Initialize on page load
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+    // Load workout data for unauthenticated users
+    await loadUnauthenticatedWorkout();
+
+    // Initialize pagination for authenticated users (already rendered by Razor)
+    initializePagination();
 });
