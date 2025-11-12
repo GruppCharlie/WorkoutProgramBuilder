@@ -33,6 +33,32 @@
 
     var currentMember = await MemberManager.GetCurrentMemberAsync();
     var isLoggedIn = currentMember != null;
+
+    var languageItems = (NavbarlanguageSelector ?? Enumerable.Empty<Umbraco.Cms.Core.Models.Blocks.BlockListItem>())
+                        .Select(block =>
+                        {
+                            var link = block?.Content.Value<string>("socialMediaUrl") ?? block?.Content.Value<string>("languageUrl");
+                            var iconUrl = block?.Content.Value<IPublishedContent>("socialMediaIcon")?.Url() ?? block?.Content.Value<IPublishedContent>("flag")?.Url();
+                            var culture = block?.Content.Value<string>("languageCulture") ?? block?.Content.Value<string>("culture");
+                            var name = block?.Content.Value<string>("socialMediaName") ?? block?.Content.Value<string>("languageName") ?? culture ?? link;
+                            return new
+                            {
+                                Item = block,
+                                Link = link,
+                                Icon = iconUrl,
+                                Culture = culture,
+                                Name = name
+                            };
+                        })
+                        .Where(x => !string.IsNullOrEmpty(x.Link) && !string.IsNullOrEmpty(x.Icon))
+                        .ToList();
+
+
+    var currentLangItem = languageItems.FirstOrDefault(x => x.Link!.Equals($"/{currentCulture}", StringComparison.OrdinalIgnoreCase))
+                      ?? languageItems.FirstOrDefault();
+
+    var otherLangs = languageItems.Where(x => x != currentLangItem).ToList();
+
 }
 
 <nav class="bg-primaryGray text-primaryText border-b border-primaryBorder fixed top-0 left-0 right-0 z-50">
@@ -70,12 +96,55 @@
                 }
                 <div id="search-results" class="absolute bg-white shadow-lg rounded-md mt-2 w-64 max-h-80 overflow-y-auto hidden"></div>
 
+                @if (currentLangItem != null)
+                {
+                    <div class="relative">
+                        <button id="lang-toggle" type="button"
+                                class="flex items-center space-x-2 px-2 py-1 rounded-md bg-transparent hover:bg-muted/10 focus:outline-none focus:ring-2 focus:ring-primary"
+                                aria-haspopup="true" aria-expanded="false">
+                            <img src="@currentLangItem.Icon" alt="@currentLangItem.Name" class="w-6 h-6 rounded-sm" />
+                            @if (otherLangs.Any())
+                            {
+                                <svg class="w-3 h-3 text-primaryText" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+                                </svg>
+                            }
+                        </button>
+
+                        @if (otherLangs.Any())
+                        {
+                            <div id="lang-menu" class="hidden origin-top-right absolute right-0 mt-2 w-[4rem] bg-primaryGray text-primaryText rounded-md shadow-lg z-50 ring-1 ring-black ring-opacity-5">
+                                <ul class="py-1">
+                                    @foreach (var lang in otherLangs)
+                                    {
+                                        <li>
+                                            <a href="@lang.Link" class="flex items-center px-3 py-2 text-sm hover:bg-muted/20 hover:text-primary transition-colors">
+                                                <img src="@lang.Icon" alt="@lang.Name" class="w-5 h-5 mr-2 rounded-sm" />
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                    </div>
+                }
+                else
+                {
+                        <p>Current Lang error</p>
+                }
+
                 @foreach (var language in NavbarlanguageSelector ?? Enumerable.Empty<Umbraco.Cms.Core.Models.Blocks.BlockListItem>())
                 {
                     var languageLink = language?.Content.Value<string>("socialMediaUrl");
                     var languageIcon = language?.Content.Value<IPublishedContent>("socialMediaIcon")?.Url();
 
                     if (string.IsNullOrEmpty(languageLink) || string.IsNullOrEmpty(languageIcon))
+                    {
+                        continue;
+                    }
+
+                    if (languageItems.Any(li => li.Link == languageLink && li.Icon == languageIcon))
                     {
                         continue;
                     }
@@ -96,12 +165,11 @@
                     @using (Html.BeginUmbracoForm("HandleLogout", "AuthSurface", FormMethod.Post, new { @class = "inline", id = "logoutForm" }))
                     {
                         <button type="submit"
-                                class="text-primaryText font-medium hover:text-primary transition-colors bg-transparent border-none cursor-pointer">
+                                class="hidden md:block text-primaryText font-medium hover:text-primary transition-colors bg-transparent border-none cursor-pointer">
                             @navbarLogout
                         </button>
                     }
                 }
-
             </div>
         </div>
     </div>
@@ -109,7 +177,7 @@
 
 <div id="sidebar" class="fixed top-16 left-0 h-full w-64 bg-primaryGray text-primaryText transform -translate-x-full transition-transform duration-300 z-40">
     <nav class="mt-4 space-y-2">
-            <ul class="flex flex-col mt-4 space-y-2 px-4">
+        <ul class="flex flex-col mt-4 space-y-2 px-4">
             @foreach (var linkItem in sidebarLinks ?? Enumerable.Empty<Umbraco.Cms.Core.Models.Blocks.BlockListItem>())
             {
                 var sidebarToggle = linkItem.Content.Value<bool>("sidebarNavToggle");
@@ -138,8 +206,19 @@
                     </li>
                 }
             }
-
-            </ul>
+            @if (isLoggedIn)
+            {
+            <li>
+            @using (Html.BeginUmbracoForm("HandleLogout", "AuthSurface", FormMethod.Post, new { @class = "inline", id = "logoutForm" }))
+            {
+                <button type="submit"
+                            class="w-full text-left px-4 py-2 text-primaryText hover:bg-muted/20 hover:text-primary transition-colors duration-200 font-medium border-b border-primaryBorder">
+                        @navbarLogout
+                </button>
+            }
+            </li>
+            }
+        </ul>
     </nav>
 </div>
 

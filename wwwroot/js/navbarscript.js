@@ -49,5 +49,43 @@
             }
         }
     });
+    
+    (function () {
+        var langToggle = document.getElementById('lang-toggle');
+        var langMenu = document.getElementById('lang-menu');
 
+        if (!langToggle || !langMenu) return;
+
+
+        function openLangMenu() {
+            langMenu.classList.remove('hidden');
+            langToggle.setAttribute('aria-expanded', 'true');
+        }
+        function closeLangMen() {
+            langMenu.classList.add('hidden');
+            langToggle.setAttribute('aria-expanded', 'false');
+        }
+
+
+        langToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (langMenu.classList.contains('hidden')) {
+                openLangMenu();
+            } else {
+                closeLangMen();
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!langMenu.contains(e.target) && !langToggle.contains(e.target)) {
+                closeLangMen();
+            }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeLangMen();
+            }
+        });
+    })();
 });
