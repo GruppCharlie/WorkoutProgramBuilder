@@ -4,6 +4,11 @@
 
     var pageTitle = Model.Value("pageTitle") ?? Model.Name;
     var pageDescription = Model.Value("metaDescription") ?? "";
+
+    var settingsNode = Umbraco.ContentAtRoot()
+    .FirstOrDefault(x => x.ContentType.Alias == "settings");
+    var navbarLogo = settingsNode?.Value<IPublishedContent>("siteLogotype");
+    var navbarLogoUrl = navbarLogo?.Url() ?? string.Empty;
 }
 
 <!doctype html>
@@ -101,7 +106,7 @@
 
 
     <link rel="stylesheet" href="/css/main.css">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="@navbarLogoUrl" type="image/x-icon" />
 </head>
 
 <body class="font-poppins bg-neutral-50 text-neutral-900 min-h-screen flex flex-col">
