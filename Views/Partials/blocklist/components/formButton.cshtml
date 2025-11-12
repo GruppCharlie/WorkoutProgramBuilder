@@ -6,15 +6,32 @@
     var buttonText = Model?.Content.Value<string>("buttonText");
     var buttonType = Model?.Content.Value<string>("buttonType");
 
-    var baseClasses = "inline-flex items-center rounded-md px-4 py-2 text-white transition-colors";
+    var baseClasses = "relative inline-flex items-center rounded-md px-4 py-2 text-white transition-colors";
     var colorClasses = buttonType == "submit"
         ? "bg-primary hover:bg-primaryHover"
         : "bg-orange-500 hover:bg-orange-700";
 }
 
 <div class="inline-flex mb-0">
-    <button type="@buttonType" 
-            class="@($"{baseClasses} {colorClasses}")">
-        @buttonText
+    <button type="@buttonType" class="@($"{baseClasses} {colorClasses}")" data-submit-btn>
+        <span class="btn-text">@buttonText</span>
+
+        <span class="btn-spinner hidden pointer-events-none absolute inset-0 flex items-center justify-center">
+            <svg viewBox="0 0 50 50" class="h-5 w-5" aria-hidden="true">
+                <circle cx="25" cy="25" r="20"
+                        stroke="currentColor"
+                        stroke-width="5"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-dasharray="31.4 31.4">
+                    <animateTransform attributeName="transform"
+                                      type="rotate"
+                                      from="0 25 25"
+                                      to="360 25 25"
+                                      dur="0.8s"
+                                      repeatCount="indefinite" />
+                </circle>
+            </svg>
+        </span>
     </button>
 </div>
