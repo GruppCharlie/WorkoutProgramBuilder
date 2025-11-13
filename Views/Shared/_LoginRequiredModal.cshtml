@@ -1,14 +1,17 @@
 @inherits UmbracoViewPageBase<IPublishedContent>
 
 @{
+    var searchPage = Model.Root().DescendantsOfType("searchPage").FirstOrDefault();
+
     var loginLink = GetPageUrl("loginPage", "/login");
     var signUpLink = GetPageUrl("signUpPage", "/signup");
 
-    var header = Model.Value("exersiceModalHeader") ?? "Login Required";
-    var text = Model.Value("exersiceModalText") ?? "You need to log in or sign up to add exercises to your favorites.";
-    var loginText = Model.Value("exersiceModalLogin") ?? "Login";
-    var signupText = Model.Value("exersiceModalSignUp") ?? "Sign up";
-    var closeText = Model.Value("exersiceModalClose") ?? "Close";
+    var header = searchPage?.Value("exersiceModalHeader") ?? "Login Required";
+    var text = searchPage?.Value("exersiceModalText") ?? "You need to log in or sign up to save items.";
+    var loginText = searchPage?.Value("exersiceModalLogin") ?? "Login";
+    var signupText = searchPage?.Value("exersiceModalSignUp") ?? "Sign up";
+    var closeText = searchPage?.Value("exersiceModalClose") ?? "Close";
+
 }
 
 <div id="loginModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50">
