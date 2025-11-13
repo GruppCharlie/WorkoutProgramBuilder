@@ -12,7 +12,6 @@
     var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
     var ctaBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formCta").ToList());
     
-    // Get returnUrl from query string
     var returnUrl = Context.Request.Query["returnUrl"].ToString();
 }
 
