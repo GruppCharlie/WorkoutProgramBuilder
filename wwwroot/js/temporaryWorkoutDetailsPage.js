@@ -4,25 +4,65 @@
  */
 
 /**
- * Load and display workout for unauthenticated users
+ * Load and display workout for unauthenticated users OR authenticated users without workout in DB
  */
 async function loadUnauthenticatedWorkout() {
-    const isAuthenticated = await isUserAuthenticated();
-    if (isAuthenticated) return;
+    // Check if container exists (only shown when workout should be loaded from sessionStorage)
+    const container = document.getElementById('unauthWorkoutContainer');
+    if (!container) return;
+    
+    // Check if user just signed up and has temp profile data
+    await saveTempProfileIfExists();
     
     const workout = getTemporaryWorkout();
     if (!workout) {
-        document.getElementById('noWorkoutMessage').style.display = 'block';
+        const noWorkoutMsg = document.getElementById('noWorkoutMessage');
+        if (noWorkoutMsg) noWorkoutMsg.style.display = 'block';
         return;
     }
     
     // Show container and set description
-    const container = document.getElementById('unauthWorkoutContainer');
     container.style.display = 'block';
-    document.getElementById('unauthWorkoutDescription').textContent = workout.Description;
+    const descElement = document.getElementById('unauthWorkoutDescription');
+    if (descElement) descElement.textContent = workout.Description;
     
     // Render exercises by cloning template (includes buttons)
     renderUnauthenticatedWorkoutExercises(workout.Exercises);
+}
+
+/**
+ * Save temporary profile data to DB if user just signed up
+ */
+async function saveTempProfileIfExists() {
+    const isAuthenticated = await isUserAuthenticated();
+    if (!isAuthenticated) return;
+    
+    try {
+        const tempProfile = sessionStorage.getItem('tempUserProfile');
+        if (!tempProfile) return;
+        
+        const profileData = JSON.parse(tempProfile);
+        
+        // Check if user already has profile data
+        const response = await fetch(API_ENDPOINTS.MEMBER_DETAILS);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.memberDetails) {
+                // User already has profile data, don't override
+                sessionStorage.removeItem('tempUserProfile');
+                return;
+            }
+        }
+        
+        // Save temp profile to DB
+        const saveResponse = await saveMemberDetails(profileData);
+        if (saveResponse.ok) {
+            console.log('Saved temporary profile data to DB');
+            sessionStorage.removeItem('tempUserProfile');
+        }
+    } catch (error) {
+        console.error('Error saving temp profile:', error);
+    }
 }
 
 /**
@@ -34,6 +74,18 @@ function renderUnauthenticatedWorkoutExercises(exercises) {
     const exerciseTemplate = document.getElementById('exerciseCardTemplate');
     
     if (!exercises || !exercises.length || !structureTemplate || !exerciseTemplate || !container) return;
+    
+    // Get CMS labels from data attributes
+    const workoutContainer = document.getElementById('unauthWorkoutContainer');
+    const labels = {
+        instructions: workoutContainer?.dataset.instructionsLabel || 'Instructions:',
+        setsReps: workoutContainer?.dataset.setsRepsLabel || 'Sets & Reps:',
+        muscles: workoutContainer?.dataset.musclesLabel || 'Muscles:',
+        equipments: workoutContainer?.dataset.equipmentsLabel || 'Equipments:',
+        sets: workoutContainer?.dataset.setsText || 'Sets',
+        reps: workoutContainer?.dataset.repsText || 'Reps',
+        visualization: workoutContainer?.dataset.visualizationTitle || 'Targeted Muscles Visualization'
+    };
     
     // Clone the entire workout structure template
     const structure = structureTemplate.content.cloneNode(true);
@@ -86,9 +138,9 @@ function renderUnauthenticatedWorkoutExercises(exercises) {
         const instructionsEl = card.querySelector('.exercise-instructions');
         if (instructions.length > 0) {
             instructionsEl.innerHTML = `
-                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Instructions:</h4>
+                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">${labels.instructions}</h4>
                 <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700 max-h-44 overflow-y-auto pr-2">
-                    ${instructions.map(instructions => `<li class="pl-4">${instructions}</li>`).join('')}
+                    ${instructions.map(instruction => `<li class="pl-4 pb-1">${instruction}</li>`).join('')}
                 </ol>
             `;
         } else {
@@ -96,16 +148,16 @@ function renderUnauthenticatedWorkoutExercises(exercises) {
         }
         
         // Sets & Reps
-        card.querySelector('.exercise-sets').textContent = `${sets} Sets`;
-        card.querySelector('.exercise-reps').textContent = `${reps} Reps`;
+        card.querySelector('.exercise-sets').textContent = `${sets} ${labels.sets}`;
+        card.querySelector('.exercise-reps').textContent = `${reps} ${labels.reps}`;
         
         // Muscles
         const musclesEl = card.querySelector('.exercise-muscles');
         if (muscleGroups.length > 0) {
             musclesEl.innerHTML = `
-                <span class="text-xs font-semibold text-gray-500 block mb-2">Muscles:</span>
+                <span class="text-xs font-semibold text-gray-500 block mb-2">${labels.muscles}</span>
                 <div class="flex flex-wrap gap-2">
-                    ${muscleGroups.map(muscleGroups => `<span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium uppercase">${muscleGroups}</span>`).join('')}
+                    ${muscleGroups.map(muscle => `<span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium uppercase">${muscle}</span>`).join('')}
                 </div>
             `;
         } else {
@@ -116,9 +168,9 @@ function renderUnauthenticatedWorkoutExercises(exercises) {
         const equipmentEl = card.querySelector('.exercise-equipment');
         if (equipment.length > 0) {
             equipmentEl.innerHTML = `
-                <span class="text-xs font-semibold text-gray-500 block mb-2">Equipments:</span>
+                <span class="text-xs font-semibold text-gray-500 block mb-2">${labels.equipments}</span>
                 <div class="flex flex-wrap gap-2">
-                    ${equipment.map(equipment => `<span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">${equipment}</span>`).join('')}
+                    ${equipment.map(item => `<span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">${item}</span>`).join('')}
                 </div>
             `;
         } else {
@@ -142,10 +194,61 @@ function renderUnauthenticatedWorkoutExercises(exercises) {
     container.innerHTML = '';
     container.appendChild(structure);
     
+    // Setup button handlers for authenticated users
+    setupWorkoutButtons();
+    
     // Reset slider to start position and initialize pagination
     const slider = document.getElementById('exerciseSlider');
     requestAnimationFrame(() => {
         slider.scrollLeft = 0;
         initializePagination();
     });
+}
+
+/**
+ * Setup workout buttons with proper handlers based on auth status
+ */
+async function setupWorkoutButtons() {
+    const isAuthenticated = await isUserAuthenticated();
+    
+    // Find the buttons in the rendered structure
+    const addButton = document.querySelector('#unauthWorkoutContainer button[title*="Add"]');
+    const favoriteButton = document.querySelector('#unauthWorkoutContainer button[title*="Favorite"]');
+    
+    if (!addButton || !favoriteButton) return;
+    
+    if (isAuthenticated) {
+        // For authenticated users: use proper workout functions
+        const workout = getTemporaryWorkout();
+        if (!workout) return;
+        
+        // Extract unique muscles and equipment from exercises
+        const allMuscles = workout.Exercises.flatMap(ex => ex.MuscleGroups || []);
+        const allEquipment = workout.Exercises.flatMap(ex => ex.Equipment || []);
+        const uniqueMuscles = [...new Set(allMuscles)];
+        const uniqueEquipment = [...new Set(allEquipment)];
+        
+        // Add data attributes to buttons so extractWorkoutDataFromButton works
+        const exercisesJson = JSON.stringify(workout.Exercises);
+        addButton.setAttribute('data-workout-id', workout.WorkoutId);
+        addButton.setAttribute('data-workout-name', workout.Name);
+        addButton.setAttribute('data-workout-description', workout.Description);
+        addButton.setAttribute('data-workout-muscles', uniqueMuscles.join(','));
+        addButton.setAttribute('data-workout-equipment', uniqueEquipment.join(','));
+        addButton.setAttribute('data-workout-exercises', exercisesJson);
+        
+        favoriteButton.setAttribute('data-workout-id', workout.WorkoutId);
+        favoriteButton.setAttribute('data-workout-name', workout.Name);
+        favoriteButton.setAttribute('data-workout-description', workout.Description);
+        favoriteButton.setAttribute('data-workout-muscles', uniqueMuscles.join(','));
+        favoriteButton.setAttribute('data-workout-equipment', uniqueEquipment.join(','));
+        favoriteButton.setAttribute('data-workout-exercises', exercisesJson);
+        
+        // Setup Add to My Workouts button - use existing function
+        addButton.onclick = (e) => addToMyWorkoutsDetails(e, addButton);
+        
+        // Setup Favorite button - use existing function
+        favoriteButton.onclick = (e) => toggleWorkoutFavoriteDetails(e, favoriteButton);
+    }
+    // For unauthenticated users, buttons already have onclick="showLoginModal()"
 }

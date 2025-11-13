@@ -1,4 +1,4 @@
-﻿@using System.Linq;
+@using System.Linq;
 @using Umbraco.Cms.Core.Models.Blocks;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<LoginPage>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
@@ -19,6 +19,9 @@
         : "";
 
     ViewData["DisablePasswordPattern"] = true;
+    
+    // Get returnUrl from query string
+    var returnUrl = Context.Request.Query["returnUrl"].ToString();
 }
 
 <div class="container mx-auto px-4 mb-16">
@@ -30,6 +33,11 @@
 
         @using (Html.BeginUmbracoForm("HandleLogin", "AuthSurface", FormMethod.Post, new { id = "loginForm", @class = "space-y-6", novalidate = "novalidate", autocomplete = "off" }))
         {
+            @if (!string.IsNullOrWhiteSpace(returnUrl))
+            {
+                <input type="hidden" name="returnUrl" value="@returnUrl" />
+            }
+            
             @Html.GetBlockListHtml(inputBlocks)
 
             <div class="flex gap-3">

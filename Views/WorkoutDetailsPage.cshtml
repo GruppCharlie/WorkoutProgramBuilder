@@ -6,6 +6,7 @@
     Layout = "mainLayout.cshtml";
     
     var isAuthenticated = ViewData["IsAuthenticated"] as bool? ?? true;
+    var loadFromSessionStorage = ViewData["LoadFromSessionStorage"] as bool? ?? false;
     
     // For authenticated users, get workout from ViewData
     SavedWorkoutDto? workout = null;
@@ -15,7 +16,7 @@
         workout = savedWorkout;
         ViewBag.Title = workout.Name;
     }
-    // For unauthenticated users, workout will be loaded from sessionStorage via JavaScript
+    // For unauthenticated users OR authenticated users without workout in DB, workout will be loaded from sessionStorage via JavaScript
     
     // Get page URLs using base class helper
     var myWorkoutsUrl = GetPageUrl("myWorkoutsPage", "/workouts/my-workouts");
@@ -37,10 +38,19 @@
     var equipmentsLabel = GetTextOrFallback(Model.EquipmentsLabel, "Equipments:");
 }
 
-@if (!isAuthenticated)
+@if (!isAuthenticated || loadFromSessionStorage)
 {
-    <!-- Unauthenticated user: Load from sessionStorage via JavaScript -->
-    <div id="unauthWorkoutContainer" class="container mx-auto px-4 sm:px-6 lg:px-8 py-10" style="display: none;">
+    <!-- Unauthenticated user OR authenticated user without workout in DB: Load from sessionStorage via JavaScript -->
+    <div id="unauthWorkoutContainer" 
+         class="container mx-auto px-4 sm:px-6 lg:px-8 py-10" 
+         style="display: none;"
+         data-instructions-label="@instructionsLabel"
+         data-sets-reps-label="@setsRepsLabel"
+         data-muscles-label="@musclesLabel"
+         data-equipments-label="@equipmentsLabel"
+         data-sets-text="@setsText"
+         data-reps-text="@repsText"
+         data-visualization-title="@visualizationTitle">
         <div class="mb-8 flex flex-col items-center justify-center">
             <p id="unauthWorkoutDescription" class="text-gray-600 text-lg"></p>
         </div>

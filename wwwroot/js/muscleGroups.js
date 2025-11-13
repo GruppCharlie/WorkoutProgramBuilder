@@ -329,6 +329,13 @@ if (userForm) {
             Height: parseFloat(heightInput.value)
         };
         
+        // Save to sessionStorage for unauthenticated users (will be saved to DB after signup)
+        try {
+            sessionStorage.setItem('tempUserProfile', JSON.stringify(details));
+        } catch (err) {
+            console.error('Error saving to sessionStorage:', err);
+        }
+        
         try {
             const res = await saveMemberDetails(details);
             if (res.ok) memberDetails = details;

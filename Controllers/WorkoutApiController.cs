@@ -128,6 +128,9 @@ public class WorkoutApiController(
 
             logger.LogInformation("Adding workout: {WorkoutId} for member {MemberId}", 
                 workout.WorkoutId, currentMember.Id);
+            logger.LogInformation("Workout Muscles: {Muscles}", string.Join(", ", workout.Muscles));
+            logger.LogInformation("Workout Equipment: {Equipment}", string.Join(", ", workout.Equipment));
+            logger.LogInformation("Workout Exercises count: {Count}", workout.Exercises.Count);
 
             var success = workoutsService.ToggleMyWorkout(int.Parse(currentMember.Id), workout);
             
