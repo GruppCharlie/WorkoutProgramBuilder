@@ -138,6 +138,9 @@ class MuscleGroupVisualizer {
         const workoutResults = document.querySelector('.workout-results');
         const workoutContent = document.querySelector('.workout-content');
 
+        // Check if user is authenticated
+        const isAuthenticated = await isUserAuthenticated();
+
         // Collect all unique muscles and equipment from all exercises
         const allMuscles = [...new Set(workout.exercises.flatMap(ex => ex.muscleGroups || []))];
         const allEquipment = [...new Set(workout.exercises.flatMap(ex => ex.equipment || []))];
@@ -145,6 +148,47 @@ class MuscleGroupVisualizer {
         const muscleVisualizationHTML = this.generateMuscleVisualization(allMuscles);
         const exercisesJson = JSON.stringify(workout.exercises).replace(/"/g, '&quot;');
         const workoutId = workout.id || Date.now().toString();
+        
+        // Save workout to sessionStorage immediately after generated workout
+        const workoutData = {
+            WorkoutId: workoutId,
+            Name: workout.name,
+            Description: workout.description,
+            Muscles: allMuscles,
+            Equipment: allEquipment,
+            Exercises: workout.exercises
+        };
+        saveTemporaryWorkout(workoutData);
+        
+        // Generate action buttons HTML only for authenticated users
+        const actionButtonsHTML = isAuthenticated ? `
+            <div class="absolute top-4 right-4 flex gap-2 z-10">
+                <button type="button"
+                        class="text-gray-400 hover:text-primary focus:outline-none text-2xl add-to-my-workouts-btn"
+                        data-workout-id="${workoutId}"
+                        data-workout-name="${workout.name}"
+                        data-workout-description="${workout.description}"
+                        data-workout-muscles="${allMuscles.join(',')}"
+                        data-workout-equipment="${allEquipment.join(',')}"
+                        data-workout-exercises="${exercisesJson}"
+                        onclick="addToMyWorkouts(event, this)"
+                        title="Add to My Workouts">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button type="button"
+                        class="text-gray-400 hover:text-red-500 focus:outline-none text-2xl"
+                        data-workout-id="${workoutId}"
+                        data-workout-name="${workout.name}"
+                        data-workout-description="${workout.description}"
+                        data-workout-muscles="${allMuscles.join(',')}"
+                        data-workout-equipment="${allEquipment.join(',')}"
+                        data-workout-exercises="${exercisesJson}"
+                        onclick="toggleWorkoutFavorite(event, this)"
+                        title="Add to Favorites">
+                    <i class="fa-solid fa-heart"></i>
+                </button>
+            </div>
+        ` : '';
         
         // Create workout card HTML using same structure as _WorkoutCard.cshtml
         workoutContent.innerHTML = `
@@ -155,34 +199,9 @@ class MuscleGroupVisualizer {
                  onclick="navigateToWorkoutDetail('${workoutId}')">
                 <!-- Workout Card Header -->
                 <div class="relative p-6 bg-neutral-100 h-[200px] flex flex-col">
-                    <div class="absolute top-4 right-4 flex gap-2 z-10">
-                        <button type="button"
-                                class="text-gray-400 hover:text-primary focus:outline-none text-2xl add-to-my-workouts-btn"
-                                data-workout-id="${workoutId}"
-                                data-workout-name="${workout.name}"
-                                data-workout-description="${workout.description}"
-                                data-workout-muscles="${allMuscles.join(',')}"
-                                data-workout-equipment="${allEquipment.join(',')}"
-                                data-workout-exercises="${exercisesJson}"
-                                onclick="addToMyWorkouts(event, this)"
-                                title="Add to My Workouts">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                        <button type="button"
-                                class="text-gray-400 hover:text-red-500 focus:outline-none text-2xl"
-                                data-workout-id="${workoutId}"
-                                data-workout-name="${workout.name}"
-                                data-workout-description="${workout.description}"
-                                data-workout-muscles="${allMuscles.join(',')}"
-                                data-workout-equipment="${allEquipment.join(',')}"
-                                data-workout-exercises="${exercisesJson}"
-                                onclick="toggleWorkoutFavorite(event, this)"
-                                title="Add to Favorites">
-                            <i class="fa-solid fa-heart"></i>
-                        </button>
-                    </div>
+                    ${actionButtonsHTML}
                     
-                    <h4 class="text-2xl font-bold text-gray-900 mb-2 pr-20 line-clamp-2">${workout.name}</h4>
+                    <h4 class="text-2xl font-bold text-gray-900 mb-2 ${isAuthenticated ? 'pr-20' : ''} line-clamp-2">${workout.name}</h4>
                     <p class="text-gray-600 text-sm flex-1 line-clamp-3">${workout.description}</p>
                     
                     <div class="mt-auto flex items-center gap-2 text-sm text-gray-500">

@@ -222,27 +222,19 @@ async function setupWorkoutButtons() {
         const workout = getTemporaryWorkout();
         if (!workout) return;
         
-        // Extract unique muscles and equipment from exercises
-        const allMuscles = workout.Exercises.flatMap(ex => ex.MuscleGroups || []);
-        const allEquipment = workout.Exercises.flatMap(ex => ex.Equipment || []);
-        const uniqueMuscles = [...new Set(allMuscles)];
-        const uniqueEquipment = [...new Set(allEquipment)];
+        // Prepare workout data with Muscles and Equipment from sessionStorage
+        const workoutData = {
+            WorkoutId: workout.WorkoutId,
+            Name: workout.Name,
+            Description: workout.Description,
+            Muscles: workout.Muscles || [],
+            Equipment: workout.Equipment || [],
+            Exercises: workout.Exercises
+        };
         
-        // Add data attributes to buttons so extractWorkoutDataFromButton works
-        const exercisesJson = JSON.stringify(workout.Exercises);
-        addButton.setAttribute('data-workout-id', workout.WorkoutId);
-        addButton.setAttribute('data-workout-name', workout.Name);
-        addButton.setAttribute('data-workout-description', workout.Description);
-        addButton.setAttribute('data-workout-muscles', uniqueMuscles.join(','));
-        addButton.setAttribute('data-workout-equipment', uniqueEquipment.join(','));
-        addButton.setAttribute('data-workout-exercises', exercisesJson);
-        
-        favoriteButton.setAttribute('data-workout-id', workout.WorkoutId);
-        favoriteButton.setAttribute('data-workout-name', workout.Name);
-        favoriteButton.setAttribute('data-workout-description', workout.Description);
-        favoriteButton.setAttribute('data-workout-muscles', uniqueMuscles.join(','));
-        favoriteButton.setAttribute('data-workout-equipment', uniqueEquipment.join(','));
-        favoriteButton.setAttribute('data-workout-exercises', exercisesJson);
+        // Set data attributes on both buttons using utility function
+        setWorkoutDataOnButton(addButton, workoutData);
+        setWorkoutDataOnButton(favoriteButton, workoutData);
         
         // Setup Add to My Workouts button - use existing function
         addButton.onclick = (e) => addToMyWorkoutsDetails(e, addButton);

@@ -1,4 +1,4 @@
-// Favorite utility functions
+// Favorite utility 
 
 /**
  * Toggle favorite status for an exercise
@@ -12,11 +12,7 @@ async function toggleFavorite(event, button) {
     const exerciseData = getExerciseDataFromButton(button);
 
     try {
-        const response = await fetch('/api/favorites/exercise', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(exerciseData)
-        });
+        const response = await toggleExerciseFavorite(exerciseData);
 
         if (response.status === 401) {
             showLoginModal();

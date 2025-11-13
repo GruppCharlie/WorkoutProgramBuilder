@@ -48,9 +48,18 @@ public class WorkoutDetailsPageController(
             
             // Workout not in DB yet - let JavaScript load it from sessionStorage
             // This happens when user signs up/logs in after generating a workout
-            ViewData["IsAuthenticated"] = true; // User is authenticated
+            ViewData["IsAuthenticated"] = true; 
             ViewData["WorkoutId"] = workoutId;
             ViewData["LoadFromSessionStorage"] = true; // Signal to load from sessionStorage
+            
+            // Set breadcrumbs for authenticated user viewing workout from sessionStorage
+            ViewData["CustomBreadcrumbs"] = new List<(string Name, string? Url)>
+            {
+                ("Home", "/"),
+                ("Workouts", "/workouts"),
+                ("My Workouts", "/workouts/my-workouts"),
+                ("Workout Details", null)
+            };
             
             return CurrentTemplate(CurrentPage);
         }
