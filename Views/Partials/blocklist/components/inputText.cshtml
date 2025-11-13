@@ -33,7 +33,7 @@
            autocapitalize="none"
            spellcheck="false"
            @(isRequired ? "required" : null) 
-           @(isEmailField ? null : new HtmlString(@"pattern=""^[A-Za-z0-9_]{3,20}$""")) />
+           @(isEmailField ? null : new HtmlString(@"pattern=""^[A-Za-z0-9_-](?:[A-Za-z0-9 _-]{1,28})[A-Za-z0-9_-]$""")) />
 
     @if(isRequired && !string.IsNullOrWhiteSpace(errorMessage)) 
     {
