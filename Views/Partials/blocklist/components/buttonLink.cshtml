@@ -10,7 +10,7 @@
     
     var buttonVariant = Model.Content.Value<string>("buttonVariant")?.ToLower() ?? "primary";
     
-    var baseClasses = "inline-block px-6 py-4 rounded-lg font-semibold no-underline transition-all duration-200";
+    var baseClasses = "inline text-primary font-medium cursor-pointer hover:underline";
     
     var variantClasses = buttonVariant switch
     {
@@ -24,4 +24,4 @@
     var btnClasses = $"{baseClasses} {variantClasses}";
 }
 
-<a href="@buttonLinkUrl" title="@buttonLinkText" class="@btnClasses">@buttonLinkText</a>
+<a href="@buttonLinkUrl" title="@buttonLinkText" class="@baseClasses">@buttonLinkText</a>
