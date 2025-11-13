@@ -1,7 +1,7 @@
 namespace WorkoutProgramBuilder.Controllers;
 
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Logging;
@@ -11,7 +11,6 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Web.Common.Security;
-using Umbraco.Cms.Web.Common.UmbracoContext;
 using Umbraco.Cms.Web.Website.Controllers;
 
 public class AuthSurfaceController(
@@ -36,6 +35,8 @@ public class AuthSurfaceController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> HandleSignup(string username, string emailSignup, string createPassword, string confirmPassword, string? returnUrl = null)
     {
+        username = username?.Trim() ?? string.Empty;
+
         if (string.IsNullOrWhiteSpace(username) ||
             string.IsNullOrWhiteSpace(emailSignup) ||
             string.IsNullOrWhiteSpace(createPassword) ||
@@ -53,10 +54,13 @@ public class AuthSurfaceController(
             return RedirectToCurrentUmbracoPage();
         }
 
-        if (!System.Text.RegularExpressions.Regex.IsMatch(username, @"^[a-zA-Z0-9_]{3,20}$"))
+        var usernameOk = Regex.IsMatch(username, @"^[A-Za-z0-9_-](?:[A-Za-z0-9 _-]{1,28})[A-Za-z0-9_-]$");
+
+        if (!usernameOk)
         {
             TempData["SignupErrorKey"] = "Signup.Validation.UsernameFormat";
-            TempData["SignupErrorDefault"] = "Username must be 3–20 characters (letters, numbers, underscore).";
+            TempData["SignupErrorDefault"] =
+                "Username must be 3–30 characters and may include letters, numbers, spaces, underscores, or hyphens (no spaces at the start/end).";
             return RedirectToCurrentUmbracoPage();
         }
 
@@ -94,7 +98,9 @@ public class AuthSurfaceController(
         if (!createResult.Succeeded)
         {
             var msg = string.Join(" ", createResult.Errors.Select(e => e.Description));
-            TempData["SignupError"] = string.IsNullOrWhiteSpace(msg)
+
+            TempData["SignupErrorKey"] = "Signup.Validation.AccountCreateFailed";
+            TempData["SignupErrorDefault"] = string.IsNullOrWhiteSpace(msg)
                 ? "Could not create the account. Please try again."
                 : msg;
 
