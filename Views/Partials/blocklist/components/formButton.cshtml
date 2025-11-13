@@ -6,13 +6,13 @@
     var buttonText = Model?.Content.Value<string>("buttonText");
     var buttonType = Model?.Content.Value<string>("buttonType");
 
-    var baseClasses = "relative inline-flex items-center rounded-md px-4 py-2 text-white transition-colors";
+    var baseClasses = "relative w-full inline-flex items-center justify-center rounded-md px-4 py-2 text-white transition-colors";
     var colorClasses = buttonType == "submit"
         ? "bg-primary hover:bg-primaryHover"
         : "bg-orange-500 hover:bg-orange-700";
 }
 
-<div class="inline-flex mb-0">
+<div class="inline-flex mb-0 w-full text-center">
     <button type="@buttonType" class="@($"{baseClasses} {colorClasses}")" data-submit-btn>
         <span class="btn-text">@buttonText</span>
 
