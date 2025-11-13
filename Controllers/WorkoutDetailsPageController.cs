@@ -44,14 +44,22 @@ public class WorkoutDetailsPageController(
 
         if (workout == null)
         {
-            logger.LogWarning("Workout not found: {WorkoutId} for member: {MemberId}", workoutId, memberId);
+            logger.LogInformation("Workout not found in DB: {WorkoutId} for member: {MemberId}. Will try to load from sessionStorage.", workoutId, memberId);
             
-            var allWorkouts = workoutsService.GetMyWorkouts(memberId);
-            logger.LogWarning("Available workouts: {Count}", allWorkouts.Count);
-            foreach (var w in allWorkouts.Take(5))
+            // Workout not in DB yet - let JavaScript load it from sessionStorage
+            // This happens when user signs up/logs in after generating a workout
+            ViewData["IsAuthenticated"] = true; 
+            ViewData["WorkoutId"] = workoutId;
+            ViewData["LoadFromSessionStorage"] = true; // Signal to load from sessionStorage
+            
+            // Set breadcrumbs for authenticated user viewing workout from sessionStorage
+            ViewData["CustomBreadcrumbs"] = new List<(string Name, string? Url)>
             {
-                logger.LogWarning("  - WorkoutId: {Id}, Name: {Name}", w.WorkoutId, w.Name);
-            }
+                ("Home", "/"),
+                ("Workouts", "/workouts"),
+                ("My Workouts", "/workouts/my-workouts"),
+                ("Workout Details", null)
+            };
             
             return CurrentTemplate(CurrentPage);
         }

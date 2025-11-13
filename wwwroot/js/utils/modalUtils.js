@@ -1,11 +1,30 @@
 // Modal utility functions
 
 /**
- * Show login modal
+ * Show login modal and update links with return URL
  */
 function showLoginModal() {
     const loginModal = document.getElementById('loginModal');
     if (loginModal) {
+        // Get current URL for return after login
+        const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+        
+        // Update login and signup links with returnUrl
+        const loginLink = loginModal.querySelector('a[href*="login"]');
+        const signupLink = loginModal.querySelector('a[href*="signup"]');
+        
+        if (loginLink) {
+            const loginUrl = new URL(loginLink.href, window.location.origin);
+            loginUrl.searchParams.set('returnUrl', returnUrl);
+            loginLink.href = loginUrl.toString();
+        }
+        
+        if (signupLink) {
+            const signupUrl = new URL(signupLink.href, window.location.origin);
+            signupUrl.searchParams.set('returnUrl', returnUrl);
+            signupLink.href = signupUrl.toString();
+        }
+        
         loginModal.classList.remove('hidden');
         document.body.classList.add('overflow-hidden');
     }

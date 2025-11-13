@@ -1,4 +1,4 @@
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<WorkoutGeneratorPage>
+@inherits UmbracoViewPageBase<WorkoutGeneratorPage>
 @inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
 @inject Umbraco.Cms.Core.Services.IMemberService MemberService
 
@@ -18,13 +18,13 @@
 
     var needsUserInput = !isLoggedIn || string.IsNullOrWhiteSpace(memberDetails);
 
-    var pleaseEnter = Model.PleaseEnter;
-    var personalAge = Model.PersonalAge;
-    var personalGender = Model.PersonalGender;
-    var genderSelection = Model.GenderSelection;
-    var personalWeight = Model.PersonalWeight;
-    var personalHeight = Model.PersonalHeight;
-    var continueButton = Model.ContinueButton;
+    var pleaseEnter = Model.PleaseEnter ?? "Please enter your details to continue";
+    var personalAge = Model.PersonalAge ?? "Age";
+    var personalGender = Model.PersonalGender ?? "Select gender";
+    var genderSelection = Model.GenderSelection ?? [ "Male", "Female"];
+    var personalWeight = Model.PersonalWeight ?? "Weight (kg)";
+    var personalHeight = Model.PersonalHeight ?? "Height (cm)";
+    var continueButton = Model.ContinueButton ?? "Continue";
 
     
     var muscleGroups = ViewData["MuscleGroups"] as List<string> ?? [];
@@ -42,12 +42,9 @@
                     <div>
                         <select name="gender" id="userGenderInput" class="border p-2 rounded w-full text-center" required>
                             <option value="">@personalGender</option>
-                            @if (genderSelection != null)
+                            @foreach (var gender in genderSelection)
                             {
-                                @foreach (var gender in genderSelection)
-                                {
-                                    <option value="@gender">@gender</option>
-                                }
+                                <option value="@gender">@gender</option>
                             }
                         </select>
 

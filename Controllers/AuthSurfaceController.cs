@@ -1,4 +1,4 @@
-﻿namespace WorkoutProgramBuilder.Controllers;
+namespace WorkoutProgramBuilder.Controllers;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +34,7 @@ public class AuthSurfaceController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> HandleSignup(string username, string emailSignup, string createPassword, string confirmPassword)
+    public async Task<IActionResult> HandleSignup(string username, string emailSignup, string createPassword, string confirmPassword, string? returnUrl = null)
     {
         if (string.IsNullOrWhiteSpace(username) ||
             string.IsNullOrWhiteSpace(emailSignup) ||
@@ -121,12 +121,23 @@ public class AuthSurfaceController(
             return RedirectToCurrentUmbracoPage();
         }
 
+        // Redirect to returnUrl if provided, otherwise go to home
+        if (!string.IsNullOrWhiteSpace(returnUrl))
+        {
+            // Decode URL in case it's encoded
+            var decodedUrl = Uri.UnescapeDataString(returnUrl);
+            if (Url.IsLocalUrl(decodedUrl))
+            {
+                return Redirect(decodedUrl);
+            }
+        }
+        
         return Redirect(GetHomeUrlForCurrentCulture() ?? "/");
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> HandleLogin(string emailLogin, string password)
+    public async Task<IActionResult> HandleLogin(string emailLogin, string password, string? returnUrl = null)
     {
         if (string.IsNullOrWhiteSpace(emailLogin) || string.IsNullOrWhiteSpace(password))
         {
@@ -147,7 +158,20 @@ public class AuthSurfaceController(
             member.Username, password, isPersistent: false, lockoutOnFailure: false);
 
         if (attempt.Succeeded)
+        {
+            // Redirect to returnUrl if provided, otherwise go to home
+            if (!string.IsNullOrWhiteSpace(returnUrl))
+            {
+                // Decode URL in case it's encoded
+                var decodedUrl = Uri.UnescapeDataString(returnUrl);
+                if (Url.IsLocalUrl(decodedUrl))
+                {
+                    return Redirect(decodedUrl);
+                }
+            }
+            
             return Redirect(GetHomeUrlForCurrentCulture() ?? "/");
+        }
 
         if (attempt.IsLockedOut)
         {

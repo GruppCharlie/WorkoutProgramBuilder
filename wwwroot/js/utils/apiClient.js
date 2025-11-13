@@ -111,3 +111,16 @@ async function getMemberDetails() {
         return null;
     }
 }
+
+/**
+ * Toggle exercise favorite status
+ * {Object} exerciseData - Exercise data object
+ * returns {Promise<Response>} API response
+ */
+async function toggleExerciseFavorite(exerciseData) {
+    return await fetch(API_ENDPOINTS.FAVORITES_EXERCISE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(exerciseData)
+    });
+}

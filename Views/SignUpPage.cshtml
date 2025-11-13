@@ -1,4 +1,4 @@
-﻿@using System.Linq;
+@using System.Linq;
 @using Umbraco.Cms.Core.Models.Blocks;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<SignUpPage>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
@@ -11,6 +11,9 @@
     var inputBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton" && x.Content.ContentType.Alias != "formCta").ToList());
     var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
     var ctaBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formCta").ToList());
+    
+    // Get returnUrl from query string
+    var returnUrl = Context.Request.Query["returnUrl"].ToString();
 }
 
 <div class="container mx-auto px-4 mb-16">
@@ -48,6 +51,11 @@
         
         @using (Html.BeginUmbracoForm("HandleSignup", "AuthSurface", FormMethod.Post, new { id = "signupForm", @class = "space-y-6", novalidate = "novalidate", autocomplete = "off" }))
         {
+            @if (!string.IsNullOrWhiteSpace(returnUrl))
+            {
+                <input type="hidden" name="returnUrl" value="@returnUrl" />
+            }
+            
             @Html.GetBlockListHtml(inputBlocks)
 
             <div class="flex gap-3">
