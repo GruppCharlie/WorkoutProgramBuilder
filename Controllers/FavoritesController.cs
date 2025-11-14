@@ -16,12 +16,13 @@ public class FavoritesController(
     IMemberWorkoutsService workoutsService,
     ILogger<FavoritesController> logger,
     ICompositeViewEngine viewEngine,
-    IUmbracoContextAccessor contextAccessor) : RenderController(logger, viewEngine, contextAccessor)
+    IUmbracoContextAccessor contextAccessor,
+    IUmbracoPageService pageService) : RenderController(logger, viewEngine, contextAccessor)
 {
     private readonly IMemberManager _memberManager = memberManager;
     private readonly IMemberFavoritesService _favoritesService = favoritesService;
     private readonly IMemberWorkoutsService _workoutsService = workoutsService;
-    private readonly IUmbracoContextAccessor _contextAccessor = contextAccessor;
+    private readonly IUmbracoPageService _pageService = pageService;
 
     [HttpGet]
     public new async Task<IActionResult> Index()
@@ -29,18 +30,7 @@ public class FavoritesController(
         var currentMember = await _memberManager.GetCurrentMemberAsync();
         if (currentMember == null)
         {
-            if (!_contextAccessor.TryGetUmbracoContext(out var umbracoContext) || umbracoContext == null)
-                return Redirect("/login");
-
-            var contentCache = umbracoContext.Content;
-            var loginNode = contentCache
-                .GetAtRoot()
-                .SelectMany(r => r.DescendantsOrSelf())
-                .FirstOrDefault(x => x.ContentType.Alias == "loginPage");
-
-            var culture = System.Globalization.CultureInfo.CurrentCulture.Name;
-            var loginUrl = loginNode?.Url(culture: culture) ?? "/login";
-
+            var loginUrl = _pageService.GetPageUrl("loginPage", "/login");
             return Redirect(loginUrl);
         }
 
@@ -66,6 +56,9 @@ public class FavoritesController(
 
         ViewData["Exercises"] = savedExercises;
         ViewData["Workouts"] = savedWorkouts;
+        
+        // Set workout details URL for JavaScript navigation
+        ViewData["WorkoutDetailsUrl"] = _pageService.GetPageUrl("workoutDetailsPage", "/workouts/workout-details");
 
         return CurrentTemplate(CurrentPage);
     }

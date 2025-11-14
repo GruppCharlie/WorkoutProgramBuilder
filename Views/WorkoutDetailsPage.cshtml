@@ -22,20 +22,20 @@
     var myWorkoutsUrl = GetPageUrl("myWorkoutsPage", "/workouts/my-workouts");
     var workoutGeneratorUrl = GetPageUrl("workoutGeneratorPage", "/workouts/workout-generator");
     
-    // CMS-editable text labels with fallbacks
+    // Localized texts from Dictionary
+    var exercisesText = Umbraco.GetDictionaryValue("workoutCard.Exercises") ?? "Exercises";
     var addToMyWorkoutsText = GetTextOrFallback(Model.AddToMyWorkoutsText, "Add to My Workouts");
     var inMyWorkoutsText = GetTextOrFallback(Model.InMyWorkoutsText, "In My Workouts");
     var favoriteText = GetTextOrFallback(Model.FavoriteText, "Favorite");
     var favoritedText = GetTextOrFallback(Model.FavoritedText, "Favorited");
-    var exercisesText = GetTextOrFallback(Model.ExercisesText, "exercises");
     
-    var visualizationTitle = GetTextOrFallback(Model.VisualizationTitle,"Targeted Muscles Visualization"); 
-    var instructionsLabel = GetTextOrFallback(Model.InstructionsLabel, "Instructions:");
-    var setsRepsLabel = GetTextOrFallback(Model.SetsRepsLabel, "Sets & Reps:");
-    var setsText = GetTextOrFallback(Model.SetsText, "Sets");
-    var repsText = GetTextOrFallback(Model.RepsText, "Reps");
-    var musclesLabel = GetTextOrFallback(Model.MusclesLabel, "Muscles:");
-    var equipmentsLabel = GetTextOrFallback(Model.EquipmentsLabel, "Equipments:");
+    var visualizationTitle = Umbraco.GetDictionaryValue("workoutExerciseCard.Visualization") ?? "Targeted Muscles Visualization"; 
+    var instructionsLabel = Umbraco.GetDictionaryValue("workoutExerciseCard.Instructions") ?? "Instructions:";
+    var setsRepsLabel = Umbraco.GetDictionaryValue("workoutExerciseCard.SetsReps") ?? "Sets & Reps:";
+    var setsText = Umbraco.GetDictionaryValue("workoutExerciseCard.Sets") ?? "Sets";
+    var repsText = Umbraco.GetDictionaryValue("workoutExerciseCard.Reps") ?? "Reps";
+    var musclesLabel = Umbraco.GetDictionaryValue("workoutExerciseCard.Muscles") ?? "Muscles:";
+    var equipmentsLabel = Umbraco.GetDictionaryValue("workoutExerciseCard.Equipment") ?? "Equipment:";
 }
 
 @if (!isAuthenticated || loadFromSessionStorage)
@@ -78,17 +78,21 @@
                 <div class="flex gap-2 sm:gap-3">
                     <button type="button"
                             class="flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 rounded-lg transition-colors bg-primary text-white hover:bg-primary/90"
+                            data-text-add="@addToMyWorkoutsText"
+                            data-text-added="@inMyWorkoutsText"
                             onclick="showLoginModal()"
                             title="@addToMyWorkoutsText">
                         <i class="fa-solid fa-plus"></i>
-                        <span class="hidden sm:inline">@addToMyWorkoutsText</span>
+                        <span class="hidden md:inline">@addToMyWorkoutsText</span>
                     </button>
                     <button type="button"
                             class="flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 border border-gray-300 rounded-lg transition-colors text-gray-700 hover:bg-gray-50"
+                            data-text-favorite="@favoriteText"
+                            data-text-favorited="@favoritedText"
                             onclick="showLoginModal()"
                             title="@favoriteText">
                         <i class="fa-solid fa-heart"></i>
-                        <span class="hidden sm:inline">@favoriteText</span>
+                        <span class="hidden md:inline">@favoriteText</span>
                     </button>
                 </div>
             </div>
@@ -181,10 +185,12 @@ else
                                 data-workout-muscles="@string.Join(",", workout.Muscles)"
                                 data-workout-equipment="@string.Join(",", workout.Equipment)"
                                 data-workout-exercises='@System.Text.Json.JsonSerializer.Serialize(workout.Exercises)'
+                                data-text-add="@addToMyWorkoutsText"
+                                data-text-added="@inMyWorkoutsText"
                                 onclick="@(workout.IsInMyWorkouts ? "removeFromMyWorkoutsDetails(event, this)" : "addToMyWorkoutsDetails(event, this)")"
                                 title="@(workout.IsInMyWorkouts ? inMyWorkoutsText : addToMyWorkoutsText)">
                             <i class="fa-solid @(workout.IsInMyWorkouts ? "fa-check" : "fa-plus")"></i>
-                            <span class="hidden sm:inline">@(workout.IsInMyWorkouts ? inMyWorkoutsText : addToMyWorkoutsText)</span>
+                            <span class="hidden md:inline">@(workout.IsInMyWorkouts ? inMyWorkoutsText : addToMyWorkoutsText)</span>
                         </button>
                         <button type="button"
                                 class="favorite-workout-btn flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 border border-gray-300 rounded-lg transition-colors @(workout.IsSaved ? "text-red-500 border-red-500 hover:bg-red-50" : "text-gray-700 hover:text-red-500 hover:bg-gray-50")"
@@ -194,10 +200,12 @@ else
                                 data-workout-muscles="@string.Join(",", workout.Muscles)"
                                 data-workout-equipment="@string.Join(",", workout.Equipment)"
                                 data-workout-exercises='@System.Text.Json.JsonSerializer.Serialize(workout.Exercises)'
+                                data-text-favorite="@favoriteText"
+                                data-text-favorited="@favoritedText"
                                 onclick="toggleWorkoutFavoriteDetails(event, this)"
                                 title="@(workout.IsSaved ? favoritedText : favoriteText)">
                             <i class="fa-solid fa-heart @(workout.IsSaved ? "text-red-500" : "")"></i>
-                            <span class="hidden sm:inline">@(workout.IsSaved ? favoritedText : favoriteText)</span>
+                            <span class="hidden md:inline">@(workout.IsSaved ? favoritedText : favoriteText)</span>
                         </button>
                     </div>
                 </div>

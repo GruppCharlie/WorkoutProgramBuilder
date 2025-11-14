@@ -8,11 +8,7 @@ namespace WorkoutProgramBuilder.Controllers;
 [ApiController]
 [Route("api/workout")]
 [Produces("application/json")]
-public class WorkoutApiController(
-    IRapidApiService rapidApiService, 
-    IMemberManager memberManager,
-    IMemberWorkoutsService workoutsService,
-    ILogger<WorkoutApiController> logger) : ControllerBase
+public class WorkoutApiController( IRapidApiService rapidApiService, IMemberManager memberManager, IMemberWorkoutsService workoutsService, ILogger<WorkoutApiController> logger) : ApiControllerBase(memberManager, logger)
 {
     private const int MinDescriptionLength = 4;
     private const int MaxDescriptionLength = 500;
@@ -25,79 +21,33 @@ public class WorkoutApiController(
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<WorkoutResponse>> GenerateWorkout([FromBody] GenerateWorkoutRequest request)
     {
-        logger.LogInformation("=== Workout Generation Request Received ===");
-        logger.LogInformation("MuscleGroups: {MuscleGroups}", string.Join(", ", request.MuscleGroups));
-        logger.LogInformation("Equipment: {Equipment}", string.Join(", ", request.Equipment));
-        logger.LogInformation("Description: {Description}", request.Description);
-        logger.LogInformation("ModelState.IsValid: {IsValid}", ModelState.IsValid);
+        LogWorkoutRequest(request);
         
         if (!ModelState.IsValid)
-        {
-            logger.LogWarning("ModelState validation failed: {Errors}", 
-                string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
             return ValidationProblem(ModelState);
-        }
 
-        if (string.IsNullOrWhiteSpace(request.Description))
-            return BadRequest(new ProblemDetails 
-            { 
-                Title = "Invalid Request",
-                Detail = "Description is required",
-                Status = StatusCodes.Status400BadRequest
-            });
-
-        if (request.Description.Length < MinDescriptionLength)
-        {
-            logger.LogWarning("Description too short: {Length} chars (min: {Min})", 
-                request.Description.Length, MinDescriptionLength);
-            return BadRequest(new ProblemDetails 
-            { 
-                Title = "Invalid Request",
-                Detail = $"Description must be at least {MinDescriptionLength} characters",
-                Status = StatusCodes.Status400BadRequest
-            });
-        }
-
-        if (request.Description.Length > MaxDescriptionLength)
-            return BadRequest(new ProblemDetails 
-            { 
-                Title = "Invalid Request",
-                Detail = $"Description must be less than {MaxDescriptionLength} characters",
-                Status = StatusCodes.Status400BadRequest
-            });
+        var validationError = ValidateDescription(request.Description);
+        if (validationError != null)
+            return validationError;
 
         try
         {
-            logger.LogInformation("Generating workout with description: {Description}", request.Description);
-
             var workout = await rapidApiService.GenerateWorkoutAsync(request);
-
+            
             if (workout is null)
-            {
-                return Problem(
-                    title: "Workout Generation Failed",
-                    detail: "Failed to generate workout. Please try again.",
-                    statusCode: StatusCodes.Status500InternalServerError
-                );
-            }
+                return Problem("Workout Generation Failed", "Failed to generate workout. Please try again.");
 
-            // Generate unique ID for the workout if not already set
             workout.Id ??= Guid.NewGuid().ToString();
-
             return Ok(workout);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error generating workout");
-            return Problem(
-                title: "Internal Server Error",
-                detail: "An unexpected error occurred while generating the workout",
-                statusCode: StatusCodes.Status500InternalServerError
-            );
+            Logger.LogError(ex, "Error generating workout");
+            return Problem("Internal Server Error", "An unexpected error occurred while generating the workout");
         }
     }
 
-    // Add/remove workout to/from My Workouts
+    // Add workout to My Workouts
     // POST /api/workout/add
     [HttpPost("add")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -106,56 +56,28 @@ public class WorkoutApiController(
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AddWorkout([FromBody] SavedWorkoutDto workout)
     {
+        var memberResult = await GetAuthenticatedMemberAsync();
+        if (memberResult.Error != null) return memberResult.Error;
+
+        if (string.IsNullOrWhiteSpace(workout.WorkoutId))
+            return BadRequest("Invalid Request", "WorkoutId is required");
+
         try
         {
-            var currentMember = await memberManager.GetCurrentMemberAsync();
-            if (currentMember == null)
-            {
-                logger.LogWarning("No current member found");
-                return Unauthorized();
-            }
+            Logger.LogInformation("Adding workout: {WorkoutId} for member {MemberId}", workout.WorkoutId, memberResult.MemberId);
 
-            if (string.IsNullOrWhiteSpace(workout.WorkoutId))
-            {
-                logger.LogWarning("Invalid workout payload");
-                return BadRequest(new ProblemDetails
-                {
-                    Title = "Invalid Request",
-                    Detail = "WorkoutId is required",
-                    Status = StatusCodes.Status400BadRequest
-                });
-            }
-
-            logger.LogInformation("Adding workout: {WorkoutId} for member {MemberId}", 
-                workout.WorkoutId, currentMember.Id);
-            logger.LogInformation("Workout Muscles: {Muscles}", string.Join(", ", workout.Muscles));
-            logger.LogInformation("Workout Equipment: {Equipment}", string.Join(", ", workout.Equipment));
-            logger.LogInformation("Workout Exercises count: {Count}", workout.Exercises.Count);
-
-            var success = workoutsService.ToggleMyWorkout(int.Parse(currentMember.Id), workout);
+            var success = workoutsService.ToggleMyWorkout(memberResult.MemberId, workout);
             
             if (!success)
-            {
-                logger.LogError("Failed to add workout for member {MemberId}", currentMember.Id);
-                return Problem(
-                    title: "Add Failed",
-                    detail: "Failed to add workout",
-                    statusCode: StatusCodes.Status500InternalServerError
-                );
-            }
+                return Problem("Add Failed", "Failed to add workout");
 
-            logger.LogInformation("Successfully added workout for member {MemberId}", currentMember.Id);
+            Logger.LogInformation("Successfully added workout for member {MemberId}", memberResult.MemberId);
             return Ok();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error adding workout");
-            return StatusCode(500, new ProblemDetails
-            {
-                Title = "Internal Server Error",
-                Detail = "An unexpected error occurred while adding the workout",
-                Status = StatusCodes.Status500InternalServerError
-            });
+            Logger.LogError(ex, "Error adding workout");
+            return Problem("Internal Server Error", "An unexpected error occurred while adding the workout");
         }
     }
 
@@ -168,53 +90,51 @@ public class WorkoutApiController(
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RemoveWorkout(string workoutId)
     {
+        var memberResult = await GetAuthenticatedMemberAsync();
+        if (memberResult.Error != null) return memberResult.Error;
+
+        if (string.IsNullOrWhiteSpace(workoutId))
+            return BadRequest("Invalid Request", "WorkoutId is required");
+
         try
         {
-            var currentMember = await memberManager.GetCurrentMemberAsync();
-            if (currentMember == null)
-            {
-                logger.LogWarning("No current member found");
-                return Unauthorized();
-            }
+            Logger.LogInformation("Removing workout: {WorkoutId} for member {MemberId}", workoutId, memberResult.MemberId);
 
-            if (string.IsNullOrWhiteSpace(workoutId))
-            {
-                logger.LogWarning("Invalid workoutId");
-                return BadRequest(new ProblemDetails
-                {
-                    Title = "Invalid Request",
-                    Detail = "WorkoutId is required",
-                    Status = StatusCodes.Status400BadRequest
-                });
-            }
-
-            logger.LogInformation("Removing workout: {WorkoutId} for member {MemberId}", 
-                workoutId, currentMember.Id);
-
-            var success = workoutsService.RemoveMyWorkout(int.Parse(currentMember.Id), workoutId);
+            var success = workoutsService.RemoveMyWorkout(memberResult.MemberId, workoutId);
             
             if (!success)
-            {
-                logger.LogError("Failed to remove workout for member {MemberId}", currentMember.Id);
-                return Problem(
-                    title: "Remove Failed",
-                    detail: "Failed to remove workout",
-                    statusCode: StatusCodes.Status500InternalServerError
-                );
-            }
+                return Problem("Remove Failed", "Failed to remove workout");
 
-            logger.LogInformation("Successfully removed workout for member {MemberId}", currentMember.Id);
+            Logger.LogInformation("Successfully removed workout for member {MemberId}", memberResult.MemberId);
             return Ok();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error removing workout");
-            return StatusCode(500, new ProblemDetails
-            {
-                Title = "Internal Server Error",
-                Detail = "An unexpected error occurred while removing the workout",
-                Status = StatusCodes.Status500InternalServerError
-            });
+            Logger.LogError(ex, "Error removing workout");
+            return Problem("Internal Server Error", "An unexpected error occurred while removing the workout");
         }
+    }
+
+    // Helper methods
+    private void LogWorkoutRequest(GenerateWorkoutRequest request)
+    {
+        Logger.LogInformation("=== Workout Generation Request ===");
+        Logger.LogInformation("MuscleGroups: {MuscleGroups}", string.Join(", ", request.MuscleGroups));
+        Logger.LogInformation("Equipment: {Equipment}", string.Join(", ", request.Equipment));
+        Logger.LogInformation("Description: {Description}", request.Description);
+    }
+
+    private BadRequestObjectResult? ValidateDescription(string description)
+    {
+        if (string.IsNullOrWhiteSpace(description))
+            return BadRequest("Invalid Request", "Description is required");
+
+        if (description.Length < MinDescriptionLength)
+            return BadRequest("Invalid Request", $"Description must be at least {MinDescriptionLength} characters");
+
+        if (description.Length > MaxDescriptionLength)
+            return BadRequest("Invalid Request", $"Description must be less than {MaxDescriptionLength} characters");
+
+        return null;
     }
 }

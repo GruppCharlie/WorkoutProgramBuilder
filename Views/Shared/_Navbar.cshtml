@@ -4,51 +4,36 @@
 @inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
 
 @{
-    var contentAtRoot = Umbraco.ContentAtRoot().ToList();
     var currentCulture = CultureInfo.CurrentCulture.Name;
-
-    var settingsNode = contentAtRoot.FirstOrDefault(x => x.ContentType.Alias == "settings");
+    var settingsNode = GetSettingsNode();
+    
+    // Navbar settings
     var navbarLogo = settingsNode?.Value<IPublishedContent>("siteLogotype");
     var navbarLogoUrl = navbarLogo?.Url() ?? string.Empty;
-    var searchPlaceholder = settingsNode?.Value<string>("searchPlaceHolderText") ?? "Search...";
-    var navbarLogin = settingsNode?.Value<string>("navbarLogin") ?? "Login";
-    var navbarLogout = settingsNode?.Value<string>("navbarLogoutText") ?? "Logout";
+    var searchPlaceholder = GetTextOrFallback(settingsNode?.Value<string>("searchPlaceHolderText"), "Search...");
+    var navbarLogin = GetTextOrFallback(settingsNode?.Value<string>("navbarLogin"), "Login");
+    var navbarLogout = GetTextOrFallback(settingsNode?.Value<string>("navbarLogoutText"), "Logout");
     var sidebarLinks = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("sidebarNavigation");
-    var NavbarlanguageSelector = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("languageSelector");
+    var navbarLanguageSelector = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("languageSelector");
 
+    // Page URLs
     var searchUrl = GetPageUrl("searchPage", "/search");
     var homeUrl = GetPageUrl("modularPage", "/");
     var loginUrl = GetPageUrl("loginPage", "/login");
     var profileUrl = GetPageUrl("profile", "/profile");
 
+    // Member authentication
     var currentMember = await MemberManager.GetCurrentMemberAsync();
     var isLoggedIn = currentMember != null;
 
-    var languageItems = (NavbarlanguageSelector ?? Enumerable.Empty<Umbraco.Cms.Core.Models.Blocks.BlockListItem>())
-                        .Select(block =>
-                        {
-                            var link = block?.Content.Value<string>("socialMediaUrl") ?? block?.Content.Value<string>("languageUrl");
-                            var iconUrl = block?.Content.Value<IPublishedContent>("socialMediaIcon")?.Url() ?? block?.Content.Value<IPublishedContent>("flag")?.Url();
-                            var culture = block?.Content.Value<string>("languageCulture") ?? block?.Content.Value<string>("culture");
-                            var name = block?.Content.Value<string>("socialMediaName") ?? block?.Content.Value<string>("languageName") ?? culture ?? link;
-                            return new
-                            {
-                                Item = block,
-                                Link = link,
-                                Icon = iconUrl,
-                                Culture = culture,
-                                Name = name
-                            };
-                        })
-                        .Where(x => !string.IsNullOrEmpty(x.Link) && !string.IsNullOrEmpty(x.Icon))
-                        .ToList();
-
-
+    // Language items
+    var languageItems = ParseLanguageItems(navbarLanguageSelector);
     var currentLangItem = languageItems.FirstOrDefault(x => x.Link!.Equals($"/{currentCulture}", StringComparison.OrdinalIgnoreCase))
                       ?? languageItems.FirstOrDefault();
-
     var otherLangs = languageItems.Where(x => x != currentLangItem).ToList();
-
+    
+    // Get default culture from Umbraco
+    var defaultCulture = Model.Root().Cultures.Keys.FirstOrDefault() ?? "en-US";
 }
 
 <nav class="bg-primaryGray text-primaryText border-b border-primaryBorder fixed top-0 left-0 right-0 z-50">
@@ -107,8 +92,13 @@
                                 <ul class="py-1">
                                     @foreach (var lang in otherLangs)
                                     {
+                                        var targetCulture = lang.Link?.TrimStart('/');
+                                        if (string.IsNullOrEmpty(targetCulture)) targetCulture = defaultCulture;
+                                        
+                                        var langUrl = Model.Url(culture: targetCulture);
                                         <li>
-                                            <a href="@lang.Link" class="flex items-center px-3 py-2 text-sm hover:bg-muted/20 hover:text-primary transition-colors">
+                                            <a href="@langUrl" 
+                                               class="flex items-center px-3 py-2 text-sm hover:bg-muted/20 hover:text-primary transition-colors">
                                                 <img src="@lang.Icon" alt="@lang.Name" class="w-5 h-5 mr-2 rounded-sm" />
                                             </a>
                                         </li>
@@ -124,7 +114,7 @@
                         <p>Current Lang error</p>
                 }
 
-                @foreach (var language in NavbarlanguageSelector ?? Enumerable.Empty<Umbraco.Cms.Core.Models.Blocks.BlockListItem>())
+                @foreach (var language in navbarLanguageSelector ?? [])
                 {
                     var languageLink = language?.Content.Value<string>("socialMediaUrl");
                     var languageIcon = language?.Content.Value<IPublishedContent>("socialMediaIcon")?.Url();
@@ -168,7 +158,7 @@
 <div id="sidebar" class="fixed top-16 left-0 h-full w-64 bg-primaryGray text-primaryText transform -translate-x-full transition-transform duration-300 z-40">
     <nav class="mt-4 space-y-2">
         <ul class="flex flex-col mt-4 space-y-2 px-4">
-            @foreach (var linkItem in sidebarLinks ?? Enumerable.Empty<Umbraco.Cms.Core.Models.Blocks.BlockListItem>())
+            @foreach (var linkItem in sidebarLinks ?? [])
             {
                 var sidebarToggle = linkItem.Content.Value<bool>("sidebarNavToggle");
                 var sidebarNavLinks = linkItem.Content.Value<IEnumerable<CoreLink>>("sidebarNavLink");

@@ -21,10 +21,16 @@ const API_ENDPOINTS = {
  * Page Routes Configuration
  */
 const PAGE_ROUTES = {
-    WORKOUT_DETAILS: (workoutId) => `/workouts/workout-details?workoutId=${workoutId}`,
-    WORKOUT_GENERATOR: '/workouts/workout-generator',
-    MY_WORKOUTS: '/workouts/my-workouts'
+    WORKOUT_DETAILS: (workoutId) => `${getWorkoutDetailsBaseUrl()}?workoutId=${workoutId}`
 };
+
+/**
+ * Get workout details base URL from body data attribute
+ * Returns culture-aware URL from Umbraco
+ */
+function getWorkoutDetailsBaseUrl() {
+    return document.body.getAttribute('data-workout-details-url') || '/workouts/workout-details';
+}
 
 
 /**

@@ -87,6 +87,11 @@ function updateMyWorkoutsButtonState(button, isAdded) {
     const icon = button.querySelector('i');
     const span = button.querySelector('span');
     
+    // Get translated texts from data attributes or use defaults
+    const textAdd = button.getAttribute('data-text-add') || state.text;
+    const textAdded = button.getAttribute('data-text-added') || WORKOUT_BUTTON_STATES.MY_WORKOUTS.ADDED.text;
+    const buttonText = isAdded ? textAdded : textAdd;
+    
     if (icon) {
         icon.className = `fa-solid ${state.icon}`;
     }
@@ -95,10 +100,10 @@ function updateMyWorkoutsButtonState(button, isAdded) {
     button.className = `add-to-my-workouts-btn flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 rounded-lg transition-colors ${state.classes}`;
     
     if (span) {
-        span.textContent = state.text;
+        span.textContent = buttonText;
     }
     
-    button.title = state.title;
+    button.title = buttonText;
 }
 
 /**
@@ -111,6 +116,11 @@ function updateFavoriteButtonState(button, isFavorited) {
     const icon = button.querySelector('i');
     const span = button.querySelector('span');
     
+    // Get translated texts from data attributes or use defaults
+    const textFavorite = button.getAttribute('data-text-favorite') || WORKOUT_BUTTON_STATES.FAVORITE.NOT_SAVED.text;
+    const textFavorited = button.getAttribute('data-text-favorited') || WORKOUT_BUTTON_STATES.FAVORITE.SAVED.text;
+    const buttonText = isFavorited ? textFavorited : textFavorite;
+    
     if (icon) {
         icon.className = `fa-solid ${state.icon} ${state.iconClasses}`;
     }
@@ -119,8 +129,8 @@ function updateFavoriteButtonState(button, isFavorited) {
     button.className = `favorite-workout-btn flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 border rounded-lg transition-colors ${state.buttonClasses}`;
     
     if (span) {
-        span.textContent = state.text;
+        span.textContent = buttonText;
     }
     
-    button.title = state.title;
+    button.title = buttonText;
 }
