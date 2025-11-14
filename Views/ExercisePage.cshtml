@@ -123,12 +123,18 @@
 
             @if (instructions.Any())
             {
-                <div class="space-y-4 text-primaryText text-lg leading-relaxed">
+                <div class="space-y-8 text-primaryText text-lg leading-relaxed">
                     @foreach (var step in instructions)
                     {
-                        var formattedStep = System.Text.RegularExpressions.Regex.Replace(step, @"Step\s*:?\s*(\d+)", "Step $1:");
-                        <p>@formattedStep</p>
+                        var formatted = System.Text.RegularExpressions.Regex.Replace(
+                        step,
+                        @"Step\s*:?\s*(\d+)\s*(.*)",
+                        "<strong>Step $1:</strong><br/>$2"
+                        );
+
+                        <p>@Html.Raw(formatted)</p>
                     }
+
                 </div>
             }
             else
