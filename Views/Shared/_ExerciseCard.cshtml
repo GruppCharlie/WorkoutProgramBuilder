@@ -7,7 +7,7 @@
 
 @foreach (var ex in exercises)
 {
-    <div class="relative bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+    <div class="exercise-card relative bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden" data-id="@ex.ExerciseId">
         <a href="@exerciseCardLink?exerciseId=@ex.ExerciseId" class="block hover:no-underline text-inherit">
             <div class="flex flex-col">
                 <img src="@ex.GifUrl" alt="@ex.Name" class="w-full h-52 object-contain bg-gray-50" />

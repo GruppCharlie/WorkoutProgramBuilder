@@ -1,14 +1,16 @@
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits UmbracoViewPageBase<IPublishedContent>
 @{
     Layout = null;
 
     var pageTitle = Model.Value("pageTitle") ?? Model.Name;
     var pageDescription = Model.Value("metaDescription") ?? "";
 
-    var settingsNode = Umbraco.ContentAtRoot()
-    .FirstOrDefault(x => x.ContentType.Alias == "settings");
+    var settingsNode = GetSettingsNode();
     var navbarLogo = settingsNode?.Value<IPublishedContent>("siteLogotype");
     var navbarLogoUrl = navbarLogo?.Url() ?? string.Empty;
+    
+    // Get workout details URL from ViewData
+    var workoutDetailsUrl = ViewData["WorkoutDetailsUrl"] as string ?? string.Empty;
 }
 
 <!doctype html>
@@ -108,39 +110,45 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="icon" href="@navbarLogoUrl" type="image/x-icon" />
 </head>
+    <body class="font-poppins bg-neutral-50 text-neutral-900 min-h-screen flex flex-col">
 
-<body class="font-poppins bg-neutral-50 text-neutral-900 min-h-screen flex flex-col">
+        @await Html.PartialAsync("_Navbar")
+        @* breadcrumbs here  *@
+        @await Html.PartialAsync("Partials/static/breadcrumb.cshtml")
+        
+        <main class="flex-grow">
+            @RenderBody()
+        </main>
 
-    @await Html.PartialAsync("_Navbar")
-    @* breadcrumbs here  *@
-    @await Html.PartialAsync("Partials/static/breadcrumb.cshtml")
-    
-    <main class="flex-grow">
-        @RenderBody()
-    </main>
+        @await Html.PartialAsync("_Footer")
+        
+        @* Login Required Modal *@
+        @await Html.PartialAsync("_LoginRequiredModal")
 
-    @await Html.PartialAsync("_Footer")
-    
-    @* Login Required Modal *@
-    @await Html.PartialAsync("_LoginRequiredModal")
-
-    @await RenderSectionAsync("Scripts", required: false)
-    
-    @* Utility scripts *@
-    <script src="~/js/utils/toast.js"></script>
-    <script src="~/js/utils/temporaryWorkoutStorage.js"></script>
-    <script src="~/js/utils/modalUtils.js"></script>
-    <script src="~/js/utils/favoriteUtils.js"></script>
-    <script src="~/js/utils/muscleMapper.js"></script>
-    <script src="~/js/utils/apiClient.js"></script>
-    <script src="~/js/utils/domHelpers.js"></script>
-    <script src="~/js/utils/workoutUtils.js"></script>
-    <script src="~/js/temporaryWorkoutDetailsPage.js"></script>
-    
-    @* Page scripts *@
-    <script src="~/js/navbarscript.js"></script>
-    <script src="~/js/muscleGroups.js"></script>
-    <script src="~/js/exercisecard.js"></script>
-    <script src="~/js/profile.js"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+        
+        @* pass the workout details url to the temporary workout details page *@
+        @if (!string.IsNullOrEmpty(workoutDetailsUrl))
+        {
+          <script>
+                document.body.setAttribute('data-workout-details-url', '@workoutDetailsUrl');
+            </script>
+        }
+        @* Utility scripts *@
+        <script src="~/js/utils/toast.js"></script>
+        <script src="~/js/utils/temporaryWorkoutStorage.js"></script>
+        <script src="~/js/utils/modalUtils.js"></script>
+        <script src="~/js/utils/favoriteUtils.js"></script>
+        <script src="~/js/utils/muscleMapper.js"></script>
+        <script src="~/js/utils/apiClient.js"></script>
+        <script src="~/js/utils/domHelpers.js"></script>
+        <script src="~/js/utils/workoutUtils.js"></script>
+        <script src="~/js/temporaryWorkoutDetailsPage.js"></script>
+        
+        @* Page scripts *@
+        <script src="~/js/navbarscript.js"></script>
+        <script src="~/js/muscleGroups.js"></script>
+        <script src="~/js/exercisecard.js"></script>
+        <script src="~/js/profile.js"></script>
     </body>
 </html>

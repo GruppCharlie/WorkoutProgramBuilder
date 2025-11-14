@@ -1,4 +1,5 @@
 @using WorkoutProgramBuilder.Business.Dto
+@using WorkoutProgramBuilder.ViewModels
 @inherits UmbracoViewPageBase<IPublishedContent>
 @{
 	Layout = "mainLayout.cshtml";
@@ -6,10 +7,32 @@
 	ViewData["ShowEquipmentFilter"] = true;
     
 	var workouts = ViewData["Workouts"] as List<SavedWorkoutDto> ?? [];
+	var workoutsUrl = GetPageUrl("workoutsPage", "/workouts");
 	var workoutGeneratorUrl = GetPageUrl("workoutGeneratorPage", "/workouts/generator");
+	
+	// Set workout details URL for JavaScript navigation
+	ViewData["WorkoutDetailsUrl"] = GetPageUrl("workoutDetailsPage", "/workouts/workout-details");
+	
+	// Localized texts from Dictionary
+	var exercisesText = Umbraco.GetDictionaryValue("workoutCard.Exercises") ?? "Exercises";
+	var visualizationTitle = Umbraco.GetDictionaryValue("workoutCard.Visualization") ?? "Targeted Muscles Visualization";
+	var musclesLabel = Umbraco.GetDictionaryValue("workoutCard.Muscles") ?? "Muscles:";
+	var equipmentLabel = Umbraco.GetDictionaryValue("workoutCard.Equipment") ?? "Equipment:";
+	
+	// My Workouts empty state texts
+	var emptyStateTitle = Umbraco.GetDictionaryValue("myWorkouts.emptyState.title") ?? "No workouts found";
+	var workoutsTemplatesText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.workoutsTemplates") ?? "Workouts templates";
+	var generatorText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.generator") ?? "AI Workout Generator";
+	var descriptionText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.descriptionText") ?? "Choose from our {0} or try our {1} to create custom workouts!";
 }
 
-<section class="">
+<section class="" 
+         data-empty-title="@emptyStateTitle"
+         data-workouts-templates-text="@workoutsTemplatesText"
+         data-generator-text="@generatorText"
+         data-description-text="@descriptionText"
+         data-workouts-url="@workoutsUrl"
+         data-generator-url="@workoutGeneratorUrl">
 	<div class="container mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         
 		<!-- Filters -->
@@ -20,16 +43,25 @@
 			<div id="myWorkoutsGrid" class="flex flex-wrap gap-6 mt-6">
 				@if (workouts.Any())
 				{
-					@await Html.PartialAsync("_WorkoutCard")
+					@await Html.PartialAsync("_WorkoutCard", new WorkoutCardViewModel
+					{
+						Workouts = workouts,
+						ExercisesText = exercisesText,
+						VisualizationTitle = visualizationTitle,
+						MusclesLabel = musclesLabel,
+						EquipmentLabel = equipmentLabel
+					})
 				}
 				else
 				{
 					<div class="flex flex-col items-center justify-center text-center py-12 w-full">
 						<div class="max-w-md mx-auto">
 							<i class="fas fa-dumbbell text-6xl text-gray-300 mb-4"></i>
-							<h3 class="text-xl font-semibold text-gray-700 mb-2">No workouts found</h3>
+							<h3 class="text-xl font-semibold text-gray-700 mb-2">@emptyStateTitle</h3>
 							<p class="text-sm text-gray-500 mt-4">
-								Add workouts from the <a href="@workoutGeneratorUrl" class="text-primary hover:underline">Workout Generator</a>!
+								@Html.Raw(string.Format(descriptionText,
+									$"<a href=\"{workoutsUrl}\" class=\"text-primary hover:underline\">{workoutsTemplatesText}</a>",
+									$"<a href=\"{workoutGeneratorUrl}\" class=\"text-primary hover:underline\">{generatorText}</a>"))
 							</p>
 						</div>
 					</div>

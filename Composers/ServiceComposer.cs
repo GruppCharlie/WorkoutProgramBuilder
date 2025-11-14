@@ -13,6 +13,7 @@ public class ServiceComposer : IComposer
         builder.Services.AddScoped<ISitemapService, SitemapService>();
         builder.Services.AddScoped<IMemberFavoritesService, MemberFavoritesService>();
         builder.Services.AddScoped<IMemberWorkoutsService, MemberWorkoutsService>();
+        builder.Services.AddScoped<IUmbracoPageService, UmbracoPageService>();
         builder.Services.Configure<IdentityOptions>(options =>
         {
             options.Lockout.AllowedForNewUsers = false;

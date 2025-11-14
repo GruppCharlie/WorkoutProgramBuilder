@@ -1,55 +1,97 @@
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using WorkoutProgramBuilder.Business.Dto
+@using WorkoutProgramBuilder.ViewModels
+@inherits UmbracoViewPageBase<IPublishedContent>
 
 @{
     Layout = "mainLayout.cshtml";
     ViewData["ShowSortFavorites"] = false; // Already on favorites page
     ViewData["ShowEquipmentFilter"] = true;
     
-    var exercises = ViewData["Exercises"] as List<WorkoutProgramBuilder.Business.Dto.ExerciseDto>;
-    var workouts = ViewData["Workouts"] as List<WorkoutProgramBuilder.Business.Dto.SavedWorkoutDto>;
+    var exercises = ViewData["Exercises"] as List<ExerciseDto>;
+    var workouts = ViewData["Workouts"] as List<SavedWorkoutDto> ?? [];
 
     var favoritesHeadline = Model.Value("favoritesHeadline");
     var noFavorites = Model.Value("noFavorites");
     
     var hasExercises = exercises != null && exercises.Any();
-    var hasWorkouts = workouts != null && workouts.Any();
+    var hasWorkouts = workouts.Any();
+    
+    // Get page URLs
+    var workoutGeneratorUrl = GetPageUrl("workoutGeneratorPage", "/workouts/generator");
+    var myWorkoutsUrl = GetPageUrl("myWorkoutsPage", "/workouts/my-workouts");
+    
+    // Localized texts from Dictionary
+    var exercisesText = Umbraco.GetDictionaryValue("workoutCard.Exercises") ?? "Exercises";
+    var visualizationTitle = Umbraco.GetDictionaryValue("workoutCard.Visualization") ?? "Targeted Muscles Visualization";
+    var musclesLabel = Umbraco.GetDictionaryValue("workoutCard.Muscles") ?? "Muscles:";
+    var equipmentLabel = Umbraco.GetDictionaryValue("workoutCard.Equipment") ?? "Equipment:";
+    
+    // Favorites page texts
+    var savedWorkoutsText = Umbraco.GetDictionaryValue("favorites.savedWorkouts") ?? "Saved Workouts";
+    var savedExercisesText = Umbraco.GetDictionaryValue("favorites.savedExercises") ?? "Saved Exercises";
+    var emptyStateTitle = Umbraco.GetDictionaryValue("favorites.emptyState.title") ?? "No favorites yet";
+    var myWorkoutsText = Umbraco.GetDictionaryValue("favorites.emptyState.myWorkouts") ?? "My Workouts";
+    var generatorText = Umbraco.GetDictionaryValue("favorites.emptyState.generator") ?? "AI Workout Generator";
+    var descriptionText = Umbraco.GetDictionaryValue("favorites.emptyState.descriptionText") ?? "Add from {0} or try our {1} to create custom workouts!";
 }
 
-<section class="container px-6 mx-auto py-10">
+<section class="container px-6 mx-auto py-10" 
+         data-empty-title="@emptyStateTitle"
+         data-my-workouts-text="@myWorkoutsText"
+         data-generator-text="@generatorText"
+         data-description-text="@descriptionText"
+         data-my-workouts-url="@myWorkoutsUrl"
+         data-generator-url="@workoutGeneratorUrl">
     <h1 class="text-2xl font-semibold mb-6">@favoritesHeadline</h1>
+
+    @* Filter Bar - Always show *@
+    <div class="mb-6">
+        @await Html.PartialAsync("_FilterBar")
+    </div>
 
     @if (!hasExercises && !hasWorkouts)
     {
-        <p class="text-gray-500">@noFavorites</p>
+        @* Empty State - No favorites at all *@
+        <div class="flex flex-col items-center justify-center text-center py-16">
+            <div class="max-w-md mx-auto">
+                <i class="fas fa-heart text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">@emptyStateTitle</h3>
+                <p class="text-sm text-gray-500 mt-4">
+                    @Html.Raw(string.Format(descriptionText,
+                        $"<a href=\"{myWorkoutsUrl}\" class=\"text-primary hover:underline\">{myWorkoutsText}</a>",
+                        $"<a href=\"{workoutGeneratorUrl}\" class=\"text-primary hover:underline\">{generatorText}</a>"))
+                </p>
+            </div>
+        </div>
     }
-    else
+
+    @* Saved Workouts Section - Only show if has workouts *@
+    @if (hasWorkouts)
     {
-        @* Filter Bar *@
-        <div class="mb-6">
-            @await Html.PartialAsync("_FilterBar")
-        </div>
-
-        @* Saved Workouts Section *@
         <div class="mb-10">
-            <h2 class="text-xl font-semibold mb-4">Saved Workouts</h2>
+            <h2 class="text-xl font-semibold mb-4">@savedWorkoutsText</h2>
             <div id="favoritesWorkoutsGrid" class="flex flex-wrap gap-6">
-                @if (hasWorkouts)
+                @await Html.PartialAsync("_WorkoutCard", new WorkoutCardViewModel
                 {
-                    @await Html.PartialAsync("_WorkoutCard")
-                }
+                    Workouts = workouts,
+                    ExercisesText = exercisesText,
+                    VisualizationTitle = visualizationTitle,
+                    MusclesLabel = musclesLabel,
+                    EquipmentLabel = equipmentLabel
+                })
             </div>
         </div>
+    }
 
-        @* Saved Exercises Section *@
-        @if (hasExercises)
-        {
-            <div>
-                <h2 class="text-xl font-semibold mb-4">Saved Exercises</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    @await Html.PartialAsync("_ExerciseCard")
-                </div>
+    @* Saved Exercises Section - Only show if has exercises *@
+    @if (hasExercises)
+    {
+        <div>
+            <h2 class="text-xl font-semibold mb-4">@savedExercisesText</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                @await Html.PartialAsync("_ExerciseCard")
             </div>
-        }
+        </div>
     }
 </section>
 

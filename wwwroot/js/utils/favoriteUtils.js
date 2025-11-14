@@ -31,9 +31,9 @@ async function toggleFavorite(event, button) {
                     showInfoToast('Removed from Favorites');
                 }
                 
-                // Dispatch event to update the workout catalog
+                // Dispatch event to update the workout catalog and favorites page
                 const exerciseId = button.getAttribute('data-id');
-                window.dispatchEvent(new CustomEvent('favoriteToggled', { 
+                window.dispatchEvent(new CustomEvent('exerciseFavoriteToggled', { 
                     detail: { exerciseId, isFavorite } 
                 }));
             }
