@@ -20,7 +20,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 {
 	/// <summary>Sign Up Page</summary>
 	[PublishedModel("signUpPage")]
-	public partial class SignUpPage : PublishedContentModel
+	public partial class SignUpPage : PublishedContentModel, IBase
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
@@ -56,5 +56,35 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("signUpForm")]
 		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel SignUpForm => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "signUpForm");
+
+		///<summary>
+		/// Exclude From Sitemap: Check to exclude this page from sitemap
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("excludeFromSitemap")]
+		public virtual bool ExcludeFromSitemap => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetExcludeFromSitemap(this, _publishedValueFallback);
+
+		///<summary>
+		/// MetaDescription
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("metaDescription")]
+		public virtual string MetaDescription => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetMetaDescription(this, _publishedValueFallback);
+
+		///<summary>
+		/// sitemap Change Frequency
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("sitemapChangeFrequency")]
+		public virtual string SitemapChangeFrequency => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetSitemapChangeFrequency(this, _publishedValueFallback);
+
+		///<summary>
+		/// Sitemap Priority
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("sitemapPriority")]
+		public virtual decimal SitemapPriority => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetSitemapPriority(this, _publishedValueFallback);
 	}
 }

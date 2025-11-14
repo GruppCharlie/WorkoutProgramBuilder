@@ -18,30 +18,30 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Member</summary>
-	[PublishedModel("Member")]
-	public partial class Member : PublishedContentModel
+	/// <summary>Workout Details</summary>
+	[PublishedModel("workoutDetailsPage")]
+	public partial class WorkoutDetailsPage : PublishedContentModel, IBase
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		public new const string ModelTypeAlias = "Member";
+		public new const string ModelTypeAlias = "workoutDetailsPage";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		public new const PublishedItemType ModelItemType = PublishedItemType.Member;
+		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		public new static IPublishedContentType GetModelContentType(IPublishedContentTypeCache contentTypeCache)
 			=> PublishedModelUtility.GetModelContentType(contentTypeCache, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<Member, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<WorkoutDetailsPage, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(contentTypeCache), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public Member(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
+		public WorkoutDetailsPage(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -50,64 +50,65 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// amountOfMyWorkouts
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[ImplementPropertyType("amountOfMyWorkouts")]
-		public virtual int AmountOfMyWorkouts => this.Value<int>(_publishedValueFallback, "amountOfMyWorkouts");
-
-		///<summary>
-		/// Amount of Saved Exercises
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[ImplementPropertyType("amountOfSavedExercises")]
-		public virtual int AmountOfSavedExercises => this.Value<int>(_publishedValueFallback, "amountOfSavedExercises");
-
-		///<summary>
-		/// Amount of Saved Workouts
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[ImplementPropertyType("amountOfSavedWorkouts")]
-		public virtual int AmountOfSavedWorkouts => this.Value<int>(_publishedValueFallback, "amountOfSavedWorkouts");
-
-		///<summary>
-		/// Member Details
+		/// Add to My Workouts
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("memberDetails")]
-		public virtual string MemberDetails => this.Value<string>(_publishedValueFallback, "memberDetails");
+		[ImplementPropertyType("addToMyWorkoutsText")]
+		public virtual string AddToMyWorkoutsText => this.Value<string>(_publishedValueFallback, "addToMyWorkoutsText");
 
 		///<summary>
-		/// myWorkoutsJson
+		/// Favorited
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("myWorkoutsJson")]
-		public virtual string MyWorkoutsJson => this.Value<string>(_publishedValueFallback, "myWorkoutsJson");
+		[ImplementPropertyType("favoritedText")]
+		public virtual string FavoritedText => this.Value<string>(_publishedValueFallback, "favoritedText");
 
 		///<summary>
-		/// savedExercisesJson
+		/// Favorite
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("savedExercisesJson")]
-		public virtual string SavedExercisesJson => this.Value<string>(_publishedValueFallback, "savedExercisesJson");
+		[ImplementPropertyType("favoriteText")]
+		public virtual string FavoriteText => this.Value<string>(_publishedValueFallback, "favoriteText");
 
 		///<summary>
-		/// Saved Workouts JSON
+		/// In My Workouts
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("savedWorkoutsJson")]
-		public virtual string SavedWorkoutsJson => this.Value<string>(_publishedValueFallback, "savedWorkoutsJson");
+		[ImplementPropertyType("inMyWorkoutsText")]
+		public virtual string InMyWorkoutsText => this.Value<string>(_publishedValueFallback, "inMyWorkoutsText");
 
 		///<summary>
-		/// Comments
+		/// Exclude From Sitemap: Check to exclude this page from sitemap
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("excludeFromSitemap")]
+		public virtual bool ExcludeFromSitemap => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetExcludeFromSitemap(this, _publishedValueFallback);
+
+		///<summary>
+		/// MetaDescription
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("umbracoMemberComments")]
-		public virtual string UmbracoMemberComments => this.Value<string>(_publishedValueFallback, "umbracoMemberComments");
+		[ImplementPropertyType("metaDescription")]
+		public virtual string MetaDescription => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetMetaDescription(this, _publishedValueFallback);
+
+		///<summary>
+		/// sitemap Change Frequency
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("sitemapChangeFrequency")]
+		public virtual string SitemapChangeFrequency => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetSitemapChangeFrequency(this, _publishedValueFallback);
+
+		///<summary>
+		/// Sitemap Priority
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("sitemapPriority")]
+		public virtual decimal SitemapPriority => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetSitemapPriority(this, _publishedValueFallback);
 	}
 }

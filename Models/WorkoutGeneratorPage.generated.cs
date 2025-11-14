@@ -18,14 +18,14 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Search Page</summary>
-	[PublishedModel("searchPage")]
-	public partial class SearchPage : PublishedContentModel, IBase
+	/// <summary>Workout Generator </summary>
+	[PublishedModel("workoutGeneratorPage")]
+	public partial class WorkoutGeneratorPage : PublishedContentModel, IBase
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		public new const string ModelTypeAlias = "searchPage";
+		public new const string ModelTypeAlias = "workoutGeneratorPage";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -34,14 +34,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 			=> PublishedModelUtility.GetModelContentType(contentTypeCache, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<SearchPage, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<WorkoutGeneratorPage, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(contentTypeCache), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public SearchPage(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
+		public WorkoutGeneratorPage(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -50,92 +50,124 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Empty Search Text
+		/// Continue Button
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("emptySearchText")]
-		public virtual string EmptySearchText => this.Value<string>(_publishedValueFallback, "emptySearchText");
+		[ImplementPropertyType("continueButton")]
+		public virtual string ContinueButton => this.Value<string>(_publishedValueFallback, "continueButton");
 
 		///<summary>
-		/// Exersice Modal Close
+		/// Describe Your Workout
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("exersiceModalClose")]
-		public virtual string ExersiceModalClose => this.Value<string>(_publishedValueFallback, "exersiceModalClose");
+		[ImplementPropertyType("describeYourWorkout")]
+		public virtual string DescribeYourWorkout => this.Value<string>(_publishedValueFallback, "describeYourWorkout");
 
 		///<summary>
-		/// Exersice Modal Header
+		/// Gender Selection
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("exersiceModalHeader")]
-		public virtual string ExersiceModalHeader => this.Value<string>(_publishedValueFallback, "exersiceModalHeader");
+		[ImplementPropertyType("genderSelection")]
+		public virtual global::System.Collections.Generic.IEnumerable<string> GenderSelection => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "genderSelection");
 
 		///<summary>
-		/// Exersice Modal Login
+		/// Generate Workout
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("exersiceModalLogin")]
-		public virtual string ExersiceModalLogin => this.Value<string>(_publishedValueFallback, "exersiceModalLogin");
+		[ImplementPropertyType("generateWorkout")]
+		public virtual string GenerateWorkout => this.Value<string>(_publishedValueFallback, "generateWorkout");
 
 		///<summary>
-		/// Exersice Modal Sign up
+		/// Generating your workout
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("exersiceModalSignUp")]
-		public virtual string ExersiceModalSignUp => this.Value<string>(_publishedValueFallback, "exersiceModalSignUp");
+		[ImplementPropertyType("generatingYourWorkout")]
+		public virtual string GeneratingYourWorkout => this.Value<string>(_publishedValueFallback, "generatingYourWorkout");
 
 		///<summary>
-		/// Exersice Modal Text
+		/// Hold Ctrl/Cmd
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("exersiceModalText")]
-		public virtual string ExersiceModalText => this.Value<string>(_publishedValueFallback, "exersiceModalText");
+		[ImplementPropertyType("holdCtrlCmd")]
+		public virtual string HoldCtrlCmd => this.Value<string>(_publishedValueFallback, "holdCtrlCmd");
 
 		///<summary>
-		/// Next Button Text
+		/// Muscle Visualization
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("nextButtonText")]
-		public virtual string NextButtonText => this.Value<string>(_publishedValueFallback, "nextButtonText");
+		[ImplementPropertyType("muscleVisualization")]
+		public virtual string MuscleVisualization => this.Value<string>(_publishedValueFallback, "muscleVisualization");
 
 		///<summary>
-		/// No Results
+		/// Personal Age
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("noResults")]
-		public virtual string NoResults => this.Value<string>(_publishedValueFallback, "noResults");
+		[ImplementPropertyType("personalAge")]
+		public virtual string PersonalAge => this.Value<string>(_publishedValueFallback, "personalAge");
 
 		///<summary>
-		/// PageText
+		/// Personal Gender
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("pageText")]
-		public virtual string PageText => this.Value<string>(_publishedValueFallback, "pageText");
+		[ImplementPropertyType("personalGender")]
+		public virtual string PersonalGender => this.Value<string>(_publishedValueFallback, "personalGender");
 
 		///<summary>
-		/// Previous Button Text
+		/// Personal Height
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("previousButtonText")]
-		public virtual string PreviousButtonText => this.Value<string>(_publishedValueFallback, "previousButtonText");
+		[ImplementPropertyType("personalHeight")]
+		public virtual string PersonalHeight => this.Value<string>(_publishedValueFallback, "personalHeight");
 
 		///<summary>
-		/// Search Results Text
+		/// Personal Weight
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("searchResults")]
-		public virtual string SearchResults => this.Value<string>(_publishedValueFallback, "searchResults");
+		[ImplementPropertyType("personalWeight")]
+		public virtual string PersonalWeight => this.Value<string>(_publishedValueFallback, "personalWeight");
+
+		///<summary>
+		/// Please Enter
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("pleaseEnter")]
+		public virtual string PleaseEnter => this.Value<string>(_publishedValueFallback, "pleaseEnter");
+
+		///<summary>
+		/// Target Muscle Groups
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("targetMuscleGroups")]
+		public virtual string TargetMuscleGroups => this.Value<string>(_publishedValueFallback, "targetMuscleGroups");
+
+		///<summary>
+		/// Workout Generator input placeholder
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("workoutGeneratorInputPlaceholder")]
+		public virtual string WorkoutGeneratorInputPlaceholder => this.Value<string>(_publishedValueFallback, "workoutGeneratorInputPlaceholder");
+
+		///<summary>
+		/// Your Generated Workout
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("yourGeneratedWorkout")]
+		public virtual string YourGeneratedWorkout => this.Value<string>(_publishedValueFallback, "yourGeneratedWorkout");
 
 		///<summary>
 		/// Exclude From Sitemap: Check to exclude this page from sitemap

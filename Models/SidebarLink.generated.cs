@@ -18,14 +18,14 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Login Page</summary>
-	[PublishedModel("loginPage")]
-	public partial class LoginPage : PublishedContentModel, IBase
+	/// <summary>{umbLink: sidebarNavLink}</summary>
+	[PublishedModel("sidebarLink")]
+	public partial class SidebarLink : PublishedElementModel
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		public new const string ModelTypeAlias = "loginPage";
+		public new const string ModelTypeAlias = "sidebarLink";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -34,14 +34,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 			=> PublishedModelUtility.GetModelContentType(contentTypeCache, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<LoginPage, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<SidebarLink, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(contentTypeCache), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public LoginPage(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
+		public SidebarLink(IPublishedElement content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -50,41 +50,18 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Login Form
+		/// Sidebar Nav Link
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("loginForm")]
-		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel LoginForm => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "loginForm");
+		[ImplementPropertyType("sidebarNavLink")]
+		public virtual global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link> SidebarNavLink => this.Value<global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link>>(_publishedValueFallback, "sidebarNavLink");
 
 		///<summary>
-		/// Exclude From Sitemap: Check to exclude this page from sitemap
+		/// Sidebar Nav Toggle
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[ImplementPropertyType("excludeFromSitemap")]
-		public virtual bool ExcludeFromSitemap => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetExcludeFromSitemap(this, _publishedValueFallback);
-
-		///<summary>
-		/// MetaDescription
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("metaDescription")]
-		public virtual string MetaDescription => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetMetaDescription(this, _publishedValueFallback);
-
-		///<summary>
-		/// sitemap Change Frequency
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("sitemapChangeFrequency")]
-		public virtual string SitemapChangeFrequency => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetSitemapChangeFrequency(this, _publishedValueFallback);
-
-		///<summary>
-		/// Sitemap Priority
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[ImplementPropertyType("sitemapPriority")]
-		public virtual decimal SitemapPriority => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetSitemapPriority(this, _publishedValueFallback);
+		[ImplementPropertyType("sidebarNavToggle")]
+		public virtual bool SidebarNavToggle => this.Value<bool>(_publishedValueFallback, "sidebarNavToggle");
 	}
 }
