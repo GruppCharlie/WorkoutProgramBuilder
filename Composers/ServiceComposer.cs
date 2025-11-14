@@ -16,6 +16,7 @@ public class ServiceComposer : IComposer
         builder.Services.AddScoped<IUmbracoPageService, UmbracoPageService>();
         builder.Services.Configure<IdentityOptions>(options =>
         {
+            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ ";
             options.Lockout.AllowedForNewUsers = false;
             options.Lockout.MaxFailedAccessAttempts = 5;
             options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
