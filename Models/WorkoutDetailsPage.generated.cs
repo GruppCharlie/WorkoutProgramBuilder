@@ -58,22 +58,6 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string AddToMyWorkoutsText => this.Value<string>(_publishedValueFallback, "addToMyWorkoutsText");
 
 		///<summary>
-		/// Equipments:
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("equipmentsLabel")]
-		public virtual string EquipmentsLabel => this.Value<string>(_publishedValueFallback, "equipmentsLabel");
-
-		///<summary>
-		/// Exercises
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("exercisesText")]
-		public virtual string ExercisesText => this.Value<string>(_publishedValueFallback, "exercisesText");
-
-		///<summary>
 		/// Favorited
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -96,54 +80,6 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("inMyWorkoutsText")]
 		public virtual string InMyWorkoutsText => this.Value<string>(_publishedValueFallback, "inMyWorkoutsText");
-
-		///<summary>
-		/// Instructions:
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("instructionsLabel")]
-		public virtual string InstructionsLabel => this.Value<string>(_publishedValueFallback, "instructionsLabel");
-
-		///<summary>
-		/// Muscles:
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("musclesLabel")]
-		public virtual string MusclesLabel => this.Value<string>(_publishedValueFallback, "musclesLabel");
-
-		///<summary>
-		/// Reps
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("repsText")]
-		public virtual string RepsText => this.Value<string>(_publishedValueFallback, "repsText");
-
-		///<summary>
-		/// Sets & Reps:
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("setsRepsLabel")]
-		public virtual string SetsRepsLabel => this.Value<string>(_publishedValueFallback, "setsRepsLabel");
-
-		///<summary>
-		/// Sets
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("setsText")]
-		public virtual string SetsText => this.Value<string>(_publishedValueFallback, "setsText");
-
-		///<summary>
-		/// Visualization Title
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("visualizationTitle")]
-		public virtual string VisualizationTitle => this.Value<string>(_publishedValueFallback, "visualizationTitle");
 
 		///<summary>
 		/// Exclude From Sitemap: Check to exclude this page from sitemap
