@@ -10,6 +10,8 @@
 
     var favoritesHeadline = Model.Value("favoritesHeadline");
     var noFavorites = Model.Value("noFavorites");
+    var savedWorkouts = Model.Value("savedWorkouts");
+    var savedExercises = Model.Value("savedExercises");
     
     var hasExercises = exercises != null && exercises.Any();
     var hasWorkouts = workouts != null && workouts.Any();
@@ -31,7 +33,7 @@
 
         @* Saved Workouts Section *@
         <div class="mb-10">
-            <h2 class="text-xl font-semibold mb-4">Saved Workouts</h2>
+            <h2 class="text-xl font-semibold mb-4">@savedWorkouts</h2>
             <div id="favoritesWorkoutsGrid" class="flex flex-wrap gap-6">
                 @if (hasWorkouts)
                 {
@@ -44,7 +46,7 @@
         @if (hasExercises)
         {
             <div>
-                <h2 class="text-xl font-semibold mb-4">Saved Exercises</h2>
+                <h2 class="text-xl font-semibold mb-4">@savedExercises</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     @await Html.PartialAsync("_ExerciseCard")
                 </div>
