@@ -32,8 +32,12 @@ tailwind.config = {
                 'orange-950': '#410d09',
 
                 primary: '#2a9ecd',
+                primaryHover: '#2a9ecdBF',
+                primaryGray: '#d9d9de',
+                primaryBorder: '#c6c7ce',
+                primaryText: '#18181b',
                 secondary: '#8373da',
-                muted: '#b8b9c1',
+                muted: '#4a4b53',
                 placeholder: '#91939f',
                 inverted: '#18181b',
             },

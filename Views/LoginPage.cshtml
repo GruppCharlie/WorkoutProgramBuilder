@@ -1,7 +1,8 @@
-﻿@using System.Linq
-@using Umbraco.Cms.Core.Models.Blocks
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<LoginPage>
+@using System.Linq;
+@using Umbraco.Cms.Core.Models.Blocks;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<LoginPage>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Extensions;
 
 @{
     Layout = "mainLayout.cshtml";
@@ -10,24 +11,35 @@
     var inputBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton" && x.Content.ContentType.Alias != "formCta").ToList());
     var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
     var ctaBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formCta").ToList());
+
+    var errKey = TempData["LoginErrorKey"] as string;
+    var errDefault = TempData["LoginErrorDefault"] as string ?? "";
+    var errorMsg = !string.IsNullOrWhiteSpace(errKey)
+        ? (Umbraco.GetDictionaryValue(errKey) ?? errDefault)
+        : "";
+
+    ViewData["DisablePasswordPattern"] = true;
+    
+    var returnUrl = Context.Request.Query["returnUrl"].ToString();
 }
 
-<div class="container mx-auto px-4">
-    <section class="max-w-md mx-auto mt-24 bg-white rounded-2xl shadow-lg px-8 py-10">
-
-        @if (TempData["LoginError"] != null)
+<div class="container mx-auto px-4 my-16">
+    <section class="max-w-md mx-auto bg-white rounded-2xl shadow-sm px-8 py-10">
+        @if (!string.IsNullOrWhiteSpace(errorMsg))
         {
-            <div class="text-red-600 mb-4">@TempData["LoginError"]</div>
+            <div class="text-red-600 mb-4 font-medium">@errorMsg</div>
         }
 
         @using (Html.BeginUmbracoForm("HandleLogin", "AuthSurface", FormMethod.Post, new { id = "loginForm", @class = "space-y-6", novalidate = "novalidate", autocomplete = "off" }))
         {
-
+            @if (!string.IsNullOrWhiteSpace(returnUrl))
+            {
+                <input type="hidden" name="returnUrl" value="@returnUrl" />
+            }
+            
             @Html.GetBlockListHtml(inputBlocks)
 
-            <div class="flex gap-3">
                 @Html.GetBlockListHtml(buttonBlocks)
-            </div>
 
             @Html.GetBlockListHtml(ctaBlocks)
         }

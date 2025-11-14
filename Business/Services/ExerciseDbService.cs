@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using WorkoutProgramBuilder.Business.Dto;
 using WorkoutProgramBuilder.Business.Interface;
 

@@ -10,7 +10,7 @@ public class MuscleGroupApiService(HttpClient httpClient, ILogger<MuscleGroupApi
 {
     private readonly HttpClient _httpClient = httpClient;
     private readonly ILogger<MuscleGroupApiService> _logger = logger;
-    private const string DefaultMuscleColor = "131,115,218"; // RGB: Secondary Purple (#8373da)
+    private const string DefaultMuscleColor = "42, 158, 205"; // RGB: Secondary Purple (#8373da)
     private List<string>? _cachedMuscleGroups;
 
     public async Task<List<string>> GetMuscleGroupsAsync()

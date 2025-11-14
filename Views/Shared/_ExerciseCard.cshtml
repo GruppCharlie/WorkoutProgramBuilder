@@ -1,37 +1,28 @@
-﻿@using System.Globalization
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits UmbracoViewPageBase<IPublishedContent>
 
 @{
-    var root = Umbraco.ContentAtRoot().FirstOrDefault();
-    var allPages = root?.DescendantsOrSelf() ?? Enumerable.Empty<IPublishedContent>();
-
-    var currentCulture = CultureInfo.CurrentCulture.Name;
-
-    var exerciseNode = allPages.FirstOrDefault(x => x.ContentType.Alias == "exercisePage");
-
-    var exerciseCardLink = exerciseNode?.Url(culture: currentCulture) ?? "/exercise";
-
+    var exerciseCardLink = GetPageUrl("exercisePage", "/exercise");
     var exercises = ViewData["Exercises"] as List<WorkoutProgramBuilder.Business.Dto.ExerciseDto> ?? [];
 }
 
 @foreach (var ex in exercises)
 {
-    <div class="relative bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+    <div class="exercise-card relative bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden" data-id="@ex.ExerciseId">
         <a href="@exerciseCardLink?exerciseId=@ex.ExerciseId" class="block hover:no-underline text-inherit">
             <div class="flex flex-col">
                 <img src="@ex.GifUrl" alt="@ex.Name" class="w-full h-52 object-contain bg-gray-50" />
 
                 <div class="flex flex-col flex-grow p-5">
-                    <h3 class="font-semibold text-lg text-gray-900 mb-1 capitalize">@ex.Name</h3>
+                    <h1 class="font-semibold text-lg text-gray-900 mb-1 capitalize">@ex.Name</h1>
 
                     <div class="flex flex-wrap gap-2 mb-3">
                         @foreach (var bp in ex.BodyParts ?? new List<string>())
                         {
-                            <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full font-medium">@bp</span>
+                            <span class="px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium">@bp</span>
                         }
                         @foreach (var tm in ex.TargetMuscles ?? new List<string>())
                         {
-                            <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full font-medium">@tm</span>
+                            <span class="px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium">@tm</span>
                         }
                     </div>
 
@@ -60,10 +51,10 @@
                 data-equipments="@string.Join(",", ex.Equipments ?? new List<string>())"
                 data-secondarymuscles="@string.Join(",", ex.SecondaryMuscles ?? new List<string>())"
                 data-gifurl="@ex.GifUrl"
-                id="favorite-btn-@ex.ExerciseId">
-            <i class="fa-solid fa-heart @((ex.IsSaved ? "text-red-500" : ""))"></i>
+                id="favorite-btn-@ex.ExerciseId"
+                aria-label="@(ex.IsSaved ? "Remove from favorites" : "Add to favorites")">
+            >
+            <i class="fa-solid fa-heart @(ex.IsSaved ? "text-red-500" : "")"></i>
         </button>
     </div>
 }
-
-@await Html.PartialAsync("_LoginRequiredModal")

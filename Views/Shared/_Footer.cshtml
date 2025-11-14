@@ -1,6 +1,4 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
-@using Umbraco.Cms.Core.Models.PublishedContent
-@using Umbraco.Cms.Web.Common.PublishedModels
+@inherits UmbracoViewPageBase<IPublishedContent>
 @using CoreLink = Umbraco.Cms.Core.Models.Link
 
 @{
@@ -16,15 +14,15 @@
 
 }
 
-<footer class="bg-neutral-200 text-neutral-700 py-10 mt-16 border-t border-neutral-300 shadow-sm">
+<footer class="bg-primaryGray text-primaryText py-10 border-t border-primaryBorder">
     <div class="container mx-auto px-6">
         <div class="flex flex-col md:flex-row justify-between items-center gap-6">
 
             <div class="text-center md:text-left">
-                <p class="text-xl font-semibold text-neutral-900">
+                <p class="text-xl font-semibold text-primaryText">
                     @FooterCompanyName
                 </p>
-                <p class="text-sm text-neutral-500 mt-2">@FooterRights</p>
+                <p class="text-sm  mt-2 text-muted">@FooterRights</p>
             </div>
 
             <nav>
@@ -34,7 +32,7 @@
                         <li>
                             <a href="@link.Url"
                                target="@(string.IsNullOrWhiteSpace(link.Target) ? "_self" : link.Target)"
-                               class="text-neutral-700 hover:text-primary transition-colors duration-200">
+                               class="text-textPrimary hover:text-primary transition-colors duration-200">
                                 @link.Name
                             </a>
                         </li>
@@ -43,9 +41,9 @@
             </nav>
         </div>
 
-        <hr class="border-neutral-300 my-8" />
+        <hr class="border-primaryBorder my-8" />
 
-        <div class="flex justify-center md:justify-start items-center text-sm text-neutral-600 gap-4">
+        <div class="flex justify-center md:justify-start items-center text-sm text-primaryText gap-4">
             @foreach (var social in FooterSocialMedia!)
             {
                 var platformLink = social?.Content.Value<string>("socialMediaUrl");
@@ -56,7 +54,7 @@
                     continue;
                 }
 
-                <a href="@platformLink" class="hover:text-primary transition-colors duration-200" target="_blank">
+                <a href="@platformLink" class="hover:opacity-70 transition-colors duration-200" target="_blank">
                     <img src="@platformIcon" alt="Social Media Icon" class="w-6 h-6" />
                 </a>
             }

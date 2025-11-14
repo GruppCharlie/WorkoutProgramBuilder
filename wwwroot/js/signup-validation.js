@@ -25,21 +25,18 @@
                 invalidMismatch = input.value !== primaryInput.value;
             }
 
-            // Visa fel endast om fältet rörts ELLER formuläret skickats
             const shouldShow = group.dataset.touched === 'true' || form.dataset.submitted === 'true';
 
             if (requiredError) requiredError.hidden = !(shouldShow && invalidRequired);
             if (formatError) formatError.hidden = !(shouldShow && !invalidRequired && invalidFormat);
             if (patternError) patternError.hidden = !(shouldShow && !invalidRequired && invalidPattern);
 
-            // ✅ Visa mismatch-fel enbart EFTER att man försökt skicka formuläret
             if (mismatchError) {
                 const showMismatch = form.dataset.submitted === 'true' && invalidMismatch;
                 mismatchError.hidden = !showMismatch;
             }
         }
 
-        // blur = markera touched
         form.addEventListener('blur', (e) => {
             const group = e.target.closest('[data-validate]');
             if (!group) return;
@@ -47,18 +44,27 @@
             showOrHideError(group);
         }, true);
 
-        // input = validera live (men visa inte mismatch ännu)
         form.addEventListener('input', (e) => {
             const group = e.target.closest('[data-validate]');
-            if (!group) return;
-            showOrHideError(group);
+            if (group) {
+                showOrHideError(group);
+                if (group.hasAttribute('data-password-primary') && confirmGroup) {
+                    showOrHideError(confirmGroup);
+                }
+            }
 
-            if (group.hasAttribute('data-password-primary') && confirmGroup) {
-                showOrHideError(confirmGroup);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const spinner = submitBtn ? submitBtn.querySelector('.btn-spinner') : null;
+            const btnText = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+
+            if (submitBtn && submitBtn.disabled) {
+                submitBtn.disabled = false;
+                submitBtn.removeAttribute('aria-busy');
+                if (spinner) spinner.classList.add('hidden');
+                if (btnText) btnText.classList.remove('invisible');
             }
         });
 
-        // submit
         form.addEventListener('submit', (e) => {
             form.dataset.submitted = 'true';
 
@@ -70,7 +76,6 @@
 
             let ok = form.checkValidity();
 
-            // extra kontroll för mismatch
             if (confirmGroup) {
                 const confirmInput = confirmGroup.querySelector('input');
                 if (primaryInput && confirmInput && confirmInput.value !== primaryInput.value) {
@@ -79,10 +84,28 @@
                 }
             }
 
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const spinner = submitBtn ? submitBtn.querySelector('.btn-spinner') : null;
+            const btnText = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+
             if (!ok) {
                 e.preventDefault();
                 e.stopPropagation();
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.removeAttribute('aria-busy');
+                }
+                if (spinner) spinner.classList.add('hidden');
+                if (btnText) btnText.classList.remove('invisible');
+                return;
             }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.setAttribute('aria-busy', 'true');
+            }
+            if (spinner) spinner.classList.remove('hidden');
+            if (btnText) btnText.classList.add('invisible');
         });
     }
 

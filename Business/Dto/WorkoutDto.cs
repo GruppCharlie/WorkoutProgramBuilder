@@ -13,6 +13,7 @@ public class GenerateWorkoutRequest
 // Response for generated workout
 public class WorkoutResponse
 {
+    public string? Id { get; set; }
     public string Name { get; set; } = "";
     public string Description { get; set; } = "";
     public List<ExerciseResponse> Exercises { get; set; } = [];
@@ -29,4 +30,18 @@ public class ExerciseResponse
     public List<string> Equipment { get; set; } = [];
     public int Sets { get; set; }
     public int Reps { get; set; }
+}
+
+
+// Saved workout for favorites
+public class SavedWorkoutDto
+{
+    public string WorkoutId { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string Description { get; set; } = "";
+    public List<string> Muscles { get; set; } = [];
+    public List<string> Equipment { get; set; } = [];
+    public List<ExerciseResponse> Exercises { get; set; } = [];
+    public bool IsSaved { get; set; }
+    public bool IsInMyWorkouts { get; set; }
 }

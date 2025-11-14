@@ -4,12 +4,15 @@ using WorkoutProgramBuilder.Business.Services;
 namespace WorkoutProgramBuilder.Controllers;
 
 [ApiController]
-[Route("umbraco/api/musclegroup")]
+[Route("api/musclegroup")]
 [Produces("application/json")]
-public class MuscleGroupController(IMuscleGroupApiService muscleGroupService, ILogger<MuscleGroupController> logger) : ControllerBase
+public class MuscleGroupApiController(IMuscleGroupApiService muscleGroupService, ILogger<MuscleGroupApiController> logger) : ControllerBase
 {
+    private readonly IMuscleGroupApiService _muscleGroupService = muscleGroupService;
+    private readonly ILogger<MuscleGroupApiController> _logger = logger;
+
     // Get all available muscle groups
-    // GET  /umbraco/api/musclegroup/groups
+    // GET  /api/musclegroup/groups
     [HttpGet("groups")]
     [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -17,31 +20,26 @@ public class MuscleGroupController(IMuscleGroupApiService muscleGroupService, IL
     {
         try
         {
-            logger.LogInformation("Fetching muscle groups");
+            _logger.LogInformation("Fetching muscle groups");
             
-            var groups = await muscleGroupService.GetMuscleGroupsAsync();
+            var groups = await _muscleGroupService.GetMuscleGroupsAsync();
             return Ok(groups);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error fetching muscle groups");
-            return Problem(
-                title: "Internal Server Error",
-                detail: "Failed to fetch muscle groups",
-                statusCode: StatusCodes.Status500InternalServerError
-            );
+            _logger.LogError(ex, "Error fetching muscle groups");
+            return Problem("Internal Server Error", "Failed to fetch muscle groups");
         }
     }
 
     // Get muscle visualization image
-    // GET  /umbraco/api/musclegroup/image
+    // GET  /api/musclegroup/image
     [HttpGet("image")]
     [Produces("image/png")]
     [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["muscleGroups", "color", "transparentBackground"
-    ])]
+    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, VaryByQueryKeys = ["muscleGroups", "color", "transparentBackground"])]
     public async Task<IActionResult> GetMuscleImage(
         [FromQuery] string muscleGroups = "",
         [FromQuery] string? color = null,
@@ -49,13 +47,13 @@ public class MuscleGroupController(IMuscleGroupApiService muscleGroupService, IL
     {
         try
         {
-            logger.LogInformation("Controller: Fetching muscle image for: {MuscleGroups}", muscleGroups);
+            _logger.LogInformation("Fetching muscle image for: {MuscleGroups}", muscleGroups);
             
-            var imageBytes = await muscleGroupService.GetMuscleImageAsync(muscleGroups, color, transparentBackground);
+            var imageBytes = await _muscleGroupService.GetMuscleImageAsync(muscleGroups, color, transparentBackground);
             
             if (imageBytes.Length == 0)
             {
-                logger.LogWarning("No image data returned for muscles: {MuscleGroups}", muscleGroups);
+                _logger.LogWarning("No image data returned for muscles: {MuscleGroups}", muscleGroups);
                 return NotFound(new ProblemDetails
                 {
                     Title = "Image Not Found",
@@ -68,12 +66,11 @@ public class MuscleGroupController(IMuscleGroupApiService muscleGroupService, IL
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error fetching muscle image for: {MuscleGroups}", muscleGroups);
-            return Problem(
-                title: "Internal Server Error",
-                detail: "Failed to generate muscle image",
-                statusCode: StatusCodes.Status500InternalServerError
-            );
+            _logger.LogError(ex, "Error fetching muscle image for: {MuscleGroups}", muscleGroups);
+            return Problem("Internal Server Error", "Failed to generate muscle image");
         }
     }
+
+    private ObjectResult Problem(string title, string detail) =>
+        Problem(title: title, detail: detail, statusCode: StatusCodes.Status500InternalServerError);
 }

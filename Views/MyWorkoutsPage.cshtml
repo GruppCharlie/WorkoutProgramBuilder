@@ -1,25 +1,77 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
-
+@using WorkoutProgramBuilder.Business.Dto
+@using WorkoutProgramBuilder.ViewModels
+@inherits UmbracoViewPageBase<IPublishedContent>
 @{
-    Layout = "mainLayout.cshtml";
-    ViewBag.Title = Model.Value("pageTitle") ?? "My Workouts";
+	Layout = "mainLayout.cshtml";
+	ViewData["ShowSortFavorites"] = true;
+	ViewData["ShowEquipmentFilter"] = true;
+    
+	var workouts = ViewData["Workouts"] as List<SavedWorkoutDto> ?? [];
+	var workoutsUrl = GetPageUrl("workoutsPage", "/workouts");
+	var workoutGeneratorUrl = GetPageUrl("workoutGeneratorPage", "/workouts/generator");
+	
+	// Set workout details URL for JavaScript navigation
+	ViewData["WorkoutDetailsUrl"] = GetPageUrl("workoutDetailsPage", "/workouts/workout-details");
+	
+	// Localized texts from Dictionary
+	var exercisesText = Umbraco.GetDictionaryValue("workoutCard.Exercises") ?? "Exercises";
+	var visualizationTitle = Umbraco.GetDictionaryValue("workoutCard.Visualization") ?? "Targeted Muscles Visualization";
+	var musclesLabel = Umbraco.GetDictionaryValue("workoutCard.Muscles") ?? "Muscles:";
+	var equipmentLabel = Umbraco.GetDictionaryValue("workoutCard.Equipment") ?? "Equipment:";
+	
+	// My Workouts empty state texts
+	var emptyStateTitle = Umbraco.GetDictionaryValue("myWorkouts.emptyState.title") ?? "No workouts found";
+	var workoutsTemplatesText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.workoutsTemplates") ?? "Workouts templates";
+	var generatorText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.generator") ?? "AI Workout Generator";
+	var descriptionText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.descriptionText") ?? "Choose from our {0} or try our {1} to create custom workouts!";
 }
 
-<section class="py-16">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col justify-center items-center pt-8">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-neutral-900 mb-4">
-                @Model.Value("pageTitle")
-            </h1>
-            
-            <div class="[&_section]:!py-0 [&_h6]:inline-block [&_h6]:px-4 [&_h6]:py-1 [&_h6]:bg-primary/10 [&_h6]:text-primary [&_h6]:text-xs [&_h6]:font-semibold [&_h6]:uppercase [&_h6]:tracking-wider [&_h6]:rounded-full [&_h6]:mb-4 [&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-bold [&_h1]:text-neutral-900 [&_p]:text-sm [&_p]:text-neutral-600 [&_p]:mb-2">
-                @await Html.GetBlockGridHtmlAsync(Model, "layout")
-            </div>
-        </div>
+<section class="" 
+         data-empty-title="@emptyStateTitle"
+         data-workouts-templates-text="@workoutsTemplatesText"
+         data-generator-text="@generatorText"
+         data-description-text="@descriptionText"
+         data-workouts-url="@workoutsUrl"
+         data-generator-url="@workoutGeneratorUrl">
+	<div class="container mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        
+		<!-- Filters -->
+		<div class="mt-8">
+			@await Html.PartialAsync("_FilterBar")
 
-        <!-- My Workouts Content -->
-        <div class="mt-8">
-            <p class="text-center text-neutral-600">Your saved workouts will appear here.</p>
-        </div>
-    </div>
+			<!-- My Workouts Grid -->
+			<div id="myWorkoutsGrid" class="flex flex-wrap gap-6 mt-6">
+				@if (workouts.Any())
+				{
+					@await Html.PartialAsync("_WorkoutCard", new WorkoutCardViewModel
+					{
+						Workouts = workouts,
+						ExercisesText = exercisesText,
+						VisualizationTitle = visualizationTitle,
+						MusclesLabel = musclesLabel,
+						EquipmentLabel = equipmentLabel
+					})
+				}
+				else
+				{
+					<div class="flex flex-col items-center justify-center text-center py-12 w-full">
+						<div class="max-w-md mx-auto">
+							<i class="fas fa-dumbbell text-6xl text-gray-300 mb-4"></i>
+							<h3 class="text-xl font-semibold text-gray-700 mb-2">@emptyStateTitle</h3>
+							<p class="text-sm text-gray-500 mt-4">
+								@Html.Raw(string.Format(descriptionText,
+									$"<a href=\"{workoutsUrl}\" class=\"text-primary hover:underline\">{workoutsTemplatesText}</a>",
+									$"<a href=\"{workoutGeneratorUrl}\" class=\"text-primary hover:underline\">{generatorText}</a>"))
+							</p>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
 </section>
+
+<script src="/js/utils/filterHelpers.js"></script>
+<script src="/js/workoutCard.js"></script>
+<script src="/js/workoutFiltering.js"></script>
+<script src="/js/myWorkouts.js"></script>

@@ -1,4 +1,4 @@
-﻿@using System.Globalization
+@using System.Globalization
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @{
     Layout = "mainLayout.cshtml";
@@ -59,7 +59,7 @@
                 </button>
             }
 
-            <span class="text-gray-500 text-sm">Page @currentPage</span>
+            <span class="text-gray-500 text-sm">@Model.Value("pageText") @currentPage</span>
 
             @if (hasNext)
             {

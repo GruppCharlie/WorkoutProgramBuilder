@@ -1,9 +1,16 @@
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits UmbracoViewPageBase<IPublishedContent>
 @{
     Layout = null;
 
     var pageTitle = Model.Value("pageTitle") ?? Model.Name;
     var pageDescription = Model.Value("metaDescription") ?? "";
+
+    var settingsNode = GetSettingsNode();
+    var navbarLogo = settingsNode?.Value<IPublishedContent>("siteLogotype");
+    var navbarLogoUrl = navbarLogo?.Url() ?? string.Empty;
+    
+    // Get workout details URL from ViewData
+    var workoutDetailsUrl = ViewData["WorkoutDetailsUrl"] as string ?? string.Empty;
 }
 
 <!doctype html>
@@ -17,108 +24,53 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Poppins:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/umbraco/backoffice/css/umbraco-blockgridlayout.css">
+    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="11f333a3-9714-4cc1-82af-39a20ac26e70" data-blockingmode="auto" type="text/javascript"></script>
+    @await Html.PartialAsync("~/Views/Partials/UmbracoCms.Integrations/Analytics/Cookiebot/Banner.cshtml")
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/js/tailwind.config.js"></script>
-    <link rel="stylesheet" href="~/css/silktide-cookie-manager.css" asp-append-version="true" />
-    <script src="~/js/silktide-cookie-manager.js" asp-append-version="true"></script>
-
-    <script>
-        silktideCookieBannerManager.updateCookieBannerConfig({
-          background: { showBackground: true },
-          cookieIcon: { position: "bottomRight" },
-          cookieTypes: [
-            {
-              id: "necessary",
-              name: "Necessary",
-              description: "<p>These cookies are necessary for the website to function properly and cannot be switched off. They help with things like logging in and setting your privacy preferences.</p>",
-              required: true,
-              onAccept: function () {
-                console.log('Necessary accepted');
-              }
-            },
-            {
-              id: "analytics",
-              name: "Analytics",
-              description: "<p>These cookies help us improve the site by tracking which pages are most popular and how visitors move around the site.</p>",
-              defaultValue: true,
-              onAccept: function () {
-                if (typeof gtag === 'function') {
-                  gtag('consent', 'update', { analytics_storage: 'granted' });
-                }
-                (window.dataLayer = window.dataLayer || []).push({ 'event': 'consent_accepted_analytics' });
-              },
-              onReject: function () {
-                if (typeof gtag === 'function') {
-                  gtag('consent', 'update', { analytics_storage: 'denied' });
-                }
-              }
-            },
-            {
-              id: "advertising",
-              name: "Advertising",
-              description: "<p>These cookies provide extra features and personalization to improve your experience. They may be set by us or by partners whose services we use.</p>",
-              onAccept: function () {
-                if (typeof gtag === 'function') {
-                  gtag('consent', 'update', {
-                    ad_storage: 'granted',
-                    ad_user_data: 'granted',
-                    ad_personalization: 'granted'
-                  });
-                }
-                (window.dataLayer = window.dataLayer || []).push({ 'event': 'consent_accepted_advertising' });
-              },
-              onReject: function () {
-                if (typeof gtag === 'function') {
-                  gtag('consent', 'update', {
-                    ad_storage: 'denied',
-                    ad_user_data: 'denied',
-                    ad_personalization: 'denied'
-                  });
-                }
-              }
-            }
-          ],
-          text: {
-            banner: {
-              description: "<p>We use cookies on our site to enhance your user experience, provide personalized content, and analyze our traffic. <a href=\"/cookie-policy\" target=\"_blank\" rel=\"noopener\">Cookie Policy.</a></p>",
-              acceptAllButtonText: "Accept all",
-              acceptAllButtonAccessibleLabel: "Accept all cookies",
-              rejectNonEssentialButtonText: "Reject non-essential",
-              rejectNonEssentialButtonAccessibleLabel: "Reject non-essential",
-              preferencesButtonText: "Preferences",
-              preferencesButtonAccessibleLabel: "Toggle preferences"
-            },
-            preferences: {
-              title: "Customize your cookie preferences",
-              description: "<p>We respect your right to privacy. You can choose not to allow some types of cookies. Your cookie preferences will apply across our website.</p>",
-              creditLinkText: "Get this banner for free",
-              creditLinkAccessibleLabel: "Get this banner for free"
-            }
-          },
-          position: { banner: "center" } 
-        });
-    </script>
-
+    <script src="/js/tailwind.config.js"></script>    
 
     <link rel="stylesheet" href="/css/main.css">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="@navbarLogoUrl" type="image/x-icon" />
 </head>
+    <body class="font-poppins bg-neutral-50 text-neutral-900 min-h-screen flex flex-col">
 
-<body class="font-poppins bg-neutral-50 text-neutral-900 min-h-screen flex flex-col">
+        @await Html.PartialAsync("_Navbar")
+        @* breadcrumbs here  *@
+        @await Html.PartialAsync("Partials/static/breadcrumb.cshtml")
+        
+        <main class="flex-grow">
+            @RenderBody()
+        </main>
 
-    @await Html.PartialAsync("_Navbar")
-    @* breadcrumbs here  *@
-    @await Html.PartialAsync("Partials/static/breadcrumb.cshtml")
-    
-    <main class="flex-grow">
-        @RenderBody()
-    </main>
+        @await Html.PartialAsync("_Footer")
+        
+        @* Login Required Modal *@
+        @await Html.PartialAsync("_LoginRequiredModal")
 
-    @await Html.PartialAsync("_Footer")
-
-    @await RenderSectionAsync("Scripts", required: false)
-    <script src="~/js/navbarscript.js"></script>
-    <script src="~/js/muscleGroups.js"></script>
-    <script src="~/js/exercisecard.js"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+        
+        @* pass the workout details url to the temporary workout details page *@
+        @if (!string.IsNullOrEmpty(workoutDetailsUrl))
+        {
+          <script>
+                document.body.setAttribute('data-workout-details-url', '@workoutDetailsUrl');
+            </script>
+        }
+        @* Utility scripts *@
+        <script src="~/js/utils/toast.js"></script>
+        <script src="~/js/utils/temporaryWorkoutStorage.js"></script>
+        <script src="~/js/utils/modalUtils.js"></script>
+        <script src="~/js/utils/favoriteUtils.js"></script>
+        <script src="~/js/utils/muscleMapper.js"></script>
+        <script src="~/js/utils/apiClient.js"></script>
+        <script src="~/js/utils/domHelpers.js"></script>
+        <script src="~/js/utils/workoutUtils.js"></script>
+        <script src="~/js/temporaryWorkoutDetailsPage.js"></script>
+        
+        @* Page scripts *@
+        <script src="~/js/navbarscript.js"></script>
+        <script src="~/js/muscleGroups.js"></script>
+        <script src="~/js/exercisecard.js"></script>
+        <script src="~/js/profile.js"></script>
     </body>
 </html>
