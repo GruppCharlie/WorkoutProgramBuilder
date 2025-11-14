@@ -3,9 +3,10 @@
  * Handles favorite-specific logic
  */
 
-// Only run on Favorites page
-if (document.getElementById('favoritesWorkoutsGrid')) {
-    
+// Check if we're on the favorites page
+const isFavoritesPage = document.querySelector('[data-page-type="favorites"]');
+
+if (isFavoritesPage) {
     // Listen for workout favorite toggle events
     window.addEventListener('workoutFavoriteToggled', (event) => {
         const { workoutId, isFavorited } = event.detail;
@@ -24,20 +25,29 @@ if (document.getElementById('favoritesWorkoutsGrid')) {
         updateCheckmarkIcon(workoutId);
     });
 
-    // Initialize filters
-    initializeWorkoutFilters({
-        gridId: 'favoritesWorkoutsGrid',
-        emptyIcon: 'fa-heart',
-        emptyMessage: 'No favorites found',
-        emptySubtext: null
-    });
+    // Initialize filters if workout grid exists
+    const workoutsGrid = document.getElementById('favoritesWorkoutsGrid');
+    if (workoutsGrid) {
+        const filterEmptyText = isFavoritesPage.dataset.filterEmptyText;
+        
+        initializeWorkoutFilters({
+            gridId: 'favoritesWorkoutsGrid',
+            emptyIcon: 'fa-heart',
+            emptyMessage: 'No favorites found',
+            emptySubtext: null,
+            filterEmptyText: filterEmptyText
+        });
+    }
 }
 
 // Listen for exercise favorite toggle events
 window.addEventListener('exerciseFavoriteToggled', (event) => {
     const { exerciseId, isFavorite } = event.detail;
     
-    if (!isFavorite && window.location.pathname.includes('/favorites')) {
+    // Only remove card if we're on the favorites page
+    const isFavoritesPage = document.querySelector('[data-page-type="favorites"]');
+    
+    if (!isFavorite && isFavoritesPage) {
         const card = document.querySelector(`.exercise-card[data-id="${exerciseId}"]`);
         const section = card?.parentElement?.parentElement;
         
@@ -99,36 +109,32 @@ function showEmptyFavoritesState() {
     const existingEmptyState = container.querySelector('.fa-heart')?.closest('.flex.flex-col');
     if (existingEmptyState) return;
     
-    // Get localized texts from data attributes
-    const emptyTitle = container.dataset.emptyTitle || 'No favorites yet';
-    const myWorkoutsText = container.dataset.myWorkoutsText || 'My Workouts';
-    const generatorText = container.dataset.generatorText || 'AI Workout Generator';
-    const descriptionText = container.dataset.descriptionText || 'Add from {0} or try our {1} to create custom workouts!';
-    const myWorkoutsUrl = container.dataset.myWorkoutsUrl || '/workouts/my-workouts';
-    const generatorUrl = container.dataset.generatorUrl || '/workouts/generator';
+    // Get localized texts and URLs from data attributes (provided by backend)
+    const emptyTitle = container.dataset.emptyTitle;
+    const myWorkoutsText = container.dataset.myWorkoutsText;
+    const generatorText = container.dataset.generatorText;
+    const descriptionText = container.dataset.descriptionText;
+    const myWorkoutsUrl = container.dataset.myWorkoutsUrl;
+    const generatorUrl = container.dataset.generatorUrl;
     
     // Build description with links
     const description = descriptionText
         .replace('{0}', `<a href="${myWorkoutsUrl}" class="text-primary hover:underline">${myWorkoutsText}</a>`)
         .replace('{1}', `<a href="${generatorUrl}" class="text-primary hover:underline">${generatorText}</a>`);
     
-    // Create empty state HTML
-    const emptyStateHTML = `
-        <div class="flex flex-col items-center justify-center text-center py-16">
-            <div class="max-w-md mx-auto">
-                <i class="fas fa-heart text-6xl text-gray-300 mb-4"></i>
-                <h3 class="text-xl font-semibold text-gray-700 mb-2">${emptyTitle}</h3>
-                <p class="text-sm text-gray-500 mt-4">${description}</p>
-            </div>
-        </div>
-    `;
+    // Create empty state element
+    const emptyState = createEmptyState({
+        icon: 'fa-heart',
+        title: emptyTitle,
+        description: description
+    });
     
-    // Find filter bar
+    // Find filter bar and insert empty state
     const heading = container.querySelector('h1');
     const filterBar = heading?.nextElementSibling;
 
     if (filterBar) {
-        filterBar.insertAdjacentHTML('afterend', emptyStateHTML);
+        filterBar.insertAdjacentElement('afterend', emptyState);
     } else {
         console.error('Favorites: Filter bar not found');
     }

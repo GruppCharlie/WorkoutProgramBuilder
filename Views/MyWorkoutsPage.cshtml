@@ -21,25 +21,41 @@
 	var workoutsTemplatesText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.workoutsTemplates") ?? "Workouts templates";
 	var generatorText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.generator") ?? "AI Workout Generator";
 	var descriptionText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.descriptionText") ?? "Choose from our {0} or try our {1} to create custom workouts!";
+	var filterEmptyText = Umbraco.GetDictionaryValue("filters.emptyState.message") ?? "match your filters. Try adjusting your selection.";
 }
 
 <section class="" 
+         data-page-type="my-workouts"
          data-empty-title="@emptyStateTitle"
          data-workouts-templates-text="@workoutsTemplatesText"
          data-generator-text="@generatorText"
          data-description-text="@descriptionText"
          data-workouts-url="@workoutsUrl"
-         data-generator-url="@workoutGeneratorUrl">
+         data-generator-url="@workoutGeneratorUrl"
+         data-filter-empty-text="@filterEmptyText">
 	<div class="container mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         
 		<!-- Filters -->
 		<div class="mt-8">
 			@await Html.PartialAsync("_FilterBar")
 
-			<!-- My Workouts Grid -->
-			<div id="myWorkoutsGrid" class="flex flex-wrap gap-6 mt-6">
-				@if (workouts.Any())
+			@* Empty State - Show if no workouts at all *@
+			@if (!workouts.Any())
+			{
+				@await Html.PartialAsync("_EmptyState", new EmptyStateViewModel
 				{
+					Icon = "fa-dumbbell",
+					Title = emptyStateTitle,
+					Description = string.Format(descriptionText,
+						$"<a href=\"{workoutsUrl}\" class=\"text-primary hover:underline\">{workoutsTemplatesText}</a>",
+						$"<a href=\"{workoutGeneratorUrl}\" class=\"text-primary hover:underline\">{generatorText}</a>")
+				})
+			}
+
+			<!-- My Workouts Grid - Only render if has workouts -->
+			@if (workouts.Any())
+			{
+				<div id="myWorkoutsGrid" class="flex flex-wrap gap-6 mt-6">
 					@await Html.PartialAsync("_WorkoutCard", new WorkoutCardViewModel
 					{
 						Workouts = workouts,
@@ -48,22 +64,8 @@
 						MusclesLabel = musclesLabel,
 						EquipmentLabel = equipmentLabel
 					})
-				}
-				else
-				{
-					<div class="flex flex-col items-center justify-center text-center py-12 w-full">
-						<div class="max-w-md mx-auto">
-							<i class="fas fa-dumbbell text-6xl text-gray-300 mb-4"></i>
-							<h3 class="text-xl font-semibold text-gray-700 mb-2">@emptyStateTitle</h3>
-							<p class="text-sm text-gray-500 mt-4">
-								@Html.Raw(string.Format(descriptionText,
-									$"<a href=\"{workoutsUrl}\" class=\"text-primary hover:underline\">{workoutsTemplatesText}</a>",
-									$"<a href=\"{workoutGeneratorUrl}\" class=\"text-primary hover:underline\">{generatorText}</a>"))
-							</p>
-						</div>
-					</div>
-				}
-			</div>
+				</div>
+			}
 		</div>
 	</div>
 </section>

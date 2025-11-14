@@ -82,19 +82,16 @@ function renderUnauthenticatedWorkoutExercises(exercises) {
   )
     return;
 
-  // Get CMS labels from data attributes
+  // Get CMS labels from data attributes (provided by backend)
   const workoutContainer = document.getElementById("unauthWorkoutContainer");
   const labels = {
-    instructions:
-      workoutContainer?.dataset.instructionsLabel || "Instructions:",
-    setsReps: workoutContainer?.dataset.setsRepsLabel || "Sets & Reps:",
-    muscles: workoutContainer?.dataset.musclesLabel || "Muscles:",
-    equipments: workoutContainer?.dataset.equipmentsLabel || "Equipments:",
-    sets: workoutContainer?.dataset.setsText || "Sets",
-    reps: workoutContainer?.dataset.repsText || "Reps",
-    visualization:
-      workoutContainer?.dataset.visualizationTitle ||
-      "Targeted Muscles Visualization",
+    instructions: workoutContainer?.dataset.instructionsLabel,
+    setsReps: workoutContainer?.dataset.setsRepsLabel,
+    muscles: workoutContainer?.dataset.musclesLabel,
+    equipments: workoutContainer?.dataset.equipmentsLabel,
+    sets: workoutContainer?.dataset.setsText,
+    reps: workoutContainer?.dataset.repsText,
+    visualization: workoutContainer?.dataset.visualizationTitle,
   };
 
   // Clone the entire workout structure template
@@ -280,5 +277,4 @@ async function setupWorkoutButtons() {
     favoriteButton.onclick = (e) =>
       toggleWorkoutFavoriteDetails(e, favoriteButton);
   }
-  // For unauthenticated users, buttons already have onclick="showLoginModal()"
 }
