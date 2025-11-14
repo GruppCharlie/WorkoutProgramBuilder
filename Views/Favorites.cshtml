@@ -11,9 +11,6 @@
     var workouts = ViewData["Workouts"] as List<SavedWorkoutDto> ?? [];
 
     var favoritesHeadline = Model.Value("favoritesHeadline");
-    // var noFavorites = Model.Value("noFavorites");
-    // var savedWorkouts = Model.Value("savedWorkouts");
-    // var savedExercises = Model.Value("savedExercises");
     
     var hasExercises = exercises != null && exercises.Any();
     var hasWorkouts = workouts.Any();
@@ -35,15 +32,18 @@
     var myWorkoutsText = Umbraco.GetDictionaryValue("favorites.emptyState.myWorkouts") ?? "My Workouts";
     var generatorText = Umbraco.GetDictionaryValue("favorites.emptyState.generator") ?? "AI Workout Generator";
     var descriptionText = Umbraco.GetDictionaryValue("favorites.emptyState.descriptionText") ?? "Add from {0} or try our {1} to create custom workouts!";
+    var filterEmptyText = Umbraco.GetDictionaryValue("filters.emptyState.message") ?? "match your filters. Try adjusting your selection.";
 }
 
 <section class="container px-6 mx-auto py-10" 
+         data-page-type="favorites"
          data-empty-title="@emptyStateTitle"
          data-my-workouts-text="@myWorkoutsText"
          data-generator-text="@generatorText"
          data-description-text="@descriptionText"
          data-my-workouts-url="@myWorkoutsUrl"
-         data-generator-url="@workoutGeneratorUrl">
+         data-generator-url="@workoutGeneratorUrl"
+         data-filter-empty-text="@filterEmptyText">
     <h1 class="text-2xl font-semibold mb-6">@favoritesHeadline</h1>
 
     @* Filter Bar - Always show *@
@@ -54,17 +54,14 @@
     @if (!hasExercises && !hasWorkouts)
     {
         @* Empty State - No favorites at all *@
-        <div class="flex flex-col items-center justify-center text-center py-16">
-            <div class="max-w-md mx-auto">
-                <i class="fas fa-heart text-6xl text-gray-300 mb-4"></i>
-                <h3 class="text-xl font-semibold text-gray-700 mb-2">@emptyStateTitle</h3>
-                <p class="text-sm text-gray-500 mt-4">
-                    @Html.Raw(string.Format(descriptionText,
-                        $"<a href=\"{myWorkoutsUrl}\" class=\"text-primary hover:underline\">{myWorkoutsText}</a>",
-                        $"<a href=\"{workoutGeneratorUrl}\" class=\"text-primary hover:underline\">{generatorText}</a>"))
-                </p>
-            </div>
-        </div>
+        @await Html.PartialAsync("_EmptyState", new EmptyStateViewModel
+        {
+            Icon = "fa-heart",
+            Title = emptyStateTitle,
+            Description = string.Format(descriptionText,
+                $"<a href=\"{myWorkoutsUrl}\" class=\"text-primary hover:underline\">{myWorkoutsText}</a>",
+                $"<a href=\"{workoutGeneratorUrl}\" class=\"text-primary hover:underline\">{generatorText}</a>")
+        })
     }
 
     @* Saved Workouts Section - Only show if has workouts *@

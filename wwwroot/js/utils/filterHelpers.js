@@ -70,10 +70,11 @@ function setupDropdownCloseOnClickOutside(dropdownIds) {
  * {string} config.emptyIcon - Icon class for empty state
  * {string} config.emptyMessage - Message for empty state
  * {string} config.emptySubtext - Subtext for empty state (optional)
- * returns {Object} - Object with activeFilters and applyFilters function
+ * {string} config.filterEmptyText - Text to show when filters don't match (optional)
+ * returns {Object} - Object with activeFilters
  */
 function initializeWorkoutFilters(config) {
-  const { gridId, emptyIcon, emptyMessage, emptySubtext } = config;
+  const { gridId, emptyIcon, emptyMessage, emptySubtext, filterEmptyText } = config;
 
   const activeFilters = {
     muscles: [],
@@ -120,7 +121,8 @@ function initializeWorkoutFilters(config) {
       activeFilters,
       emptyIcon,
       emptyMessage,
-      emptySubtext
+      emptySubtext,
+      filterEmptyText
     );
     updateActiveFilterTags(activeFilters);
   }
@@ -188,7 +190,7 @@ function initializeWorkoutFilters(config) {
     applyFilters();
   };
 
-  return { activeFilters, applyFilters };
+  return { activeFilters};
 }
 
 /**

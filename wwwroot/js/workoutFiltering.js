@@ -8,12 +8,16 @@
  * {string} emptyIcon - Icon class for empty state (e.g., 'fa-dumbbell' or 'fa-heart')
  * {string} emptyMessage - Message to show when no workouts match
  * {string} emptyLink - Optional link to show in empty state
+ * {string} filterEmptyText - Text to append when filters are active
  */
-function applyWorkoutFilters(gridId, filters, emptyIcon = 'fa-dumbbell', emptyMessage = 'No workouts found', emptyLink = null) {
+function applyWorkoutFilters(gridId, filters, emptyIcon = 'fa-dumbbell', emptyMessage = 'No workouts found', emptyLink = null, filterEmptyText = 'match your filters. Try adjusting your selection.') {
     const grid = document.getElementById(gridId);
     if (!grid) return;
     
     const cards = Array.from(grid.querySelectorAll('[data-workout-id]'));
+    
+    // If no cards exist at all, don't show filter empty state
+    if (cards.length === 0) return;
     
     // Filter cards
     cards.forEach(card => {
@@ -83,13 +87,13 @@ function applyWorkoutFilters(gridId, filters, emptyIcon = 'fa-dumbbell', emptyMe
     });
     
     // Check empty state
-    showEmptyStateIfNeeded(grid, visibleCards, filters, emptyIcon, emptyMessage, emptyLink);
+    showEmptyStateIfNeeded(grid, visibleCards, filters, emptyIcon, emptyMessage, emptyLink, filterEmptyText);
 }
 
 /**
  * Show empty state if no cards are visible
  */
-function showEmptyStateIfNeeded(grid, visibleCards, filters, emptyIcon, emptyMessage, emptyLink) {
+function showEmptyStateIfNeeded(grid, visibleCards, filters, emptyIcon, emptyMessage, emptyLink, filterEmptyText) {
     // Remove existing empty state
     const existingEmptyState = grid.querySelector('.empty-state-message');
     if (existingEmptyState) {
@@ -99,22 +103,18 @@ function showEmptyStateIfNeeded(grid, visibleCards, filters, emptyIcon, emptyMes
     if (visibleCards.length === 0) {
         const hasFilters = filters.muscles.length > 0 || filters.equipment.length > 0;
         const message = hasFilters 
-            ? emptyMessage.replace('found', 'match your filters. Try adjusting your selection.')
+            ? emptyMessage.replace('found', filterEmptyText)
             : emptyMessage;
         
-        const emptyState = document.createElement('div');
-        emptyState.className = 'empty-state-message w-full flex flex-col items-center justify-center text-center py-12';
-        emptyState.innerHTML = `
-            <div class="max-w-md mx-auto">
-                <i class="fas ${emptyIcon} text-6xl text-gray-300 mb-4"></i>
-                <h3 class="text-xl font-semibold text-gray-700 mb-2">${message}</h3>
-                ${!hasFilters && emptyLink ? `
-                    <p class="text-sm text-gray-500 mt-4">
-                        ${emptyLink}
-                    </p>
-                ` : ''}
-            </div>
-        `;
+        const description = !hasFilters && emptyLink ? emptyLink : null;
+        
+        const emptyState = createEmptyState({
+            icon: emptyIcon,
+            title: message,
+            description: description,
+            className: 'w-full py-12'
+        });
+        
         grid.appendChild(emptyState);
     }
 }
@@ -139,19 +139,14 @@ function removeCardWithAnimation(workoutId, gridId, emptyIcon, emptyMessage, emp
             
             if (!remainingCards || remainingCards.length === 0) {
                 // Show empty state
-                grid.innerHTML = `
-                    <div class="w-full flex flex-col items-center justify-center text-center py-12">
-                        <div class="max-w-md mx-auto">
-                            <i class="fas ${emptyIcon} text-6xl text-gray-300 mb-4"></i>
-                            <h3 class="text-xl font-semibold text-gray-700 mb-2">${emptyMessage}</h3>
-                            ${emptyLink ? `
-                                <p class="text-sm text-gray-500 mt-4">
-                                    ${emptyLink}
-                                </p>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
+                grid.innerHTML = '';
+                const emptyState = createEmptyState({
+                    icon: emptyIcon,
+                    title: emptyMessage,
+                    description: emptyLink,
+                    className: 'w-full py-12'
+                });
+                grid.appendChild(emptyState);
             }
         }, 300);
     }

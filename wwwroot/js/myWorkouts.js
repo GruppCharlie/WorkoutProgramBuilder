@@ -3,17 +3,20 @@
  * Handles favorite-specific logic
  */
 
-// Only run on My Workouts page
-if (document.getElementById('myWorkoutsGrid')) {
+// Check if we're on the my workouts page
+const isMyWorkoutsPage = document.querySelector('[data-page-type="my-workouts"]');
+
+if (isMyWorkoutsPage) {
     
-    // Get localized texts from data attributes
-    const section = document.querySelector('section[data-empty-title]');
-    const emptyTitle = section?.dataset.emptyTitle || 'No workouts found';
-    const workoutsTemplatesText = section?.dataset.workoutsTemplatesText || 'Workouts templates';
-    const generatorText = section?.dataset.generatorText || 'AI Workout Generator';
-    const descriptionText = section?.dataset.descriptionText || 'Choose from our {0} or try our {1} to create custom workouts!';
-    const workoutsUrl = section?.dataset.workoutsUrl || '/workouts';
-    const generatorUrl = section?.dataset.generatorUrl || '/workouts/generator';
+    // Get localized texts and URLs from data attributes (provided by backend)
+    const section = isMyWorkoutsPage;
+    const emptyTitle = section?.dataset.emptyTitle;
+    const workoutsTemplatesText = section?.dataset.workoutsTemplatesText;
+    const generatorText = section?.dataset.generatorText;
+    const descriptionText = section?.dataset.descriptionText;
+    const workoutsUrl = section?.dataset.workoutsUrl;
+    const generatorUrl = section?.dataset.generatorUrl;
+    const filterEmptyText = section?.dataset.filterEmptyText;
     
     // Build description with links
     const emptyDescription = descriptionText
@@ -51,11 +54,15 @@ if (document.getElementById('myWorkoutsGrid')) {
         );
     });
 
-    // Initialize filters using shared function
-    initializeWorkoutFilters({
-        gridId: 'myWorkoutsGrid',
-        emptyIcon: 'fa-dumbbell',
-        emptyMessage: emptyTitle,
-        emptySubtext: emptyDescription
-    });
+    // Initialize filters only if grid exists and has cards
+    const myWorkoutsGrid = document.getElementById('myWorkoutsGrid');
+    if (myWorkoutsGrid && myWorkoutsGrid.querySelector('[data-workout-id]')) {
+        initializeWorkoutFilters({
+            gridId: 'myWorkoutsGrid',
+            emptyIcon: 'fa-dumbbell',
+            emptyMessage: emptyTitle,
+            emptySubtext: emptyDescription,
+            filterEmptyText: filterEmptyText
+        });
+    }
 }

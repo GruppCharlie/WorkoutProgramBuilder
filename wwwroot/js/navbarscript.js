@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("overlay");
     const menuToggle = document.getElementById("menu-toggle");
@@ -38,7 +38,7 @@
     const input = document.querySelector('#navbar-search');
     if (!input) return;
 
-    const searchUrl = input.dataset.searchUrl || '/search';
+    const searchUrl = input.dataset.searchUrl;
 
     input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
