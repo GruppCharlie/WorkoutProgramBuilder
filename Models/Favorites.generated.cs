@@ -66,6 +66,22 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string NoFavorites => this.Value<string>(_publishedValueFallback, "noFavorites");
 
 		///<summary>
+		/// Saved Exercises
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("savedExercises")]
+		public virtual string SavedExercises => this.Value<string>(_publishedValueFallback, "savedExercises");
+
+		///<summary>
+		/// Saved Workouts
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("savedWorkouts")]
+		public virtual string SavedWorkouts => this.Value<string>(_publishedValueFallback, "savedWorkouts");
+
+		///<summary>
 		/// Exclude From Sitemap: Check to exclude this page from sitemap
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
