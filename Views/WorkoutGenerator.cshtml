@@ -38,20 +38,27 @@
             <div id="userInputSection" class="text-center py-12">
                 <p>@pleaseEnter</p>
                 <form id="userDetailsForm" class="mt-4 space-y-4 max-w-xs mx-auto">
-                    <div><input type="number" name="age" id="userAgeInput" placeholder="@personalAge" min="10" max="100" class="border p-2 rounded w-full text-center" required /></div>
                     <div>
-                        <select name="gender" id="userGenderInput" class="border p-2 rounded w-full text-center" required>
-                            <option value="">@personalGender</option>
-                            @foreach (var gender in genderSelection)
-                            {
-                                <option value="@gender">@gender</option>
-                            }
-                        </select>
-
-                    </div>
-                    <div><input type="number" name="weight" id="userWeightInput" placeholder="@personalWeight" min="30" max="250" class="border p-2 rounded w-full text-center" required /></div>
-                    <div><input type="number" name="height" id="userHeightInput" placeholder="@personalHeight" min="100" max="250" class="border p-2 rounded w-full text-center" required /></div>
-                    <button type="submit" id="generateBtn" class="w-full px-4 py-2 bg-primary hover:bg-primaryHover text-white rounded">@continueButton</button>
+                        <label for="userAgeInput" class="sr-only">@personalAge</label>
+                            <input type="number" name="age" id="userAgeInput" placeholder="@personalAge" min="10" max="100" class="border p-2 rounded w-full text-center" required /></div>
+                                <div>
+                                    <label for="userGenderInput" class="sr-only">@personalGender</label>
+                                        <select name="gender" id="userGenderInput"
+                                                class="border p-2 rounded w-full text-center" required>
+                                            <option value="">@personalGender</option>
+                                            @foreach (var gender in genderSelection)
+                                            {
+                                                <option value="@gender">@gender</option>
+                                            }
+                                        </select>
+                                </div>
+                    <div>
+                        <label for="userWeightInput" class="sr-only">@personalWeight</label>
+                        <input type="number" name="weight" id="userWeightInput" placeholder="@personalWeight" min="30" max="250" class="border p-2 rounded w-full text-center" required /></div>
+                    <div>
+                        <label for="userHeightInput" class="sr-only">@personalHeight</label>
+                        <input type="number" name="height" id="userHeightInput" placeholder="@personalHeight" min="100" max="250" class="border p-2 rounded w-full text-center" required /></div>
+                    <button type="submit" id="generateBtn" aria-label="Continue" class="w-full px-4 py-2 bg-primary hover:bg-primaryHover text-white rounded">@continueButton</button>
                 </form>
             </div>
         }
