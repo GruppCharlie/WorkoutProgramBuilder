@@ -65,7 +65,7 @@
         @if (mappedMuscles.Any())
         {
             <div class="p-6 bg-white border-t border-gray-100">
-                <h5 class="text-sm font-semibold text-gray-700 mb-3">@Model.VisualizationTitle</h5>
+                <h2 class="text-sm font-semibold text-gray-700 mb-3">@Model.VisualizationTitle</h2>
                 <div class="flex justify-center">
                     <img src="@imageUrl" 
                          alt="Targeted muscles visualization" 
@@ -80,7 +80,7 @@
             @if (muscleGroups.Any())
             {
                 <div>
-                    <span class="text-xs font-semibold text-gray-500 block mb-2">@Model.MusclesLabel</span>
+                    <span class="text-xs font-semibold text-primaryText block mb-2">@Model.MusclesLabel</span>
                     <div class="flex flex-wrap gap-2">
                         @foreach (var muscle in muscleGroups)
                         {
@@ -93,7 +93,7 @@
             @if (equipment.Any())
             {
                 <div>
-                    <span class="text-xs font-semibold text-gray-500 block mb-2">@Model.EquipmentLabel</span>
+                    <span class="text-xs font-semibold text-primaryText block mb-2">@Model.EquipmentLabel</span>
                     <div class="flex flex-wrap gap-2">
                         @foreach (var eq in equipment)
                         {

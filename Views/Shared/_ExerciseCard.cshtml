@@ -3,58 +3,69 @@
 @{
     var exerciseCardLink = GetPageUrl("exercisePage", "/exercise");
     var exercises = ViewData["Exercises"] as List<WorkoutProgramBuilder.Business.Dto.ExerciseDto> ?? [];
+
+    var musclesLabel = Umbraco.GetDictionaryValue("workoutCard.Muscles") ?? "Muscles:";
+    var equipmentLabel = Umbraco.GetDictionaryValue("workoutCard.Equipment") ?? "Equipment:";
 }
 
 @foreach (var ex in exercises)
 {
-    <div class="exercise-card relative bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden" data-id="@ex.ExerciseId">
+    <div class="relative bg-white rounded-lg border border-primaryBorder overflow-hidden shadow-sm transition-shadow duration-300 cursor-pointer hover:shadow-md workout-card w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]" data-id="@ex.ExerciseId">
         <a href="@exerciseCardLink?exerciseId=@ex.ExerciseId" class="block hover:no-underline text-inherit">
             <div class="flex flex-col">
-                <img src="@ex.GifUrl" alt="@ex.Name" class="w-full h-52 object-contain bg-gray-50" />
+                <img src="@ex.GifUrl" alt="@ex.Name" class="w-full h-52 object-contain" />
 
-                <div class="flex flex-col flex-grow p-5">
+                <div class="flex flex-col flex-grow p-5 border-t border-gray-100">
                     <h1 class="font-semibold text-lg text-gray-900 mb-1 capitalize">@ex.Name</h1>
 
-                    <div class="flex flex-wrap gap-2 mb-3">
+                    <div class="mb-3">
+                        <span class="text-xs font-semibold text-primaryText block mb-2">@musclesLabel</span>
+
                         @foreach (var bp in ex.BodyParts ?? new List<string>())
                         {
-                            <span class="px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium">@bp</span>
+                            <span class="uppercase px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block mr-2 mb-2">
+                                @bp
+                            </span>
                         }
-                        @foreach (var tm in ex.TargetMuscles ?? new List<string>())
+
+                        @if (ex.SecondaryMuscles?.Any() == true)
                         {
-                            <span class="px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium">@tm</span>
+                            @foreach (var sm in ex.SecondaryMuscles)
+                            {
+                                <span class="uppercase px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block mr-2 mb-2">
+                                    @sm
+                                </span>
+                            }
                         }
                     </div>
 
-                    <p class="text-sm text-gray-600 mb-2">
-                        <span class="font-medium text-gray-700">Equipment:</span>
-                        @(string.Join(", ", ex.Equipments ?? new List<string>()))
-                    </p>
+                    <div class="mb-3">
+                        <span class="text-xs font-semibold text-primaryText block mb-2">@equipmentLabel</span>
 
-                    @if (ex.SecondaryMuscles?.Any() == true)
-                    {
-                        <p class="text-sm text-gray-600 mb-3">
-                            <span class="font-medium text-gray-700">Secondary:</span>
-                            @(string.Join(", ", ex.SecondaryMuscles))
-                        </p>
-                    }
+                        @foreach (var eq in ex.Equipments ?? new List<string>())
+                        {
+                            <span class="capitalize px-3 py-1 bg-gray-100 text-primaryText rounded-full text-xs font-medium inline-block mr-2 mb-2">
+                                @eq
+                            </span>
+                        }
+                    </div>
+
                 </div>
             </div>
         </a>
-
-        <button type="button"
-                class="absolute top-3 right-3 text-gray-400 hover:text-red-500 focus:outline-none z-10 text-2xl"
-                data-id="@ex.ExerciseId"
-                data-title="@ex.Name"
-                data-bodyparts="@string.Join(",", ex.BodyParts ?? new List<string>())"
-                data-targetmuscles="@string.Join(",", ex.TargetMuscles ?? new List<string>())"
-                data-equipments="@string.Join(",", ex.Equipments ?? new List<string>())"
-                data-secondarymuscles="@string.Join(",", ex.SecondaryMuscles ?? new List<string>())"
-                data-gifurl="@ex.GifUrl"
-                id="favorite-btn-@ex.ExerciseId"
-                aria-label="@(ex.IsSaved ? "Remove from favorites" : "Add to favorites")">
-            >
-            <i class="fa-solid fa-heart @(ex.IsSaved ? "text-red-500" : "")"></i>
-        </button>
+        <div class="absolute top-4 right-4 flex gap-2 z-10 text-2xl">
+            <button type="button"
+                    data-id="@ex.ExerciseId"
+                    data-title="@ex.Name"
+                    data-bodyparts="@string.Join(",", ex.BodyParts ?? new List<string>())"
+                    data-targetmuscles="@string.Join(",", ex.TargetMuscles ?? new List<string>())"
+                    data-equipments="@string.Join(",", ex.Equipments ?? new List<string>())"
+                    data-secondarymuscles="@string.Join(",", ex.SecondaryMuscles ?? new List<string>())"
+                    data-gifurl="@ex.GifUrl"
+                    id="favorite-btn-@ex.ExerciseId"
+                    aria-label="@(ex.IsSaved ? "Remove from favorites" : "Add to favorites")">
+                <i class="fa-solid fa-heart @(ex.IsSaved ? "text-red-500" : "")"></i>
+            </button>
+        </div>
     </div>
 }
