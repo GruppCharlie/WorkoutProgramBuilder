@@ -104,7 +104,7 @@
                     <li><strong>@username</strong> @currentMember.UserName</li>
                     <li><strong>@profileEmail</strong> @currentMember.Email</li>
                     <li>
-                        <stron>@profileLastLogin</stron>
+                        <strong>@profileLastLogin</strong>
                         @(currentMember?.LastLoginDateUtc?.ToLocalTime().ToString("MMMM d, yyyy 'at' h:mm tt") ?? "Never")
                     </li>
                     <li><strong>@amountSavedExercises</strong> @exercisesSaved</li>
@@ -197,7 +197,7 @@
                         var unlocked = workoutsSaved >= required;
 
                         <div class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-sm transition
-                                @(unlocked ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500")">
+                                @(unlocked ? "bg-green-100 text-green-800" : "bg-gray-100 text-primaryText")">
                             @if (!string.IsNullOrEmpty(achievementIcon))
                             {
                                 <img src="@achievementIcon" alt="@achievementName" class="w-6 h-6 object-contain" />

@@ -22,12 +22,12 @@
         <!-- Workout Card Header -->
         <div class="relative p-6 bg-neutral-100 h-[200px] flex flex-col">
             
-            <h4 class="text-2xl font-bold text-gray-900 mb-2 pr-20 line-clamp-2">@workout.Name</h4>
-            <p class="text-gray-600 text-sm flex-1 md:line-clamp-3">@workout.Description</p>
+            <h1 class="text-2xl font-bold text-primaryText mb-2 pr-20 line-clamp-2">@workout.Name</h1>
+            <p class="text-primaryText text-sm flex-1 line-clamp-3">@workout.Description</p>
             
             @if (exercises.Any())
             {
-                <div class="mt-auto flex items-center gap-2 text-sm text-gray-500">
+                <div class="mt-auto flex items-center gap-2 text-sm text-primaryText">
                     <i class="fa-solid fa-dumbbell"></i>
                     <span>@exercises.Count @Model.ExercisesText</span>
                 </div>
@@ -84,7 +84,7 @@
                     <div class="flex flex-wrap gap-2">
                         @foreach (var muscle in muscleGroups)
                         {
-                            <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">@muscle</span>
+                            <span class="px-3 py-1 bg-primary/20 text-primaryText rounded-full text-xs font-medium">@muscle</span>
                         }
                     </div>
                 </div>

@@ -41,20 +41,27 @@
             <div id="userInputSection" class="text-center py-12">
                 <p>@pleaseEnter</p>
                 <form id="userDetailsForm" class="mt-4 space-y-4 max-w-xs mx-auto">
-                    <div><input type="number" name="age" id="userAgeInput" placeholder="@personalAge" min="10" max="100" class="border p-2 rounded w-full text-center" required /></div>
                     <div>
-                        <select name="gender" id="userGenderInput" class="border p-2 rounded w-full text-center" required>
-                            <option value="">@personalGender</option>
-                            @foreach (var gender in genderSelection)
-                            {
-                                <option value="@gender">@gender</option>
-                            }
-                        </select>
-
-                    </div>
-                    <div><input type="number" name="weight" id="userWeightInput" placeholder="@personalWeight" min="30" max="250" class="border p-2 rounded w-full text-center" required /></div>
-                    <div><input type="number" name="height" id="userHeightInput" placeholder="@personalHeight" min="100" max="250" class="border p-2 rounded w-full text-center" required /></div>
-                    <button type="submit" id="generateBtn" class="w-full px-4 py-2 bg-primary hover:bg-primaryHover text-white rounded">@continueButton</button>
+                        <label for="userAgeInput" class="sr-only">@personalAge</label>
+                            <input type="number" name="age" id="userAgeInput" placeholder="@personalAge" min="10" max="100" class="border p-2 rounded w-full text-center" required /></div>
+                                <div>
+                                    <label for="userGenderInput" class="sr-only">@personalGender</label>
+                                        <select name="gender" id="userGenderInput"
+                                                class="border p-2 rounded w-full text-center" required>
+                                            <option value="">@personalGender</option>
+                                            @foreach (var gender in genderSelection)
+                                            {
+                                                <option value="@gender">@gender</option>
+                                            }
+                                        </select>
+                                </div>
+                    <div>
+                        <label for="userWeightInput" class="sr-only">@personalWeight</label>
+                        <input type="number" name="weight" id="userWeightInput" placeholder="@personalWeight" min="30" max="250" class="border p-2 rounded w-full text-center" required /></div>
+                    <div>
+                        <label for="userHeightInput" class="sr-only">@personalHeight</label>
+                        <input type="number" name="height" id="userHeightInput" placeholder="@personalHeight" min="100" max="250" class="border p-2 rounded w-full text-center" required /></div>
+                    <button type="submit" id="generateBtn" aria-label="Continue" class="w-full px-4 py-2 bg-primary hover:bg-primaryHover text-white rounded">@continueButton</button>
                 </form>
             </div>
         }
@@ -64,12 +71,12 @@
             <div class="grid md:grid-cols-2 gap-8">
                 <!-- AI Workout Generator Form -->
                 <div>
-                    <h3 class="text-xl font-bold mb-4">@Model.GenerateWorkout</h3>
+                    <h1 class="text-xl font-bold mb-4">@Model.GenerateWorkout</h1>
                     
                     <form id="workoutGeneratorForm" class="workout-generator-form space-y-4">
                         <!-- Muscle Groups Selection -->
                         <div class="mb-8">
-                            <label class="block text-sm font-semibold text-primaryText mb-2">@Model.TargetMuscleGroups</label>
+                            <label for="muscleGroupsSelect" class="block text-sm font-semibold text-primaryText mb-2">@Model.TargetMuscleGroups</label>
                             <div class="rounded-lg border-2 border-primaryBorder overflow-hidden">
                                 <select multiple id="muscleGroupsSelect" class="muscle-groups-select w-full px-2 py-3 focus:outline-none focus:border-primary bg-white max-h-[250px]">
                                     <option value="any" selected>Any</option>
@@ -113,7 +120,7 @@
 
                 <!-- Muscle Visualization -->
                 <div>
-                    <h3 class="text-xl font-bold mb-4">@Model.MuscleVisualization</h3>
+                    <h2 class="text-xl font-bold mb-4">@Model.MuscleVisualization</h2>
                     <div class="muscle-image-container">
                         <div class="flex justify-center">
                             <img alt="Muscle groups visualization" 
