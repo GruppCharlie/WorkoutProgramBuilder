@@ -176,6 +176,13 @@ class MuscleGroupVisualizer {
 
     // Check if user is authenticated
     const isAuthenticated = await isUserAuthenticated();
+    
+    // Get localized texts from data attributes (provided by backend)
+    const section = document.querySelector('section[data-exercises-text]');
+    const exercisesText = section?.dataset.exercisesText;
+    const visualizationTitle = section?.dataset.visualizationTitle ;
+    const musclesLabel = section?.dataset.musclesLabel;
+    const equipmentLabel = section?.dataset.equipmentLabel;
 
     // Collect all unique muscles and equipment from all exercises
     const allMuscles = [
@@ -256,20 +263,20 @@ class MuscleGroupVisualizer {
                     
                     <div class="mt-auto flex items-center gap-2 text-sm text-gray-500">
                         <i class="fa-solid fa-dumbbell"></i>
-                        <span>${workout.exercises.length} exercises</span>
+                        <span>${workout.exercises.length} ${exercisesText.toLowerCase()}</span>
                     </div>
                 </div>
 
                 <!-- Targeted Muscles Visualization -->
                 <div class="p-6 bg-white border-t border-gray-100">
-                    <h5 class="text-sm font-semibold text-gray-700 mb-3">Targeted Muscles Visualization</h5>
+                    <h5 class="text-sm font-semibold text-gray-700 mb-3">${visualizationTitle}</h5>
                     ${muscleVisualizationHTML}
                 </div>
 
                 <!-- Muscles & Equipment Tags -->
                 <div class="p-6 space-y-4 border-t border-gray-100">
                     <div>
-                        <span class="text-xs font-semibold text-gray-500 block mb-2">Muscles:</span>
+                        <span class="text-xs font-semibold text-gray-500 block mb-2">${musclesLabel}</span>
                         <div class="flex flex-wrap gap-2">
                             ${allMuscles
                               .map(
@@ -282,7 +289,7 @@ class MuscleGroupVisualizer {
                     </div>
                     
                     <div>
-                        <span class="text-xs font-semibold text-gray-500 block mb-2">Equipment:</span>
+                        <span class="text-xs font-semibold text-gray-500 block mb-2">${equipmentLabel}</span>
                         <div class="flex flex-wrap gap-2">
                             ${allEquipment
                               .map(

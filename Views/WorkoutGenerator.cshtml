@@ -28,9 +28,18 @@
 
     
     var muscleGroups = ViewData["MuscleGroups"] as List<string> ?? [];
+    
+    // Localized texts from Dictionary for generated workout card
+    var exercisesText = Umbraco.GetDictionaryValue("workoutCard.Exercises") ?? "Exercises";
+    var visualizationTitle = Umbraco.GetDictionaryValue("workoutCard.Visualization") ?? "Targeted Muscles Visualization";
+    var musclesLabel = Umbraco.GetDictionaryValue("workoutCard.Muscles") ?? "Muscles:";
+    var equipmentLabel = Umbraco.GetDictionaryValue("workoutCard.Equipment") ?? "Equipment:";
 }
 
-<section>
+<section data-exercises-text="@exercisesText"
+         data-visualization-title="@visualizationTitle"
+         data-muscles-label="@musclesLabel"
+         data-equipment-label="@equipmentLabel">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 mb-16">
 
         @if (needsUserInput)
