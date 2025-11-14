@@ -56,9 +56,6 @@ public class FavoritesController(
 
         ViewData["Exercises"] = savedExercises;
         ViewData["Workouts"] = savedWorkouts;
-        
-        // Set workout details URL for JavaScript navigation
-        ViewData["WorkoutDetailsUrl"] = _pageService.GetPageUrl("workoutDetailsPage", "/workouts/workout-details");
 
         return CurrentTemplate(CurrentPage);
     }

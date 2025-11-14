@@ -7,9 +7,6 @@
 
     var currentMember = await MemberManager.GetCurrentMemberAsync();
     var isLoggedIn = currentMember != null;
-    
-    // Set workout details URL for JavaScript navigation
-    ViewData["WorkoutDetailsUrl"] = GetPageUrl("workoutDetailsPage", "/workouts/workout-details");
 
     string? memberDetails = null;
 

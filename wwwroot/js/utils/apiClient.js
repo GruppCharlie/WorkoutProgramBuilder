@@ -14,23 +14,16 @@ const API_ENDPOINTS = {
     WORKOUT_REMOVE: (workoutId) => `/api/workout/remove/${workoutId}`,
     FAVORITES_EXERCISE: '/api/favorites/exercise',
     FAVORITES_WORKOUT: '/api/favorites/workout',
-    MEMBER_DETAILS: '/api/member/details'
+    MEMBER_DETAILS: '/api/member/details',
+    WORKOUT_DETAILS_URL: '/api/routes/workout-details'
 };
 
 /**
  * Page Routes Configuration
  */
 const PAGE_ROUTES = {
-    WORKOUT_DETAILS: (workoutId) => `${getWorkoutDetailsBaseUrl()}?workoutId=${workoutId}`
+    WORKOUT_DETAILS: (workoutId) => `${window.WORKOUT_DETAILS_URL || '/workouts/workout-details'}?workoutId=${workoutId}`
 };
-
-/**
- * Get workout details base URL from body data attribute
- * Returns culture-aware URL from Umbraco
- */
-function getWorkoutDetailsBaseUrl() {
-    return document.body.getAttribute('data-workout-details-url') || '/workouts/workout-details';
-}
 
 
 /**
