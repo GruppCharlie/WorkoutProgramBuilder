@@ -31,8 +31,8 @@ tailwind.config = {
                 'orange-700': '#ba2b14',
                 'orange-950': '#410d09',
 
-                primary: '#2a9ecd',
-                primaryHover: '#2a9ecdBF',
+                primary: '#166079',
+                primaryHover: '#0f4c5c',
                 primaryGray: '#d9d9de',
                 primaryBorder: '#c6c7ce',
                 primaryText: '#18181b',

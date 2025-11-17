@@ -9,7 +9,7 @@
 @if (!string.IsNullOrEmpty(linkText) && !string.IsNullOrEmpty(linkUrl))
 {
     <a href="@linkUrl" 
-       class="text-blue-600 hover:text-blue-800 underline hover:no-underline transition-colors duration-200"
+       class="text-primary hover:text-primaryHover underline hover:no-underline transition-colors duration-200"
        @(isExternal ? "target=\"_blank\" rel=\"noopener noreferrer\"" : "")>
         @linkText
     </a>

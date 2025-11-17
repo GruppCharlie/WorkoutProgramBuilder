@@ -9,32 +9,35 @@
  * {string} type - Toast type: 'success', 'error', 'info', 'warning'
  * {number} duration - Duration in milliseconds (default: 3000)
  */
-function showToast(message, type = 'success', duration = 3000) {
-    const toast = document.createElement('div');
-    
-    // Base classes
-    const baseClasses = 'fixed top-20 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300';
-    
-    // Type-specific classes
-    const typeClasses = {
-        success: 'bg-green-500 text-white',
-        error: 'bg-red-500 text-white',
-        info: 'bg-blue-500 text-white',
-        warning: 'bg-yellow-500 text-gray-900'
-    };
-    
-    toast.className = `${baseClasses} ${typeClasses[type] || typeClasses.success}`;
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    // Fade out and remove
+function showToast(message, type = "success", duration = 3000) {
+  const toast = document.createElement("div");
+
+  // Base classes
+  const baseClasses =
+    "fixed top-20 right-4 px-6 py-3 rounded-lg shadow-sm z-50 transition-opacity duration-300";
+
+  // Type-specific classes
+  const typeClasses = {
+    success: "bg-green-500 text-black",
+    error: "bg-red-500 text-black",
+    info: "bg-primary text-white",
+    warning: "bg-yellow-500 text-black",
+  };
+
+  toast.className = `${baseClasses} ${
+    typeClasses[type] || typeClasses.success
+  }`;
+  toast.textContent = message;
+
+  document.body.appendChild(toast);
+
+  // Fade out and remove
+  setTimeout(() => {
+    toast.style.opacity = "0";
     setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-    }, duration);
+      toast.remove();
+    }, 300);
+  }, duration);
 }
 
 /**
@@ -42,7 +45,7 @@ function showToast(message, type = 'success', duration = 3000) {
  * {string} message - Success message
  */
 function showSuccessToast(message) {
-    showToast(message, 'success');
+  showToast(message, "success");
 }
 
 /**
@@ -50,7 +53,7 @@ function showSuccessToast(message) {
  * {string} message - Error message
  */
 function showErrorToast(message) {
-    showToast(message, 'error');
+  showToast(message, "error");
 }
 
 /**
@@ -58,7 +61,7 @@ function showErrorToast(message) {
  * {string} message - Info message
  */
 function showInfoToast(message) {
-    showToast(message, 'info');
+  showToast(message, "info");
 }
 
 /**
@@ -66,5 +69,5 @@ function showInfoToast(message) {
  * {string} message - Warning message
  */
 function showWarningToast(message) {
-    showToast(message, 'warning');
+  showToast(message, "warning");
 }
