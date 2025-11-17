@@ -18,14 +18,14 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Workout Template</summary>
-	[PublishedModel("workoutTemplate")]
-	public partial class WorkoutTemplate : PublishedContentModel
+	/// <summary>{umbValue:exerciseName}</summary>
+	[PublishedModel("exerciseItem")]
+	public partial class ExerciseItem : PublishedElementModel
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		public new const string ModelTypeAlias = "workoutTemplate";
+		public new const string ModelTypeAlias = "exerciseItem";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -34,20 +34,28 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 			=> PublishedModelUtility.GetModelContentType(contentTypeCache, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<WorkoutTemplate, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedContentTypeCache contentTypeCache, Expression<Func<ExerciseItem, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(contentTypeCache), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public WorkoutTemplate(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
+		public ExerciseItem(IPublishedElement content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
 		}
 
 		// properties
+
+		///<summary>
+		/// Description
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("description")]
+		public virtual string Description => this.Value<string>(_publishedValueFallback, "description");
 
 		///<summary>
 		/// Equipment
@@ -58,12 +66,20 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual global::System.Collections.Generic.IEnumerable<string> Equipment => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "equipment");
 
 		///<summary>
-		/// Exercises: Add exercises to this workout template
+		/// Exercise Name
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("exercises")]
-		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel Exercises => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "exercises");
+		[ImplementPropertyType("exerciseName")]
+		public virtual string ExerciseName => this.Value<string>(_publishedValueFallback, "exerciseName");
+
+		///<summary>
+		/// Instructions
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("instructions")]
+		public virtual string Instructions => this.Value<string>(_publishedValueFallback, "instructions");
 
 		///<summary>
 		/// Muscles
@@ -74,19 +90,17 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual global::System.Collections.Generic.IEnumerable<string> Muscles => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "muscles");
 
 		///<summary>
-		/// Workout Description
+		/// Reps
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("workoutDescription")]
-		public virtual string WorkoutDescription => this.Value<string>(_publishedValueFallback, "workoutDescription");
+		[ImplementPropertyType("reps")]
+		public virtual int Reps => this.Value<int>(_publishedValueFallback, "reps");
 
 		///<summary>
-		/// Workout Name
+		/// Sets
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("workoutName")]
-		public virtual string WorkoutName => this.Value<string>(_publishedValueFallback, "workoutName");
+		[ImplementPropertyType("sets")]
+		public virtual int Sets => this.Value<int>(_publishedValueFallback, "sets");
 	}
 }
