@@ -96,6 +96,14 @@
                                         if (string.IsNullOrEmpty(targetCulture)) targetCulture = defaultCulture;
                                         
                                         var langUrl = Model.Url(culture: targetCulture);
+                                        
+                                        // Preserve query string when switching language
+                                        var queryString = Context.Request.QueryString.ToString();
+                                        if (!string.IsNullOrEmpty(queryString))
+                                        {
+                                            langUrl += queryString;
+                                        }
+                                        
                                         <li>
                                             <a href="@langUrl" 
                                                class="flex items-center px-3 py-2 text-sm hover:bg-muted/20 hover:text-primary transition-colors">
