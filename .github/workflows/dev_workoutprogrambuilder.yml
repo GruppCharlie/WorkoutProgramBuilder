@@ -51,5 +51,6 @@ jobs:
         with:
           app-name: 'WorkoutProgramBuilder'
           slot-name: 'Production'
-          package: .
+          package: ./.net-app
+
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4EC31F4D2C7848CD8AC77C9F2D5BCE87 }}
