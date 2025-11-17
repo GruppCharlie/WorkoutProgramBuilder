@@ -83,7 +83,7 @@ public static class MuscleMapper
 
 
     // Generate muscle visualization image URL
-    public static string GenerateMuscleVisualizationUrl(List<string> muscles, string color = "42, 158, 205")
+    public static string GenerateMuscleVisualizationUrl(List<string> muscles, string color = "22,96,121")
     {
         var mappedMuscles = MapToApiMuscleGroups(muscles);
         var muscleGroupsParam = string.Join(",", mappedMuscles);

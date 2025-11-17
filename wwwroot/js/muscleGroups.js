@@ -59,7 +59,7 @@ class MuscleGroupVisualizer {
   constructor(containerSelector, options = {}) {
     this.container = document.querySelector(containerSelector);
     this.selectedMuscles = [];
-    this.color = options.color || "42, 158, 205"; // RGB format - Secondary Purple
+    this.color = options.color || "22,96,121"; // RGB format - Secondary Purple
     void this.init();
   }
 
