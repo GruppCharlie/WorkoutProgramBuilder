@@ -18,6 +18,11 @@ public class HangfireJobsRegistrar : IHostedService
             job => job.RunAsync(),
             "0 3 * * *");
 
+        _recurring.AddOrUpdate<SitemapRegenerationJob>(
+            "sitemap-regeneration",
+            job => job.RunAsync(),
+            "10 3 * * *");
+
         return Task.CompletedTask;
     }
 
