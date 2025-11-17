@@ -11,6 +11,7 @@ public interface IUmbracoPageService
 {
     IEnumerable<IPublishedContent> GetAllPages();
     string GetPageUrl(string contentTypeAlias, string fallbackUrl);
+    IEnumerable<IPublishedContent> GetChildrenByType(IPublishedContent parent, string contentTypeAlias);
 }
 
 public class UmbracoPageService(IUmbracoContextAccessor contextAccessor) : IUmbracoPageService
@@ -31,5 +32,10 @@ public class UmbracoPageService(IUmbracoContextAccessor contextAccessor) : IUmbr
         var allPages = GetAllPages();
         var page = allPages.FirstOrDefault(x => x.ContentType.Alias == contentTypeAlias);
         return page?.Url(culture: currentCulture) ?? fallbackUrl;
+    }
+
+    public IEnumerable<IPublishedContent> GetChildrenByType(IPublishedContent parent, string contentTypeAlias)
+    {
+        return parent.Children?.Where(x => x.ContentType.Alias == contentTypeAlias) ?? [];
     }
 }

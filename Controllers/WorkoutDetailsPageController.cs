@@ -12,6 +12,7 @@ public class WorkoutDetailsPageController(
     IMemberManager memberManager,
     IMemberWorkoutsService workoutsService,
     IMemberFavoritesService favoritesService,
+    IWorkoutTemplateService workoutTemplateService,
     ILogger<WorkoutDetailsPageController> logger,
     ICompositeViewEngine viewEngine,
     IUmbracoContextAccessor contextAccessor,
@@ -59,12 +60,46 @@ public class WorkoutDetailsPageController(
         
         var memberId = int.Parse(currentMember.Id);
         
-        var workout = workoutsService.GetWorkoutById(memberId, workoutId);
-        
         logger.LogInformation("Looking for workout: {WorkoutId} for member: {MemberId}", workoutId, memberId);
         
+        // Check if this is a template workout (from CMS)
+        if (workoutId.StartsWith("template-"))
+        {
+            logger.LogInformation("Loading template workout from CMS: {WorkoutId}", workoutId);
+            
+            var allPages = _pageService.GetAllPages();
+            var workoutsPage = allPages.FirstOrDefault(x => x.ContentType.Alias == "workoutsPage");
+            
+            if (workoutsPage != null)
+            {
+                var templates = workoutTemplateService.GetWorkoutTemplates(workoutsPage);
+                var templateWorkout = templates.FirstOrDefault(w => w.WorkoutId == workoutId);
+                
+                if (templateWorkout != null)
+                {
+                    // Check if workout is favorited or in My Workouts
+                    var templateFavorites = favoritesService.GetFavoriteWorkouts(memberId);
+                    var templateMemberWorkouts = workoutsService.GetMyWorkouts(memberId);
+                    
+                    templateWorkout.IsSaved = templateFavorites.Any(w => w.WorkoutId == workoutId);
+                    templateWorkout.IsInMyWorkouts = templateMemberWorkouts.Any(w => w.WorkoutId == workoutId);
+                    
+                    ViewData["Workout"] = templateWorkout;
+                    ViewData["IsAuthenticated"] = true;
+                    ViewData["CustomBreadcrumbs"] = GetBreadcrumbs();
+                    
+                    return CurrentTemplate(CurrentPage);
+                }
+            }
+            
+            logger.LogWarning("Template workout not found: {WorkoutId}", workoutId);
+            return CurrentTemplate(CurrentPage);
+        }
+        
+        // Load from My Workouts (AI-generated workouts)
+        var myWorkout = workoutsService.GetWorkoutById(memberId, workoutId);
 
-        if (workout == null)
+        if (myWorkout == null)
         {
             logger.LogInformation("Workout not found in DB: {WorkoutId} for member: {MemberId}. Will try to load from sessionStorage.", workoutId, memberId);
             
@@ -79,6 +114,8 @@ public class WorkoutDetailsPageController(
             
             return CurrentTemplate(CurrentPage);
         }
+        
+        var workout = myWorkout;
 
         // Check if workout is favorited
         var favoriteWorkouts = favoritesService.GetFavoriteWorkouts(memberId);

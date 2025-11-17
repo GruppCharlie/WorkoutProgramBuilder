@@ -1,0 +1,72 @@
+@using WorkoutProgramBuilder.ViewModels
+@using WorkoutProgramBuilder.Business.Dto
+@inherits UmbracoViewPageBase<IPublishedContent>
+
+@{
+    Layout = "mainLayout.cshtml";
+    ViewData["ShowSortFavorites"] = true;
+    ViewData["ShowEquipmentFilter"] = true;
+    
+    var workoutTemplates = ViewData["WorkoutTemplates"] as List<SavedWorkoutDto> ?? [];
+    var workoutGeneratorUrl = GetPageUrl("workoutGeneratorPage", "/workouts/generator");
+    
+    // Localized texts from Dictionary
+    var exercisesText = Umbraco.GetDictionaryValue("workoutCard.Exercises") ?? "Exercises";
+    var visualizationTitle = Umbraco.GetDictionaryValue("workoutCard.Visualization") ?? "Targeted Muscles Visualization";
+    var musclesLabel = Umbraco.GetDictionaryValue("workoutCard.Muscles") ?? "Muscles:";
+    var equipmentLabel = Umbraco.GetDictionaryValue("workoutCard.Equipment") ?? "Equipment:";
+    
+    // Empty state texts
+    var emptyStateTitle = Umbraco.GetDictionaryValue("workoutTemplates.emptyState.title") ?? "No workout templates available yet";
+    var generatorText = Umbraco.GetDictionaryValue("workoutTemplates.emptyState.generator") ?? "AI Workout Generator";
+    var descriptionText = Umbraco.GetDictionaryValue("workoutTemplates.emptyState.description") ?? "Try our {0} to create custom workouts!";
+    var filterEmptyText = Umbraco.GetDictionaryValue("filters.emptyState.message") ?? "match your filters. Try adjusting your selection.";
+}
+
+<section class="" 
+         data-page-type="workout-templates"
+         data-empty-title="@emptyStateTitle"
+         data-generator-text="@generatorText"
+         data-description-text="@descriptionText"
+         data-generator-url="@workoutGeneratorUrl"
+         data-filter-empty-text="@filterEmptyText">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        
+        <!-- Filters -->
+        <div class="mt-8">
+            @await Html.PartialAsync("_FilterBar")
+
+            @* Empty State - Show if no workout templates *@
+            @if (!workoutTemplates.Any())
+            {
+                @await Html.PartialAsync("_EmptyState", new EmptyStateViewModel
+                {
+                    Icon = "fa-dumbbell",
+                    Title = emptyStateTitle,
+                    Description = string.Format(descriptionText,
+                        $"<a href=\"{workoutGeneratorUrl}\" class=\"text-primary hover:underline\">{generatorText}</a>")
+                })
+            }
+
+            <!-- Workout Templates Grid - Render workout cards -->
+            @if (workoutTemplates.Any())
+            {
+                <div id="workoutTemplatesGrid" class="flex flex-wrap gap-6 mt-6">
+                    @await Html.PartialAsync("_WorkoutCard", new WorkoutCardViewModel
+                    {
+                        Workouts = workoutTemplates,
+                        ExercisesText = exercisesText,
+                        VisualizationTitle = visualizationTitle,
+                        MusclesLabel = musclesLabel,
+                        EquipmentLabel = equipmentLabel
+                    })
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<script src="/js/utils/filterHelpers.js"></script>
+<script src="/js/workoutCard.js"></script>
+<script src="/js/workoutFiltering.js"></script>
+<script src="/js/workoutsPage.js"></script>

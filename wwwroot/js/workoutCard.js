@@ -29,10 +29,11 @@ async function navigateToWorkoutDetail(workoutId) {
         return;
     }
     
-    // For authenticated users: save to My Workouts if needed
+    // For authenticated users: only auto-add AI-generated workouts (not CMS templates)
     const addButton = workoutCard.querySelector('.add-to-my-workouts-btn');
+    const isTemplateWorkout = workoutId.startsWith('template-');
     
-    if (addButton && !addButton.disabled) {
+    if (addButton && !addButton.disabled && !isTemplateWorkout) {
         const icon = addButton.querySelector('i');
         const isNotInMyWorkouts = icon && icon.classList.contains('fa-plus');
         
@@ -46,7 +47,7 @@ async function navigateToWorkoutDetail(workoutId) {
         }
     }
     
-    // If already in My Workouts, navigate 
+    // Navigate directly (for templates or already saved workouts)
     window.location.href = PAGE_ROUTES.WORKOUT_DETAILS(workoutId);
 }
 
