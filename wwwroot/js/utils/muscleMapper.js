@@ -72,7 +72,7 @@ function mapMuscleNamesToGroups(muscles) {
  * {string} color - RGB color string (default: primary purple)
  * returns {string} Image URL for muscle visualization
  */
-function generateMuscleVisualizationUrl(muscles, color = '42,158,205') {
+function generateMuscleVisualizationUrl(muscles, color = '22,96,121') {
     const validMuscleGroups = mapMuscleNamesToGroups(muscles);
     const muscleGroups = validMuscleGroups.join(',');
     return `/api/musclegroup/image?muscleGroups=${encodeURIComponent(muscleGroups)}&color=${encodeURIComponent(color)}&transparentBackground=true`;

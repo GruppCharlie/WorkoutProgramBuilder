@@ -4,6 +4,22 @@
 
     var exercise = ViewData["Exercise"] as WorkoutProgramBuilder.Business.Dto.ExerciseDto;
 
+    if (!string.IsNullOrEmpty(exercise?.Name))
+    {
+        var words = exercise.Name.ToLower().Split(' ');
+        for (int i = 0; i < words.Length; i++)
+        {
+            if (words[i].Length > 0)
+                words[i] = char.ToUpper(words[i][0]) + words[i].Substring(1);
+        }
+        ViewBag.Title = string.Join(" ", words);
+    }
+    else
+    {
+        ViewBag.Title = exercise?.Name;
+    }
+
+
     var titleFallback = Model.Title;
     var bodyPartsLabel = Model.BodyParts;
     var targetMusclesLabel = Model.TargetMuscles;
@@ -16,35 +32,39 @@
 }
 
 <div class="container mx-auto px-6 py-16">
-    <div class="bg-white border border-gray-200 shadow-md rounded-2xl pt-10 max-w-6xl mx-auto">
+    <div class="bg-white border border-gray-200 shadow-sm rounded-2xl max-w-6xl mx-auto">
 
-        <h1 class="text-4xl font-bold text-primaryText text-center mb-12 capitalize p-10">
-            @(exercise?.Name ?? titleFallback)
-        </h1>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start lg:items-center">
 
-            <div class="flex justify-center">
-                <img src="@exercise?.GifUrl" alt="" class="w-full max-w-[300px] h-auto object-contain" />
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start lg:items-center px-10">
+
+            <div class="flex justify-center pt-10">
+                <div class="relative w-full max-w-[350px] h-[350px] rounded-xl overflow-hidden">
+                    <div class="gif-skeleton absolute inset-0 bg-gray-200 animate-pulse"></div>
+
+                    <img src="@exercise?.GifUrl"
+                         alt="@exercise?.Name"
+                         class="gif-image w-full h-full object-contain opacity-0 transition-opacity duration-500" />
+                </div>
             </div>
 
-            <div class="space-y-6 text-primaryText p-10">
+            <div class="space-y-8 text-primaryText border-neutral-100">
 
                 <div>
-                    <p class="font-semibold mb-2">@bodyPartsLabel</p>
-                    <div class="flex flex-wrap">
+                    <p class="font-semibold mb-2 text-lg">@bodyPartsLabel</p>
+                    <div class="flex flex-wrap gap-2">
                         @if (exercise?.BodyParts != null && exercise.BodyParts.Any())
                         {
                             foreach (var item in exercise.BodyParts)
                             {
-                                <span class="uppercase px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block mr-2 mb-2">
+                                <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
                                     @item
                                 </span>
                             }
                         }
                         else
                         {
-                            <span class="uppercase px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                            <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
                                 @notAvailable
                             </span>
                         }
@@ -52,20 +72,20 @@
                 </div>
 
                 <div>
-                    <p class="font-semibold mb-2">@targetMusclesLabel</p>
-                    <div class="flex flex-wrap">
+                    <p class="font-semibold mb-2 text-lg">@targetMusclesLabel</p>
+                    <div class="flex flex-wrap gap-2">
                         @if (exercise?.TargetMuscles != null && exercise.TargetMuscles.Any())
                         {
                             foreach (var item in exercise.TargetMuscles)
                             {
-                                <span class="uppercase px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block mr-2 mb-2">
+                                <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
                                     @item
                                 </span>
                             }
                         }
                         else
                         {
-                            <span class="uppercase px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                            <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
                                 @notAvailable
                             </span>
                         }
@@ -73,20 +93,20 @@
                 </div>
 
                 <div>
-                    <p class="font-semibold mb-2">@equipmentLabel</p>
-                    <div class="flex flex-wrap">
+                    <p class="font-semibold mb-2 text-lg">@equipmentLabel</p>
+                    <div class="flex flex-wrap gap-2">
                         @if (exercise?.Equipments != null && exercise.Equipments.Any())
                         {
                             foreach (var item in exercise.Equipments)
                             {
-                                <span class="uppercase px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block mr-2 mb-2">
+                                <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
                                     @item
                                 </span>
                             }
                         }
                         else
                         {
-                            <span class="uppercase px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                            <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
                                 @notAvailable
                             </span>
                         }
@@ -94,20 +114,20 @@
                 </div>
 
                 <div>
-                    <p class="font-semibold mb-2">@secondaryMusclesLabel</p>
-                    <div class="flex flex-wrap">
+                    <p class="font-semibold mb-2 text-lg">@secondaryMusclesLabel</p>
+                    <div class="flex flex-wrap gap-2">
                         @if (exercise?.SecondaryMuscles != null && exercise.SecondaryMuscles.Any())
                         {
                             foreach (var item in exercise.SecondaryMuscles)
                             {
-                                <span class="uppercase px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block mr-2 mb-2">
+                                <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
                                     @item
                                 </span>
                             }
                         }
                         else
                         {
-                            <span class="uppercase px-2 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                            <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
                                 @notAvailable
                             </span>
                         }
@@ -117,9 +137,8 @@
             </div>
 
         </div>
-
         <div class="mt-14 border-t p-10">
-            <h3 class="text-3xl font-semibold text-primaryText mb-6">@instructionsLabel</h3>
+            <h1 class="text-3xl font-semibold text-primaryText mb-6">@instructionsLabel</h1>
 
             @if (instructions.Any())
             {
@@ -134,7 +153,6 @@
 
                         <p>@Html.Raw(formatted)</p>
                     }
-
                 </div>
             }
             else
