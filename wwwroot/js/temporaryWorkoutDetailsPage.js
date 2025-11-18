@@ -145,9 +145,9 @@ function renderUnauthenticatedWorkoutExercises(exercises) {
     const instructionsEl = card.querySelector(".exercise-instructions");
     if (instructions.length > 0) {
       instructionsEl.innerHTML = `
-                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">${
+                <h1 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">${
                   labels.instructions
-                }</h4>
+                }</h1>
                 <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700 max-h-44 overflow-y-auto pr-2">
                     ${instructions
                       .map(
