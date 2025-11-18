@@ -212,7 +212,7 @@ function renderUnauthenticatedWorkoutExercises(exercises) {
   exercises.forEach((_, i) => {
     const dot = document.createElement("button");
     dot.onclick = () => scrollToExercise(i);
-    dot.className = `exercise-dot w-2 h-2 rounded-full transition-all duration-300 ${
+    dot.className = `exercise-dot w-3 h-3 rounded-full transition-all duration-300 ${
       i === 0 ? "bg-primary w-8" : "bg-gray-300 hover:bg-gray-400"
     }`;
     dot.setAttribute("data-index", i);
