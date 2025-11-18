@@ -99,25 +99,32 @@
                         <!-- Workout Description Prompt -->
                         <div>
                             <label class="block text-sm font-semibold text-primaryText mb-2">@Model.DescribeYourWorkout</label>
-                            <textarea 
-                                id="promptTextarea"
-                                      class="workout-prompt w-full px-2 py-3 border-2 border-primaryBorder rounded-lg focus:outline-none focus:border-primary resize-none"
-                                      rows="5" 
-                                placeholder="@Model.WorkoutGeneratorInputPlaceholder"
-                                required
-                            ></textarea>
+                                <textarea id="promptTextarea"
+                                          class="workout-prompt w-full px-2 py-3 border-2 border-primaryBorder rounded-lg focus:outline-none focus:border-primary resize-none"
+                                          rows="5"
+                                          placeholder="@Model.WorkoutGeneratorInputPlaceholder"
+                                          required
+                                          minlength="10"></textarea>
                         </div>
 
                         <!-- Generate Button -->
-                        <button type="submit" class="generate-btn w-full px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primaryHover transition-colors disabled:bg-neutral-400 disabled:cursor-not-allowed">
-                            @Model.GenerateWorkout
+                        <button type="submit" id="generateBtn" class="generate-btn relative w-full px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primaryHover transition-colors disabled:bg-neutral-400 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            <span class="btn-text">@Model.GenerateWorkout</span>
+                            <span class="loading-spinner hidden pointer-events-none absolute inset-0 flex items-center justify-center">
+                                <svg viewBox="0 0 50 50" class="h-5 w-5" aria-hidden="true">
+                                    <circle cx="25" cy="25" r="20" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="31.4 31.4">
+                                        <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.8s" repeatCount="indefinite"></animateTransform>
+                                    </circle>
+                                </svg>
+                            </span>
                         </button>
 
+
+
                         <!-- Loading State -->
-                        <div class="loading-state hidden text-center py-4">
-                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                            <p class="mt-2 text-sm text-primaryText">@Model.GeneratingYourWorkout</p>
-                        </div>
+                        <!-- Moved loading spinner into button above-->
+                        @* <p class="mt-2 text-sm text-primaryText">@Model.GeneratingYourWorkout</p> *@
+
 
                         <!-- Error Message -->
                         <div class="error-message hidden p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>

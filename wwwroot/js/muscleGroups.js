@@ -159,11 +159,14 @@ class MuscleGroupVisualizer {
       await this.displayWorkout(workout);
     } catch (error) {
       console.error("Error generating workout:", error);
-      errorMessage.textContent = `Failed to generate workout: ${error.message}. Please try again.`;
-      toggleElement(errorMessage, true);
+        errorMessage.textContent = `Failed to generate workout: ${error.message}. Please try again.`;
+        //Removed toggleElement moved loadin spinner for workout generator into button so removed generatgin workout text
+        //toggleElement(errorMessage, true);
+
     } finally {
-      setButtonLoading(generateBtn, false);
-      toggleElement(loadingState, false);
+        setButtonLoading(generateBtn, false);
+        //toggleElement(errorMessage, true);
+
     }
   }
 
@@ -176,11 +179,11 @@ class MuscleGroupVisualizer {
 
     // Check if user is authenticated
     const isAuthenticated = await isUserAuthenticated();
-    
+
     // Get localized texts from data attributes (provided by backend)
-    const section = document.querySelector('section[data-exercises-text]');
+    const section = document.querySelector("section[data-exercises-text]");
     const exercisesText = section?.dataset.exercisesText;
-    const visualizationTitle = section?.dataset.visualizationTitle ;
+    const visualizationTitle = section?.dataset.visualizationTitle;
     const musclesLabel = section?.dataset.musclesLabel;
     const equipmentLabel = section?.dataset.equipmentLabel;
 
@@ -263,7 +266,9 @@ class MuscleGroupVisualizer {
                     
                     <div class="mt-auto flex items-center gap-2 text-sm text-gray-500">
                         <i class="fa-solid fa-dumbbell"></i>
-                        <span>${workout.exercises.length} ${exercisesText.toLowerCase()}</span>
+                        <span>${
+                          workout.exercises.length
+                        } ${exercisesText.toLowerCase()}</span>
                     </div>
                 </div>
 
