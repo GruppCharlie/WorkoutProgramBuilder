@@ -1,0 +1,87 @@
+﻿@using Umbraco.Cms.Core.Security
+@using Umbraco.Cms.Core.Services
+@inherits UmbracoViewPageBase<LeaderboardPage>
+
+@inject IMemberService MemberService
+@inject IMemberManager MemberManager
+
+@{
+    Layout = "mainLayout.cshtml";
+
+    var allMembers = MemberService.GetAllMembers().ToList();
+
+    var leaderboard = allMembers
+        .Select(m => new
+        {
+            Name = m.Name,
+            Username = m.Username,
+            SavedWorkouts = m.GetValue<int?>("amountOfMyWorkouts") ?? 0,
+            MemberSince = m.CreateDate
+        })
+        .OrderByDescending(x => x.SavedWorkouts)
+        .Take(10)
+        .ToList();
+
+    var leaderboardHeadline = Model.LeaderboardHeadline;
+    var leaderboardSubText = Model.LeaderboardSubText;
+    var leaderboardRank = Model.LeaderboardRank;
+    var leaderboardUser = Model.LeaderboardUser;
+    var leaderboardSavedWorkouts = Model.LeaderboardSavedWorkouts;
+    var leaderboardMemberSince = Model.LeaderboardMemberSince;
+}
+
+<section class="container px-6 py-10 mx-auto">
+    <div class="bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
+
+        <h1 class="text-3xl font-bold text-primaryText mb-6">@leaderboardHeadline</h1>
+
+        <p class="text-gray-600 mb-8">
+            @leaderboardSubText
+        </p>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-left text-primaryText">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th class="py-3 px-4">@leaderboardRank</th>
+                        <th class="py-3 px-4">@leaderboardUser</th>
+                        <th class="py-3 px-4">@leaderboardSavedWorkouts</th>
+                        <th class="py-3 px-4">@leaderboardMemberSince</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < leaderboard.Count; i++)
+                    {
+                        var entry = leaderboard[i];
+                        var rank = i + 1;
+
+                        string rowClass = rank switch
+                        {
+                            1 => "bg-yellow-100 font-bold",
+                            2 => "bg-gray-100 font-semibold",
+                            3 => "bg-orange-100 font-medium",
+                            _ => ""
+                        };
+
+                        string medal = rank switch
+                        {
+                            1 => "🥇",
+                            2 => "🥈",
+                            3 => "🥉",
+                            _ => ""
+                        };
+
+                        <tr class="border-b border-gray-100 transition @rowClass">
+                            <td class="py-3 px-4 font-semibold">@medal @rank</td>
+                            <td class="py-3 px-4">@entry.Username</td>
+                            <td class="py-3 px-4">@entry.SavedWorkouts</td>
+                            <td class="py-3 px-4">@entry.MemberSince.ToString("MMMM yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</section>
