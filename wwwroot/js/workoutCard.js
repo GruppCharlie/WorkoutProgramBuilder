@@ -1,8 +1,8 @@
 /**
  * Workout Card Navigation
  * Handles click events on workout cards
- * For authenticated users: saves to My Workouts then navigates
- * For unauthenticated users: saves to sessionStorage and navigates directly
+ * For authenticated users: navigates directly (user must manually add to My Workouts)
+ * For unauthenticated users: saves to sessionStorage and navigates
  */
 async function navigateToWorkoutDetail(workoutId) {
     if (!workoutId) return;
@@ -24,30 +24,10 @@ async function navigateToWorkoutDetail(workoutId) {
             const workoutData = extractWorkoutDataFromButton(addButton);
             saveTemporaryWorkout(workoutData);
         }
-        
-        window.location.href = PAGE_ROUTES.WORKOUT_DETAILS(workoutId);
-        return;
     }
     
-    // For authenticated users: only auto-add AI-generated workouts (not CMS templates)
-    const addButton = workoutCard.querySelector('.add-to-my-workouts-btn');
-    const isTemplateWorkout = workoutId.startsWith('template-');
-    
-    if (addButton && !addButton.disabled && !isTemplateWorkout) {
-        const icon = addButton.querySelector('i');
-        const isNotInMyWorkouts = icon && icon.classList.contains('fa-plus');
-        
-        if (isNotInMyWorkouts) {
-            await addToMyWorkouts(new Event('click'), addButton);
-            
-            setTimeout(() => {
-                window.location.href = PAGE_ROUTES.WORKOUT_DETAILS(workoutId);
-            }, 500);
-            return;
-        }
-    }
-    
-    // Navigate directly (for templates or already saved workouts)
+    // For authenticated users: navigate directly without auto-adding to My Workouts
+    // User must manually click the plus button to add workout
     window.location.href = PAGE_ROUTES.WORKOUT_DETAILS(workoutId);
 }
 
