@@ -1,11 +1,8 @@
-
 /**
- * Shared workout filtering functionality
- * Used by both My Workouts and Favorites pages
- * Apply filters to a workout grid
+ * Apply filters and sorting to a workout grid
  * {string} gridId - ID of the grid element
  * {object} filters - Filter object with muscles, equipment, sort
- * {string} emptyIcon - Icon class for empty state (e.g., 'fa-dumbbell' or 'fa-heart')
+ * {string} emptyIcon - Icon class for empty state
  * {string} emptyMessage - Message to show when no workouts match
  * {string} emptyLink - Optional link to show in empty state
  * {string} filterEmptyText - Text to append when filters are active
@@ -19,7 +16,14 @@ function applyWorkoutFilters(gridId, filters, emptyIcon = 'fa-dumbbell', emptyMe
     // If no cards exist at all, don't show filter empty state
     if (cards.length === 0) return;
     
-    // Filter cards
+    // Save original order on first run (using data attribute)
+    cards.forEach((card, index) => {
+        if (!card.dataset.originalOrder) {
+            card.dataset.originalOrder = index.toString();
+        }
+    });
+    
+    // First, apply visibility filters
     cards.forEach(card => {
         let shouldShow = true;
         
@@ -53,38 +57,30 @@ function applyWorkoutFilters(gridId, filters, emptyIcon = 'fa-dumbbell', emptyMe
             );
         }
         
-        // Show/hide card
+        // Apply visibility immediately
         card.style.display = shouldShow ? '' : 'none';
     });
     
-    // Sort visible cards
+    // Sort cards based on selected option
+    const cardSortData = cards.map(card => ({
+        card,
+        sortValue: getSortValue(card, filters.sort)
+    }));
+    
+    cardSortData.sort((a, b) => {
+        if (filters.sort === 'a-z') {
+            return a.sortValue.localeCompare(b.sortValue, undefined, { sensitivity: 'base' });
+        }
+        return a.sortValue - b.sortValue;
+    });
+    
+    // Apply CSS order property to reorder cards visually
+    cardSortData.forEach((item, index) => {
+        item.card.style.order = index.toString();
+    });
+    
+    // Get visible cards for empty state check
     const visibleCards = cards.filter(card => card.style.display !== 'none');
-    
-    if (filters.sort === 'a-z') {
-        visibleCards.sort((a, b) => {
-            const aName = a.querySelector('h4')?.textContent || '';
-            const bName = b.querySelector('h4')?.textContent || '';
-            return aName.localeCompare(bName);
-        });
-    } else if (filters.sort === 'favorites') {
-        visibleCards.sort((a, b) => {
-            const aFavorited = a.querySelector('.fa-heart')?.classList.contains('text-red-500') || false;
-            const bFavorited = b.querySelector('.fa-heart')?.classList.contains('text-red-500') || false;
-            if (aFavorited && !bFavorited) return -1;
-            if (!aFavorited && bFavorited) return 1;
-            return 0;
-        });
-    }
-    
-    // Apply order using CSS order property
-    visibleCards.forEach((card, index) => {
-        card.style.order = index;
-    });
-    
-    // Reset order for hidden cards
-    cards.filter(card => card.style.display === 'none').forEach(card => {
-        card.style.order = 9999;
-    });
     
     // Check empty state
     showEmptyStateIfNeeded(grid, visibleCards, filters, emptyIcon, emptyMessage, emptyLink, filterEmptyText);

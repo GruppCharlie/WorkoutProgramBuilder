@@ -1,11 +1,35 @@
 /**
- * Filter Helper Utilities
- * Reusable filter and tag functions
+ * Get sort value for a card based on sort type
+ * {HTMLElement} card - The card element
+ * {string} sortType - Type of sorting (recent, a-z, favorites)
+ * {number|string} Sort value
+ */
+function getSortValue(card, sortType) {
+  switch (sortType) {
+    case "recent":
+      return parseInt(card.dataset.originalOrder) || 0;
+
+    case "a-z":
+      const titleElement = card.querySelector("h1") || card.querySelector("h4");
+      return titleElement?.textContent?.trim() || "";
+
+    case "favorites":
+      const isFavorited =
+        card.querySelector(".fa-heart")?.classList.contains("text-red-500") ||
+        false;
+      return isFavorited ? 0 : 1; // Favorites first
+
+    default:
+      return parseInt(card.dataset.originalOrder) || 0;
+  }
+}
+
+/**
  * Create filter tag element
  * {string} value - Filter value
  * {string} type - Filter type (muscle, equipment, etc)
  * {string} label - Display label (optional, defaults to value)
- * returns {HTMLElement} Filter tag element
+ * {HTMLElement} Filter tag element
  */
 function createFilterTag(value, type, label = null) {
   const tag = document.createElement("span");
@@ -71,7 +95,7 @@ function setupDropdownCloseOnClickOutside(dropdownIds) {
  * {string} config.emptyMessage - Message for empty state
  * {string} config.emptySubtext - Subtext for empty state (optional)
  * {string} config.filterEmptyText - Text to show when filters don't match (optional)
- * returns {Object} - Object with activeFilters
+ * {Object} Object with activeFilters
  */
 function initializeWorkoutFilters(config) {
   const { gridId, emptyIcon, emptyMessage, emptySubtext, filterEmptyText } = config;
@@ -190,11 +214,11 @@ function initializeWorkoutFilters(config) {
     applyFilters();
   };
 
-  return { activeFilters};
+  return { activeFilters };
 }
 
 /**
- * Update active filter tags
+ * Update active filter tags display
  * {Object} activeFilters - Active filters object
  */
 function updateActiveFilterTags(activeFilters) {

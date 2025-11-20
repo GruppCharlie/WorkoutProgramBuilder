@@ -82,6 +82,22 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string InMyWorkoutsText => this.Value<string>(_publishedValueFallback, "inMyWorkoutsText");
 
 		///<summary>
+		/// Show GIF
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("showGif")]
+		public virtual string ShowGif => this.Value<string>(_publishedValueFallback, "showGif");
+
+		///<summary>
+		/// Show Muscle Visualization
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("showMuscleVisualization")]
+		public virtual string ShowMuscleVisualization => this.Value<string>(_publishedValueFallback, "showMuscleVisualization");
+
+		///<summary>
 		/// Exclude From Sitemap: Check to exclude this page from sitemap
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
