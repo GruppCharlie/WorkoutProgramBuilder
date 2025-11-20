@@ -71,6 +71,21 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual int AmountOfSavedWorkouts => this.Value<int>(_publishedValueFallback, "amountOfSavedWorkouts");
 
 		///<summary>
+		/// Cookie Consent Date
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("cookieConsentDate")]
+		public virtual global::System.DateTime CookieConsentDate => this.Value<global::System.DateTime>(_publishedValueFallback, "cookieConsentDate");
+
+		///<summary>
+		/// Cookie Consent Status
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("cookieConsentStatus")]
+		public virtual string CookieConsentStatus => this.Value<string>(_publishedValueFallback, "cookieConsentStatus");
+
+		///<summary>
 		/// Member Details
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
