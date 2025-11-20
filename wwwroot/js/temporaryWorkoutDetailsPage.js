@@ -128,18 +128,56 @@ function renderUnauthenticatedWorkoutExercises(exercises) {
       descEl.remove();
     }
 
-    // Muscle visualization
+    // Muscle visualization / GIF
     const imageContainer = card.querySelector(".exercise-image-container");
-    if (muscleGroups.length > 0) {
-      const imageUrl = generateMuscleVisualizationUrl(muscleGroups);
-      imageContainer.innerHTML = `
-                <div class="flex justify-center">
-                    <img src="${imageUrl}" alt="${name} muscles" class="w-full h-auto" style="max-width: 200px;" />
-                </div>
-            `;
-    } else {
-      imageContainer.remove();
+
+    // skeleton
+    imageContainer.innerHTML = `
+    <div class="gif-wrapper pb-4 relative w-full h-48">
+        <div class="gif-skeleton absolute inset-0 w-full h-full bg-gray-200 animate-pulse"></div>
+        <div class="flex justify-center gif-content opacity-0"></div>
+    </div>
+`;
+
+    async function loadExerciseGifOrImage() {
+      const gifContent = imageContainer.querySelector(".gif-content");
+      let gifUrl = null;
+
+      async function searchApi(query) {
+        const response = await fetch(
+          `/api/exercises/search?query=${encodeURIComponent(query)}&limit=1`
+        );
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data?.data?.length > 0 ? data.data[0].gifUrl : null;
+      }
+
+      // 1. Try exercise name
+      gifUrl = await searchApi(name);
+
+      // 2. Try first muscle group
+      if (!gifUrl && muscleGroups.length > 0) {
+        gifUrl = await searchApi(muscleGroups[0]);
+      }
+
+      // 3. Render GIF if found, else fallback to muscle visualization
+      if (gifUrl) {
+        gifContent.innerHTML = `<img src="${gifUrl}" alt="${name} GIF" class="w-full h-auto" style="max-width: 200px;" />`;
+      } else if (muscleGroups.length > 0) {
+        const imageUrl = generateMuscleVisualizationUrl(muscleGroups);
+        gifContent.innerHTML = `<img src="${imageUrl}" alt="${name} muscles" class="w-full h-auto" style="max-width: 200px;" />`;
+      } else {
+        imageContainer.remove();
+        return;
+      }
+
+      // Fade in content and remove skeleton
+      gifContent.classList.remove("opacity-0");
+      const skeleton = imageContainer.querySelector(".gif-skeleton");
+      skeleton?.remove();
     }
+
+    loadExerciseGifOrImage();
 
     // Instructions
     const instructionsEl = card.querySelector(".exercise-instructions");

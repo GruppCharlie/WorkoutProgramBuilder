@@ -55,4 +55,17 @@ public class SearchPageController(
 
         return CurrentTemplate(CurrentPage);
     }
+
+    [HttpGet]
+    [Route("api/exercises/search")]
+    public async Task<IActionResult> ApiSearch([FromQuery] string query, [FromQuery] int offset = 0, [FromQuery] int limit = 10)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return BadRequest("Query is required");
+
+        var searchResponse = await _exerciseDbService.SearchAsync(query, offset, limit);
+
+        return Ok(searchResponse);
+    }
+
 }
