@@ -182,7 +182,7 @@ public class AuthSurfaceController(
         if (attempt.IsLockedOut)
         {
             TempData["LoginErrorKey"] = "Login.Validation.LockedOut";
-            TempData["LoginErrorDefault"] = "Too many failed attempts. Please try again later.";
+            TempData["LoginErrorDefault"] = "Too many failed attempts. Please try again later."; 
             return RedirectToCurrentUmbracoPage();
         }
 
