@@ -1,7 +1,11 @@
+@using Umbraco.Cms.Web.Common.PublishedModels
+@using Umbraco.Cms.Core.Web
+@inject IUmbracoContextAccessor UmbracoContextAccessor
 @using WorkoutProgramBuilder.Business.Helpers
 @using WorkoutProgramBuilder.ViewModels
 @inject WorkoutProgramBuilder.Business.Interface.IExerciseDbService _exerciseDbService
 @model WorkoutExerciseCardViewModel
+
 
 @{
     var exerciseMuscles = Model.Exercise.MuscleGroups;
@@ -25,6 +29,17 @@
     {
         gifUrl = searchResultSecond.Data.First().GifUrl;
     }
+
+    var imageId = $"exerciseVisualization_{Model.ExerciseNumber}";
+
+    var umbracoContext = UmbracoContextAccessor.GetRequiredUmbracoContext();
+    var allNodes = umbracoContext.Content.GetAtRoot().SelectMany(r => r.DescendantsOrSelf());
+    var workoutDetailsNode = allNodes.FirstOrDefault(x => x.ContentType.Alias == "workoutDetailsPage");
+
+    var showMuscleVisualization = workoutDetailsNode?.Value<string>("showMuscleVisualization") ?? "Show Muscle Visualization";
+    var showGif = workoutDetailsNode?.Value<string>("showGif") ?? "Show GIF";
+
+
 }
 
 
@@ -44,23 +59,35 @@
 
         <div class="p-6 flex flex-col flex-1 space-y-4 overflow-hidden">
             @* <h2 class="text-sm font-semibold text-gray-700 mb-3">@Model.VisualizationTitle</h2> *@
-            <div class="gif-wrapper pb-4 relative w-full">
-                <div class="gif-skeleton absolute inset-0 w-full h-full bg-gray-200 animate-pulse"></div>
-                <div class="flex justify-center">
-                    @if (!string.IsNullOrWhiteSpace(gifUrl))
+            <div class="gif-wrapper pb-4 w-full flex flex-col items-center">
+                <div class="flex justify-center mb-2">
+                    @if (!string.IsNullOrWhiteSpace(gifUrl) && exerciseMuscles!.Any())
                     {
-                        <img src="@gifUrl"
-                             alt="@Model.Exercise.Name GIF"
-                             class="gif-image opacity-0 w-full h-auto"
-                             style="max-width: 200px;" />
+                        <button class="px-3 py-1 bg-primary hover:bg-primaryHover text-white rounded text-sm font-medium"
+                                data-text-gif="@showGif"
+                                data-text-muscle="@showMuscleVisualization"
+                                onclick="toggleVisualization('@gifUrl', '@exerciseImageUrl', '@imageId', this)">
+                            @showMuscleVisualization
+                        </button>
                     }
-                    else if (exerciseMuscles!.Any())
+                    else if (!string.IsNullOrWhiteSpace(gifUrl))
                     {
-                        <img src="@exerciseImageUrl"
-                             alt="@Model.Exercise.Name muscles"
-                             class="gif-image opacity-0 w-full h-auto"
-                             style="max-width: 200px;" />
+                        <button class="px-3 py-1 bg-primary hover:bg-primaryHover text-white rounded text-sm font-medium"
+                                data-text-gif="@showGif"
+                                data-text-muscle="@showMuscleVisualization"
+                                onclick="toggleVisualization('@gifUrl', '@exerciseImageUrl', '@imageId', this)">
+                            @showGif
+                        </button>
                     }
+                </div>
+
+                <div class="relative w-full flex justify-center">
+                    <div class="gif-skeleton absolute w-full h-full bg-gray-200 animate-pulse"></div>
+
+                    <img id="@imageId"
+                         src="@(!string.IsNullOrWhiteSpace(gifUrl) ? gifUrl : exerciseImageUrl)"
+                         alt="@Model.Exercise.Name"
+                         class="gif-image w-full h-auto max-w-[200px] opacity-0 transition-opacity duration-300" />
                 </div>
             </div>
 

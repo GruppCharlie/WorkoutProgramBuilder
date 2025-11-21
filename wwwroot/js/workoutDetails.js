@@ -176,8 +176,26 @@ function initializePagination() {
   }
 
   slider.addEventListener("scroll", updateActiveDot);
-  updateActiveDot(); // Initial update
+    updateActiveDot(); // Initial update
+    toggleVisualization();
 }
+
+function toggleVisualization(gifUrl, muscleUrl, imageId, button) {
+    const img = document.getElementById(imageId);
+    if (!img) return;
+
+    const textGif = button.dataset.textGif || 'Show GIF';
+    const textMuscle = button.dataset.textMuscle || 'Show Muscle Visualization';
+
+    if (img.src.endsWith(gifUrl)) {
+        img.src = muscleUrl;
+        button.innerText = textGif;
+    } else {
+        img.src = gifUrl || muscleUrl;
+        button.innerText = textMuscle;
+    }
+}
+
 
 /**
  * Initialize on page load
