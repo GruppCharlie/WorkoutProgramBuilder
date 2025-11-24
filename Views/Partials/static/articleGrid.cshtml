@@ -1,4 +1,4 @@
-@using System.Linq
+﻿@using System.Linq
 @using Umbraco.Cms.Core.Models
 @model IEnumerable<IPublishedContent>
 
@@ -16,7 +16,7 @@
         var thumb = item.Value<MediaWithCrops>("thumbnail")?.Url();
         var preamble = item.Value<string>("preamble") ?? string.Empty;
 
-        <article class="rounded-2xl overflow-hidden border border-primaryBorder shadow-sm bg-white hover:shadow-md transition-shadow">
+        <article class="js-article-card rounded-2xl overflow-hidden border border-primaryBorder shadow-sm bg-white hover:shadow-md transition-shadow">
             @if (!string.IsNullOrEmpty(thumb))
             {
                 <a href="@url" class="block aspect-[16/9] overflow-hidden">
