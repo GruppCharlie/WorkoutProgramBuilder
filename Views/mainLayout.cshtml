@@ -69,5 +69,10 @@
         <script src="~/js/exercisecard.js"></script>
         <script src="~/js/profile.js"></script>
         <script src="~/js/exercisepage.js"></script>
+
+        @if (User?.Identity?.IsAuthenticated ?? false)
+        {
+            <script src="~/js/cookieConsentSync.js"></script>
+        }
     </body>
 </html>
