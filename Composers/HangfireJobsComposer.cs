@@ -13,6 +13,7 @@ public class HangfireJobsComposer : IComposer
             builder.Config.GetSection("Cleanup:InactiveMembers"));
         builder.Services.AddTransient<InactiveMemberCleanupJob>();
         builder.Services.AddTransient<SitemapRegenerationJob>();
+        builder.Services.AddTransient<CookieConsentResetJob>();
         builder.Services.AddHostedService<HangfireJobsRegistrar>();
     }
 }

@@ -23,6 +23,11 @@ public class HangfireJobsRegistrar : IHostedService
             job => job.RunAsync(),
             "10 3 * * *");
 
+        _recurring.AddOrUpdate<CookieConsentResetJob>(
+            "cookie-consent-reset",
+            job => job.RunAsync(),
+            "0 4 * * *");
+
         return Task.CompletedTask;
     }
 
