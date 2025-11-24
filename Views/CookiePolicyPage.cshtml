@@ -16,23 +16,15 @@
         <div class="page-content">
             @Html.Raw(body)
         </div>
-        
-        @await Html.PartialAsync("~/Views/Partials/UmbracoCms.Integrations/Analytics/Cookiebot/Declaration.cshtml")
 
-        <!-- Cookiebot Declaration Script -->
         <div class="cookie-declaration mt-10">
-            <script id="CookieDeclaration"
-                    src="https://consent.cookiebot.com/11f333a3-9714-4cc1-82af-39a20ac26e70/cd.js"
-                    type="text/javascript"
-                    async>
-            </script>
+            @await Html.PartialAsync("~/Views/Partials/UmbracoCms.Integrations/Analytics/Cookiebot/Declaration.cshtml")
         </div>
 
     </div>
 </section>
 
 <style>
-
     .container {
         margin: 0 auto;
     }
