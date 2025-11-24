@@ -1,4 +1,6 @@
+﻿@using System
 @using System.Linq
+@using Umbraco.Cms.Core.Models.PublishedContent
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 
 @{
@@ -8,12 +10,17 @@
     var selection = Umbraco.Content(Guid.Parse("0bde7d2b-14a7-4c63-a0a3-db84428b99ff"))
         ?.ChildrenOfType("articleItemTemplate")
         ?.Where(x => x.IsVisible())
-        ?? [];
+        ?? Enumerable.Empty<IPublishedContent>();
 
     var customHeadline = Model.Value<string>("customHeadline");
     var preambleText = string.IsNullOrWhiteSpace(customHeadline)
         ? "Build strength, confidence, and knowledge — one article at a time."
         : customHeadline;
+
+    var isSwedish = Model.Url().Contains("/sv/");
+    var searchPlaceholder = isSwedish ? "Sök artiklar..." : "Search articles...";
+    var searchButton = isSwedish ? "Sök" : "Search";
+    var noResultsText = isSwedish ? "Inga artiklar hittades." : "No articles found.";
 }
 
 <section id="our-articles">
@@ -25,7 +32,104 @@
         </div>
     </div>
 
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl mx-auto flex gap-4 items-center">
+            <input
+                type="search"
+                id="articleSearch"
+                placeholder="@searchPlaceholder"
+                class="w-full pl-5 pr-3 py-3 rounded-xl text-primaryText placeholder-placeholder
+                       text-base font-normal focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                autocomplete="off"
+            />
+            <button
+                type="button"
+                id="articleSearchButton"
+                class="px-6 py-3 text-xl font-medium rounded-xl bg-[#0F5C69] text-white hover:bg-[#0D4E5A] transition-colors"
+            >
+                @searchButton
+            </button>
+        </div>
+    </div>
+
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        @await Html.PartialAsync("~/Views/Partials/static/articleGrid.cshtml", selection)
+        <div id="articleGrid">
+            @await Html.PartialAsync("~/Views/Partials/static/articleGrid.cshtml", selection)
+        </div>
+
+        <p id="noArticlesMessage" class="text-center text-neutral-500 py-10 hidden">
+            @noResultsText
+        </p>
     </div>
 </section>
+
+<style>
+    .js-article-card {
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 150ms ease, transform 150ms ease;
+    }
+    .js-article-card.is-hiding {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    .js-article-card.is-hidden {
+        display: none;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var input = document.getElementById("articleSearch");
+        var button = document.getElementById("articleSearchButton");
+        var cards = Array.prototype.slice.call(document.querySelectorAll(".js-article-card"));
+        var noResult = document.getElementById("noArticlesMessage");
+
+        if (!input || cards.length === 0) return;
+
+        function showCard(card) {
+            card.classList.remove("is-hidden");
+            requestAnimationFrame(function () {
+                card.classList.remove("is-hiding");
+            });
+        }
+
+        function hideCard(card) {
+            card.classList.add("is-hiding");
+            setTimeout(function () {
+                card.classList.add("is-hidden");
+            }, 150);
+        }
+
+        function applyFilter() {
+            var q = input.value.trim().toLowerCase();
+            var visibleCount = 0;
+
+            cards.forEach(function (card) {
+                var text = card.textContent.toLowerCase();
+                var matches = !q || text.includes(q);
+
+                if (matches) {
+                    showCard(card);
+                    visibleCount++;
+                } else {
+                    hideCard(card);
+                }
+            });
+
+            noResult.style.display = visibleCount === 0 ? "" : "none";
+        }
+
+        input.addEventListener("input", applyFilter);
+        button.addEventListener("click", applyFilter);
+
+        input.addEventListener("keydown", function (evt) {
+            if (evt.key === "Enter") {
+                evt.preventDefault();
+                applyFilter();
+            }
+        });
+
+        applyFilter();
+    });
+</script>
