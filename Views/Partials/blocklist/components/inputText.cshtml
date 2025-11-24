@@ -1,5 +1,6 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockListItem>
+@using Umbraco.Extensions;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 
 @{
@@ -8,24 +9,43 @@
     var placeholderText = Model?.Content.Value<string>("placeholderText");
     var isRequired = Model.Content.Value<bool>("isRequired");
     var errorMessage = Model?.Content.Value<string>("errorMessage");
+
+    var isEmailField =
+        !string.IsNullOrWhiteSpace(uniqueName) &&
+        uniqueName.Contains("email", StringComparison.OrdinalIgnoreCase);
+    var inputType = isEmailField ? "email" : "text";
+    var autoComplete = isEmailField ? "email" : "username";
+
+    var formatMessage = isEmailField
+        ? Umbraco.GetDictionaryValue("Signup.Validation.EmailInvalid" ?? "Please enter a valid email address")
+        : Umbraco.GetDictionaryValue("Signup.Validation.UsernameInvalid" ?? "Please enter a valid username.");
 }
 
-<div class="space-y-2" data-validate>
+<div class="space-y-2 mb-4" data-validate>
     <label class="block text-gray-800" for="@uniqueName">@labelText</label>
 
     <input id="@uniqueName" 
            name="@uniqueName" 
-           type="email" 
+           type="@inputType" 
            placeholder="@placeholderText" 
-           class="w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-           autocomplete="email"
+           class="w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+           autocomplete="@autoComplete"
            autocapitalize="none"
            spellcheck="false"
-           @(isRequired ? "required" : null) />
+           @(isRequired ? "required" : null) 
+           @(isEmailField ? null : new HtmlString(@"pattern=""^[A-Za-z0-9_-](?:[A-Za-z0-9 _-]{1,28})[A-Za-z0-9_-]$""")) />
 
-    @if(isRequired && !string.IsNullOrWhiteSpace(errorMessage)) {
+    @if(isRequired && !string.IsNullOrWhiteSpace(errorMessage)) 
+    {
         <span data-error="required" hidden class="text-sm text-red-600 mt-1">@errorMessage</span>
     }
 
-    <span data-error="format" hidden class="text-sm text-red-600 mt-1">Please enter a valid email address</span>
+    @if (isEmailField)
+    {
+        <span data-error="format" hidden class="text-sm text-red-600 mt-1">@formatMessage</span>
+    }
+    else
+    {
+        <span data-error="pattern" hidden class="text-sm text-red-600 mt-1">@formatMessage</span>
+    }
 </div>

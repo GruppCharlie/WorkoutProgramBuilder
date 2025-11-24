@@ -1,25 +1,66 @@
-﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using System.Linq;
+@using Umbraco.Cms.Core.Models.Blocks;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<SignUpPage>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
-@using Umbraco.Cms.Core.Models.Blocks;
-@using System.Linq;
+@using Umbraco.Extensions;
+
 @{
 	Layout = "mainLayout.cshtml";
 
     var all = Model.SignUpForm ?? new BlockListModel(new List<BlockListItem>());
-    var inputBlocks  = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton").ToList());
+    var inputBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias != "formButton" && x.Content.ContentType.Alias != "formCta").ToList());
     var buttonBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formButton").ToList());
+    var ctaBlocks = new BlockListModel(all.Where(x => x.Content.ContentType.Alias == "formCta").ToList());
+    
+    var returnUrl = Context.Request.Query["returnUrl"].ToString();
 }
 
-<div class="container mx-auto px-4">
-	<section class="max-w-md mx-auto mt-24 bg-white rounded-2xl shadow-lg px-8 py-10">
-        <form id="signupForm" class="space-y-6" novalidate autocomplete="off">
+<div class="container mx-auto px-4 my-16">
+	<section class="max-w-md mx-auto bg-white rounded-2xl shadow-sm px-8 py-10">
+        @{
+            string DictOr(string key, string fallback)
+            {
+                if (string.IsNullOrWhiteSpace(key)) return "";
+                var v = Umbraco.GetDictionaryValue(key);
+
+                if (string.IsNullOrWhiteSpace(v) || string.Equals(v, key, StringComparison.Ordinal))
+                    return fallback;
+
+                return v;
+            }
+
+            var errKey = TempData["SignupErrorKey"] as string;
+            var errDefault = TempData["SignupErrorDefault"] as string ?? "";
+            var errorMsg = DictOr(errKey, errDefault);
+
+            var okKey = TempData["SignupSuccessKey"] as string;
+            var okDefault = TempData["SignupSuccessDefault"] as string ?? "";
+            var okMsg = DictOr(okKey, okDefault);
+        }
+
+        @if (!string.IsNullOrWhiteSpace(errorMsg))
+        {
+            <div class="text-red-600 mb-4">@errorMsg</div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(okMsg))
+        {
+            <div class="text-green-700 mb-4">@okMsg</div>
+        }
+        
+        @using (Html.BeginUmbracoForm("HandleSignup", "AuthSurface", FormMethod.Post, new { id = "signupForm", @class = "space-y-6", novalidate = "novalidate", autocomplete = "off" }))
+        {
+            @if (!string.IsNullOrWhiteSpace(returnUrl))
+            {
+                <input type="hidden" name="returnUrl" value="@returnUrl" />
+            }
+            
             @Html.GetBlockListHtml(inputBlocks)
 
-            <div class="flex gap-3">
                 @Html.GetBlockListHtml(buttonBlocks)
-            </div>
-        </form>
+
+            @Html.GetBlockListHtml(ctaBlocks)
+        }
 	</section>
 </div>
 

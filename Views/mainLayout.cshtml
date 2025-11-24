@@ -1,9 +1,15 @@
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits UmbracoViewPageBase<IPublishedContent>
 @{
     Layout = null;
 
     var pageTitle = Model.Value("pageTitle") ?? Model.Name;
     var pageDescription = Model.Value("metaDescription") ?? "";
+
+    var settingsNode = GetSettingsNode();
+    var navbarLogo = settingsNode?.Value<IPublishedContent>("siteLogotype");
+    var navbarLogoUrl = navbarLogo?.Url() ?? string.Empty;
+    
+    var workoutDetailsUrl = GetPageUrl("workoutDetailsPage", "/workouts/workout-details");
 }
 
 <!doctype html>
@@ -11,32 +17,57 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="@pageDescription" />
+     <meta name="description" content="@pageDescription" /> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <title>@pageTitle</title>
+     <title>@pageTitle</title> 
 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/tailwind.config.js"></script>    
+    
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Poppins:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/umbraco/backoffice/css/umbraco-blockgridlayout.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/js/tailwind.config.js"></script>
+    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="11f333a3-9714-4cc1-82af-39a20ac26e70" data-blockingmode="auto" type="text/javascript"></script>
+    @await Html.PartialAsync("~/Views/Partials/UmbracoCms.Integrations/Analytics/Cookiebot/Banner.cshtml")
+
     <link rel="stylesheet" href="/css/main.css">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="@navbarLogoUrl" type="image/x-icon" />
 </head>
+    <body class="font-poppins bg-neutral-50 text-neutral-900 min-h-screen flex flex-col">
 
-<body class="font-poppins bg-neutral-50 text-neutral-900 min-h-screen flex flex-col">
+        @await Html.PartialAsync("_Navbar")
+        @* breadcrumbs here  *@
+        @await Html.PartialAsync("Partials/static/breadcrumb.cshtml")
+        
+        <main class="flex-grow">
+            @RenderBody()
+        </main>
 
-    @await Html.PartialAsync("_Navbar")
-    @* breadcrumbs here  *@
-    @await Html.PartialAsync("Partials/static/breadcrumb.cshtml")
-    
-    <main class="flex-grow">
-        @RenderBody()
-    </main>
+        @await Html.PartialAsync("_Footer")
+        
+        @* Login Required Modal *@
+        @await Html.PartialAsync("_LoginRequiredModal")
 
-    @await Html.PartialAsync("_Footer")
-
-    @await RenderSectionAsync("Scripts", required: false)
-    <script src="~/js/navbarscript.js"></script>
-    <script src="~/js/muscleGroups.js"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+        
+        <script>window.WORKOUT_DETAILS_URL = '@workoutDetailsUrl';</script>
+        
+        @* Utility scripts *@
+        <script src="~/js/utils/toast.js"></script>
+        <script src="~/js/utils/temporaryWorkoutStorage.js"></script>
+        <script src="~/js/utils/modalUtils.js"></script>
+        <script src="~/js/utils/favoriteUtils.js"></script>
+        <script src="~/js/utils/muscleMapper.js"></script>
+        <script src="~/js/utils/apiClient.js"></script>
+        <script src="~/js/utils/domHelpers.js"></script>
+        <script src="~/js/utils/workoutUtils.js"></script>
+        <script src="~/js/temporaryWorkoutDetailsPage.js"></script>
+        
+        
+        @* Page scripts *@
+        <script src="~/js/navbarscript.js"></script>
+        <script src="~/js/muscleGroups.js"></script>
+        <script src="~/js/exercisecard.js"></script>
+        <script src="~/js/profile.js"></script>
+        <script src="~/js/exercisepage.js"></script>
     </body>
 </html>

@@ -60,20 +60,20 @@
 
 @if (prev != null || next != null)
 {
-<section aria-label="Article pagination" class="border-t border-neutral-200 bg-white/60">
+<section aria-label="Article pagination" class="border-t border-primaryBorder bg-white/60">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
     <div class="grid gap-4 sm:grid-cols-2">
 
       @if (prev != null)
       {
         var pThumb = GetThumb(prev);
-        <a href="@prev.Url()" class="group block rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
+        <a href="@prev.Url()" class="group block rounded-2xl border border-primaryBorder bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
           <div class="flex items-center gap-4">
             @if (!string.IsNullOrEmpty(pThumb))
             { <img src="@pThumb" alt="@prev.Name" class="h-16 w-24 rounded-lg object-cover" loading="lazy" decoding="async" /> }
             <div class="min-w-0">
-              <div class="text-xs uppercase tracking-wide text-neutral-500">@labelPrevious</div>
-              <div class="mt-0.5 line-clamp-2 font-semibold text-neutral-900 group-hover:text-blue-700">@prev.Name</div>
+              <div class="text-xs uppercase tracking-wide text-muted">@labelPrevious</div>
+              <div class="mt-0.5 line-clamp-2 font-semibold text-primaryText group-hover:text-primary">@prev.Name</div>
             </div>
           </div>
         </a>
@@ -82,11 +82,11 @@
       @if (next != null)
       {
         var nThumb = GetThumb(next);
-        <a href="@next.Url()" class="group block rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow sm:ml-auto">
+                    <a href="@next.Url()" class="group block rounded-2xl border border-primaryBorder bg-white p-4 shadow-sm hover:shadow-md transition-shadow sm:ml-auto">
           <div class="flex items-center gap-4 justify-end">
             <div class="min-w-0 text-right">
-              <div class="text-xs uppercase tracking-wide text-neutral-500">@labelNext</div>
-              <div class="mt-0.5 line-clamp-2 font-semibold text-neutral-900 group-hover:text-blue-700">@next.Name</div>
+              <div class="text-xs uppercase tracking-wide text-muted">@labelNext</div>
+              <div class="mt-0.5 line-clamp-2 font-semibold text-primaryText group-hover:text-primary">@next.Name</div>
             </div>
             @if (!string.IsNullOrEmpty(nThumb))
             { <img src="@nThumb" alt="@next.Name" class="h-16 w-24 rounded-lg object-cover" loading="lazy" decoding="async" /> }

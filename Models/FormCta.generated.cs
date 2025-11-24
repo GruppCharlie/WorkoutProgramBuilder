@@ -55,7 +55,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("align")]
-		public virtual global::System.Collections.Generic.IEnumerable<string> Align => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "align");
+		public virtual string Align => this.Value<string>(_publishedValueFallback, "align");
 
 		///<summary>
 		/// Button

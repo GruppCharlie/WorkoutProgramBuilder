@@ -1,0 +1,158 @@
+@inherits UmbracoViewPageBase<WorkoutGeneratorPage>
+@inject Umbraco.Cms.Core.Security.IMemberManager MemberManager
+@inject Umbraco.Cms.Core.Services.IMemberService MemberService
+
+@{
+    Layout = "mainLayout.cshtml";
+
+    var currentMember = await MemberManager.GetCurrentMemberAsync();
+    var isLoggedIn = currentMember != null;
+
+    string? memberDetails = null;
+
+    if (isLoggedIn)
+    {
+        var member = MemberService.GetById(int.Parse(currentMember!.Id));
+        memberDetails = member?.GetValue<string>("memberDetails");
+    }
+
+    var needsUserInput = !isLoggedIn || string.IsNullOrWhiteSpace(memberDetails);
+
+    var pleaseEnter = Model.PleaseEnter ?? "Please enter your details to continue";
+    var personalAge = Model.PersonalAge ?? "Age";
+    var personalGender = Model.PersonalGender ?? "Select gender";
+    var genderSelection = Model.GenderSelection ?? [ "Male", "Female"];
+    var personalWeight = Model.PersonalWeight ?? "Weight (kg)";
+    var personalHeight = Model.PersonalHeight ?? "Height (cm)";
+    var continueButton = Model.ContinueButton ?? "Continue";
+
+    
+    var muscleGroups = ViewData["MuscleGroups"] as List<string> ?? [];
+    
+    // Localized texts from Dictionary for generated workout card
+    var exercisesText = Umbraco.GetDictionaryValue("workoutCard.Exercises") ?? "Exercises";
+    var visualizationTitle = Umbraco.GetDictionaryValue("workoutCard.Visualization") ?? "Targeted Muscles Visualization";
+    var musclesLabel = Umbraco.GetDictionaryValue("workoutCard.Muscles") ?? "Muscles:";
+    var equipmentLabel = Umbraco.GetDictionaryValue("workoutCard.Equipment") ?? "Equipment:";
+}
+
+<section data-exercises-text="@exercisesText"
+         data-visualization-title="@visualizationTitle"
+         data-muscles-label="@musclesLabel"
+         data-equipment-label="@equipmentLabel">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+
+        @if (needsUserInput)
+        {
+            <div id="userInputSection" class="text-center py-12">
+                <p>@pleaseEnter</p>
+                <form id="userDetailsForm" class="mt-4 space-y-4 max-w-xs mx-auto">
+                    <div>
+                        <label for="userAgeInput" class="sr-only">@personalAge</label>
+                            <input type="number" name="age" id="userAgeInput" placeholder="@personalAge" min="10" max="100" class="border p-2 rounded w-full text-center" required /></div>
+                                <div>
+                                    <label for="userGenderInput" class="sr-only">@personalGender</label>
+                                        <select name="gender" id="userGenderInput"
+                                                class="border p-2 rounded w-full text-center" required>
+                                            <option value="">@personalGender</option>
+                                            @foreach (var gender in genderSelection)
+                                            {
+                                                <option value="@gender">@gender</option>
+                                            }
+                                        </select>
+                                </div>
+                    <div>
+                        <label for="userWeightInput" class="sr-only">@personalWeight</label>
+                        <input type="number" name="weight" id="userWeightInput" placeholder="@personalWeight" min="30" max="250" class="border p-2 rounded w-full text-center" required /></div>
+                    <div>
+                        <label for="userHeightInput" class="sr-only">@personalHeight</label>
+                        <input type="number" name="height" id="userHeightInput" placeholder="@personalHeight" min="100" max="250" class="border p-2 rounded w-full text-center" required /></div>
+                    <button type="submit" id="generateBtn" aria-label="Continue" class="w-full px-4 py-2 bg-primary hover:bg-primaryHover text-white rounded">@continueButton</button>
+                </form>
+            </div>
+        }
+
+        <!-- Workout Generator -->
+        <div id="visualizerSection" data-muscle-visualizer class="py-8" style="@(needsUserInput ? "display:none;" : "display:block;")">
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- AI Workout Generator Form -->
+                <div>
+                    <h1 class="text-xl font-bold mb-4">@Model.GenerateWorkout</h1>
+                    
+                    <form id="workoutGeneratorForm" class="workout-generator-form space-y-4">
+                        <!-- Muscle Groups Selection -->
+                        <div class="mb-8">
+                            <label for="muscleGroupsSelect" class="block text-sm font-semibold text-primaryText mb-2">@Model.TargetMuscleGroups</label>
+                            <div class="rounded-lg border-2 border-primaryBorder overflow-hidden">
+                                <select multiple id="muscleGroupsSelect" class="muscle-groups-select w-full px-2 py-3 focus:outline-none focus:border-primary bg-white max-h-[250px]">
+                                    <option value="any" selected>Any</option>
+                                    @foreach (var muscle in muscleGroups)
+                                    {
+                                        <option value="@muscle" class="py-1 px-2 hover:bg-primary/10 cursor-pointer">@muscle.Replace("_", " ").ToUpper()</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <p class="text-xs text-muted mt-1">@Model.HoldCtrlCmd</p>
+                        </div>
+
+                        <!-- Workout Description Prompt -->
+                        <div>
+                            <label class="block text-sm font-semibold text-primaryText mb-2">@Model.DescribeYourWorkout</label>
+                                <textarea id="promptTextarea"
+                                          class="workout-prompt w-full px-2 py-3 border-2 border-primaryBorder rounded-lg focus:outline-none focus:border-primary resize-none"
+                                          rows="5"
+                                          placeholder="@Model.WorkoutGeneratorInputPlaceholder"
+                                          required
+                                          minlength="10"></textarea>
+                        </div>
+
+                        <!-- Generate Button -->
+                        <button type="submit" id="generateBtn" class="generate-btn relative w-full px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primaryHover transition-colors disabled:bg-neutral-400 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            <span class="btn-text">@Model.GenerateWorkout</span>
+                            <span class="loading-spinner hidden pointer-events-none absolute inset-0 flex items-center justify-center">
+                                <svg viewBox="0 0 50 50" class="h-5 w-5" aria-hidden="true">
+                                    <circle cx="25" cy="25" r="20" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="31.4 31.4">
+                                        <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.8s" repeatCount="indefinite"></animateTransform>
+                                    </circle>
+                                </svg>
+                            </span>
+                        </button>
+
+
+
+                        <!-- Loading State -->
+                        <!-- Moved loading spinner into button above-->
+                        @* <p class="mt-2 text-sm text-primaryText">@Model.GeneratingYourWorkout</p> *@
+
+
+                        <!-- Error Message -->
+                        <div class="error-message hidden p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>
+                    </form>
+                </div>
+
+                <!-- Muscle Visualization -->
+                <div>
+                    <h2 class="text-xl font-bold mb-4">@Model.MuscleVisualization</h2>
+                    <div class="muscle-image-container">
+                        <div class="flex justify-center">
+                            <img alt="Muscle groups visualization" 
+                                 id="muscleVisualizationImage"
+                                 class="w-full h-auto mx-auto transition-opacity duration-300"
+                                 style="opacity: 1; max-width: 500px;" 
+                                 src="/api/musclegroup/image?muscleGroups=&color=22,96,121&transparentBackground=true"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generated Workout Display -->
+            <div class="workout-results mt-8 hidden">
+                <h3 class="text-2xl font-bold mb-4">@Model.YourGeneratedWorkout</h3>
+                <div class="workout-content"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="/js/workoutCard.js"></script>

@@ -1,69 +1,165 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ExercisePage>
 @{
     Layout = "mainLayout.cshtml";
 
     var exercise = ViewData["Exercise"] as WorkoutProgramBuilder.Business.Dto.ExerciseDto;
 
+    if (!string.IsNullOrEmpty(exercise?.Name))
+    {
+        var words = exercise.Name.ToLower().Split(' ');
+        for (int i = 0; i < words.Length; i++)
+        {
+            if (words[i].Length > 0)
+                words[i] = char.ToUpper(words[i][0]) + words[i].Substring(1);
+        }
+        ViewBag.Title = string.Join(" ", words);
+    }
+    else
+    {
+        ViewBag.Title = exercise?.Name;
+    }
 
-    var titleFallback = Model.Value("title")?.ToString();
-    var bodyPartsLabel = Model.Value("bodyParts")?.ToString() ?? "";
-    var targetMusclesLabel = Model.Value("targetMuscles")?.ToString() ?? "";
-    var equipmentLabel = Model.Value("equipment")?.ToString() ?? "";
-    var secondaryMusclesLabel = Model.Value("secondaryMuscles")?.ToString() ?? "";
-    var instructionsLabel = Model.Value("instructions")?.ToString() ?? "";
-    var notAvailable = Model.Value("notAvailable")?.ToString() ?? "Not available";
 
-    var instructions = exercise?.Instructions ?? new List<string>();
+    var titleFallback = Model.Title;
+    var bodyPartsLabel = Model.BodyParts;
+    var targetMusclesLabel = Model.TargetMuscles;
+    var equipmentLabel = Model.Equipment;
+    var secondaryMusclesLabel = Model.SecondaryMuscles;
+    var instructionsLabel = Model.Instructions;
+    var notAvailable = Model.NotAvailable;
 
-    string ListOrFallback(List<string>? list) => (list != null && list.Any()) ? string.Join(", ", list) : notAvailable;
+    var instructions = exercise?.Instructions ?? [];
 }
 
-<div class="container mx-auto px-6 py-10">
-    <div class="bg-white shadow-lg rounded-xl p-8 md:p-12">
-        <h1 class="text-4xl font-bold text-gray-700 text-center mb-10">
-            @(exercise?.Name ?? titleFallback)
-        </h1>
+<div class="container mx-auto px-6 py-16">
+    <div class="bg-white border border-gray-200 shadow-sm rounded-2xl max-w-6xl mx-auto">
 
-        <div class="flex flex-col md:flex-row items-start md:items-center gap-8 mb-8">
-            <div class="flex-shrink-0">
-                <img src="@exercise?.GifUrl" alt="" class="w-64 h-64 object-contain rounded-lg border border-gray-200" />
+
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start lg:items-center px-10">
+
+            <div class="flex justify-center pt-10">
+                <div class="relative w-full max-w-[350px] h-[350px] rounded-xl overflow-hidden">
+                    <div class="gif-skeleton absolute inset-0 bg-gray-200 animate-pulse"></div>
+
+                    <img src="@exercise?.GifUrl"
+                         alt="@exercise?.Name"
+                         class="gif-image w-full h-full object-contain opacity-0 transition-opacity duration-500" />
+                </div>
             </div>
 
-            <div class="flex-1 space-y-3 text-gray-800">
-                <p>
-                    <span class="font-semibold text-gray-700">@bodyPartsLabel </span>
-                    <span class="text-primary">@ListOrFallback(exercise?.BodyParts)</span>
-                </p>
-                <p>
-                    <span class="font-semibold text-gray-700">@targetMusclesLabel </span>
-                    <span class="text-primary">@ListOrFallback(exercise?.TargetMuscles)</span>
-                </p>
-                <p>
-                    <span class="font-semibold text-gray-700">@equipmentLabel </span>
-                    <span class="text-primary">@ListOrFallback(exercise?.Equipments)</span>
-                </p>
-                <p>
-                    <span class="font-semibold text-gray-700">@secondaryMusclesLabel </span>
-                    <span class="text-primary">@ListOrFallback(exercise?.SecondaryMuscles)</span>
-                </p>
+            <div class="space-y-8 text-primaryText border-neutral-100">
+
+                <div>
+                    <p class="font-semibold mb-2 text-lg">@bodyPartsLabel</p>
+                    <div class="flex flex-wrap gap-2">
+                        @if (exercise?.BodyParts != null && exercise.BodyParts.Any())
+                        {
+                            foreach (var item in exercise.BodyParts)
+                            {
+                                <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                                    @item
+                                </span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                                @notAvailable
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div>
+                    <p class="font-semibold mb-2 text-lg">@targetMusclesLabel</p>
+                    <div class="flex flex-wrap gap-2">
+                        @if (exercise?.TargetMuscles != null && exercise.TargetMuscles.Any())
+                        {
+                            foreach (var item in exercise.TargetMuscles)
+                            {
+                                <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                                    @item
+                                </span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                                @notAvailable
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div>
+                    <p class="font-semibold mb-2 text-lg">@equipmentLabel</p>
+                    <div class="flex flex-wrap gap-2">
+                        @if (exercise?.Equipments != null && exercise.Equipments.Any())
+                        {
+                            foreach (var item in exercise.Equipments)
+                            {
+                                <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                                    @item
+                                </span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                                @notAvailable
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div>
+                    <p class="font-semibold mb-2 text-lg">@secondaryMusclesLabel</p>
+                    <div class="flex flex-wrap gap-2">
+                        @if (exercise?.SecondaryMuscles != null && exercise.SecondaryMuscles.Any())
+                        {
+                            foreach (var item in exercise.SecondaryMuscles)
+                            {
+                                <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                                    @item
+                                </span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="uppercase px-3 py-1 bg-primary/20 text-primaryText text-xs rounded-full font-medium inline-block">
+                                @notAvailable
+                            </span>
+                        }
+                    </div>
+                </div>
+
             </div>
+
         </div>
+        <div class="mt-14 border-t p-10">
+            <h1 class="text-3xl font-semibold text-primaryText mb-6">@instructionsLabel</h1>
 
-        <div class="mt-6 space-y-3 text-gray-700">
-            <h3 class="text-2xl font-semibold text-gray-800 mb-3">@instructionsLabel</h3>
             @if (instructions.Any())
             {
-                <ol class="list-decimal list-inside">
+                <div class="space-y-8 text-primaryText text-lg leading-relaxed">
                     @foreach (var step in instructions)
                     {
-                        <li>@step</li>
+                        var formatted = System.Text.RegularExpressions.Regex.Replace(
+                        step,
+                        @"Step\s*:?\s*(\d+)\s*(.*)",
+                        "<strong>Step $1:</strong><br/>$2"
+                        );
+
+                        <p>@Html.Raw(formatted)</p>
                     }
-                </ol>
+                </div>
             }
             else
             {
-                <p>@notAvailable</p>
+                <p class="text-primaryText text-lg">@notAvailable</p>
             }
         </div>
+
     </div>
 </div>

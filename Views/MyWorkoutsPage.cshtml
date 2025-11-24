@@ -1,0 +1,76 @@
+@using WorkoutProgramBuilder.Business.Dto
+@using WorkoutProgramBuilder.ViewModels
+@inherits UmbracoViewPageBase<IPublishedContent>
+@{
+	Layout = "mainLayout.cshtml";
+	ViewData["ShowSortFavorites"] = true;
+	ViewData["ShowEquipmentFilter"] = true;
+    
+	var workouts = ViewData["Workouts"] as List<SavedWorkoutDto> ?? [];
+	var workoutsUrl = GetPageUrl("workoutsPage", "/workouts");
+	var workoutGeneratorUrl = GetPageUrl("workoutGeneratorPage", "/workouts/generator");
+	
+	// Localized texts from Dictionary
+	var exercisesText = Umbraco.GetDictionaryValue("workoutCard.Exercises") ?? "Exercises";
+	var visualizationTitle = Umbraco.GetDictionaryValue("workoutCard.Visualization") ?? "Targeted Muscles Visualization";
+	var musclesLabel = Umbraco.GetDictionaryValue("workoutCard.Muscles") ?? "Muscles:";
+	var equipmentLabel = Umbraco.GetDictionaryValue("workoutCard.Equipment") ?? "Equipment:";
+	
+	// My Workouts empty state texts
+	var emptyStateTitle = Umbraco.GetDictionaryValue("myWorkouts.emptyState.title") ?? "No workouts found";
+	var workoutsTemplatesText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.workoutsTemplates") ?? "Workouts templates";
+	var generatorText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.generator") ?? "AI Workout Generator";
+	var descriptionText = Umbraco.GetDictionaryValue("myWorkouts.emptyState.descriptionText") ?? "Choose from our {0} or try our {1} to create custom workouts!";
+	var filterEmptyText = Umbraco.GetDictionaryValue("filters.emptyState.message") ?? "match your filters. Try adjusting your selection.";
+}
+
+<section class="" 
+         data-page-type="my-workouts"
+         data-empty-title="@emptyStateTitle"
+         data-workouts-templates-text="@workoutsTemplatesText"
+         data-generator-text="@generatorText"
+         data-description-text="@descriptionText"
+         data-workouts-url="@workoutsUrl"
+         data-generator-url="@workoutGeneratorUrl"
+         data-filter-empty-text="@filterEmptyText">
+	<div class="container mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        
+		<!-- Filters -->
+		<div class="mt-8">
+			@await Html.PartialAsync("_FilterBar")
+
+			@* Empty State - Show if no workouts at all *@
+			@if (!workouts.Any())
+			{
+				@await Html.PartialAsync("_EmptyState", new EmptyStateViewModel
+				{
+					Icon = "fa-dumbbell",
+					Title = emptyStateTitle,
+					Description = string.Format(descriptionText,
+						$"<a href=\"{workoutsUrl}\" class=\"text-primary hover:underline\">{workoutsTemplatesText}</a>",
+						$"<a href=\"{workoutGeneratorUrl}\" class=\"text-primary hover:underline\">{generatorText}</a>")
+				})
+			}
+
+			<!-- My Workouts Grid - Only render if has workouts -->
+			@if (workouts.Any())
+			{
+				<div id="myWorkoutsGrid" class="flex flex-wrap gap-6 mt-6">
+					@await Html.PartialAsync("_WorkoutCard", new WorkoutCardViewModel
+					{
+						Workouts = workouts,
+						ExercisesText = exercisesText,
+						VisualizationTitle = visualizationTitle,
+						MusclesLabel = musclesLabel,
+						EquipmentLabel = equipmentLabel
+					})
+				</div>
+			}
+		</div>
+	</div>
+</section>
+
+<script src="/js/utils/filterHelpers.js"></script>
+<script src="/js/workoutCard.js"></script>
+<script src="/js/workoutFiltering.js"></script>
+<script src="/js/myWorkouts.js"></script>

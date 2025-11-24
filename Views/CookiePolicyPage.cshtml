@@ -1,0 +1,54 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    Layout = "mainLayout.cshtml";
+    var title = Model.Value<string>("pageTitle") ?? string.Empty;
+    var body = Model.Value<string>("pageContent") ?? string.Empty;
+}
+
+<section>
+    <div class="container px-6 py-24">
+
+        @if (!string.IsNullOrWhiteSpace(title))
+        {
+            <h1>@title</h1>
+        }
+
+        <div class="page-content">
+            @Html.Raw(body)
+        </div>
+        
+        @await Html.PartialAsync("~/Views/Partials/UmbracoCms.Integrations/Analytics/Cookiebot/Declaration.cshtml")
+
+        <!-- Cookiebot Declaration Script -->
+        <div class="cookie-declaration mt-10">
+            <script id="CookieDeclaration"
+                    src="https://consent.cookiebot.com/11f333a3-9714-4cc1-82af-39a20ac26e70/cd.js"
+                    type="text/javascript"
+                    async>
+            </script>
+        </div>
+
+    </div>
+</section>
+
+<style>
+
+    .container {
+        margin: 0 auto;
+    }
+
+    .page-content {
+        line-height: 1.7;
+        font-size: 1.05rem;
+        color: #333;
+    }
+
+    .page-content p {
+        margin-bottom: 1.2rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+</style>

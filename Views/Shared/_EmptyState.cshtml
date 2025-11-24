@@ -1,0 +1,14 @@
+@model WorkoutProgramBuilder.ViewModels.EmptyStateViewModel
+
+<div class="w-full flex flex-col items-center justify-center text-center py-16">
+    <div class="max-w-md mx-auto">
+        <i class="fas @Model.Icon text-6xl text-gray-300 mb-4"></i>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">@Model.Title</h3>
+        @if (!string.IsNullOrEmpty(Model.Description))
+        {
+            <p class="text-sm text-gray-500 mt-4">
+                @Html.Raw(Model.Description)
+            </p>
+        }
+    </div>
+</div>

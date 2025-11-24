@@ -1,4 +1,4 @@
-﻿@using System.Globalization
+@using System.Globalization
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @{
     Layout = "mainLayout.cshtml";
@@ -37,11 +37,8 @@
     }
     else
     {
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            @foreach (var ex in exercises)
-            {
-                @await Html.PartialAsync("_ExerciseCard", ex)
-            }
+        <div class="flex flex-wrap gap-6">
+                @await Html.PartialAsync("_ExerciseCard")
         </div>
 
 
@@ -62,7 +59,7 @@
                 </button>
             }
 
-            <span class="text-gray-500 text-sm">Page @currentPage</span>
+            <span class="text-gray-500 text-sm">@Model.Value("pageText") @currentPage</span>
 
             @if (hasNext)
             {

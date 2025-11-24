@@ -50,6 +50,74 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
+		/// amountOfMyWorkouts
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("amountOfMyWorkouts")]
+		public virtual int AmountOfMyWorkouts => this.Value<int>(_publishedValueFallback, "amountOfMyWorkouts");
+
+		///<summary>
+		/// Amount of Saved Exercises
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("amountOfSavedExercises")]
+		public virtual int AmountOfSavedExercises => this.Value<int>(_publishedValueFallback, "amountOfSavedExercises");
+
+		///<summary>
+		/// Amount of Saved Workouts
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("amountOfSavedWorkouts")]
+		public virtual int AmountOfSavedWorkouts => this.Value<int>(_publishedValueFallback, "amountOfSavedWorkouts");
+
+		///<summary>
+		/// Cookie Consent Date
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("cookieConsentDate")]
+		public virtual global::System.DateTime CookieConsentDate => this.Value<global::System.DateTime>(_publishedValueFallback, "cookieConsentDate");
+
+		///<summary>
+		/// Cookie Consent Status
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("cookieConsentStatus")]
+		public virtual string CookieConsentStatus => this.Value<string>(_publishedValueFallback, "cookieConsentStatus");
+
+		///<summary>
+		/// Member Details
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("memberDetails")]
+		public virtual string MemberDetails => this.Value<string>(_publishedValueFallback, "memberDetails");
+
+		///<summary>
+		/// myWorkoutsJson
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("myWorkoutsJson")]
+		public virtual string MyWorkoutsJson => this.Value<string>(_publishedValueFallback, "myWorkoutsJson");
+
+		///<summary>
+		/// savedExercisesJson
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("savedExercisesJson")]
+		public virtual string SavedExercisesJson => this.Value<string>(_publishedValueFallback, "savedExercisesJson");
+
+		///<summary>
+		/// Saved Workouts JSON
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("savedWorkoutsJson")]
+		public virtual string SavedWorkoutsJson => this.Value<string>(_publishedValueFallback, "savedWorkoutsJson");
+
+		///<summary>
 		/// Comments
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]

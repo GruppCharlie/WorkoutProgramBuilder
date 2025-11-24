@@ -58,6 +58,46 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string EmptySearchText => this.Value<string>(_publishedValueFallback, "emptySearchText");
 
 		///<summary>
+		/// Exersice Modal Close
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("exersiceModalClose")]
+		public virtual string ExersiceModalClose => this.Value<string>(_publishedValueFallback, "exersiceModalClose");
+
+		///<summary>
+		/// Exersice Modal Header
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("exersiceModalHeader")]
+		public virtual string ExersiceModalHeader => this.Value<string>(_publishedValueFallback, "exersiceModalHeader");
+
+		///<summary>
+		/// Exersice Modal Login
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("exersiceModalLogin")]
+		public virtual string ExersiceModalLogin => this.Value<string>(_publishedValueFallback, "exersiceModalLogin");
+
+		///<summary>
+		/// Exersice Modal Sign up
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("exersiceModalSignUp")]
+		public virtual string ExersiceModalSignUp => this.Value<string>(_publishedValueFallback, "exersiceModalSignUp");
+
+		///<summary>
+		/// Exersice Modal Text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("exersiceModalText")]
+		public virtual string ExersiceModalText => this.Value<string>(_publishedValueFallback, "exersiceModalText");
+
+		///<summary>
 		/// Next Button Text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
@@ -72,6 +112,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("noResults")]
 		public virtual string NoResults => this.Value<string>(_publishedValueFallback, "noResults");
+
+		///<summary>
+		/// PageText
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("pageText")]
+		public virtual string PageText => this.Value<string>(_publishedValueFallback, "pageText");
 
 		///<summary>
 		/// Previous Button Text
@@ -103,5 +151,20 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("metaDescription")]
 		public virtual string MetaDescription => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetMetaDescription(this, _publishedValueFallback);
+
+		///<summary>
+		/// sitemap Change Frequency
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("sitemapChangeFrequency")]
+		public virtual string SitemapChangeFrequency => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetSitemapChangeFrequency(this, _publishedValueFallback);
+
+		///<summary>
+		/// Sitemap Priority
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.3.2+8aa9dc8")]
+		[ImplementPropertyType("sitemapPriority")]
+		public virtual decimal SitemapPriority => global::Umbraco.Cms.Web.Common.PublishedModels.Base.GetSitemapPriority(this, _publishedValueFallback);
 	}
 }

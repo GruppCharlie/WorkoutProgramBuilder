@@ -1,0 +1,270 @@
+@using WorkoutProgramBuilder.Business.Dto
+@using WorkoutProgramBuilder.ViewModels
+@inherits UmbracoViewPageBase<WorkoutDetailsPage>
+
+@{
+    Layout = "mainLayout.cshtml";
+    
+    var isAuthenticated = ViewData["IsAuthenticated"] as bool? ?? true;
+    var loadFromSessionStorage = ViewData["LoadFromSessionStorage"] as bool? ?? false;
+    
+    // For authenticated users, get workout from ViewData
+    SavedWorkoutDto? workout = null;
+    
+    if (isAuthenticated && ViewData["Workout"] is SavedWorkoutDto savedWorkout)
+    {
+        workout = savedWorkout;
+        ViewBag.Title = workout.Name;
+    }
+    // For unauthenticated users OR authenticated users without workout in DB, workout will be loaded from sessionStorage via JavaScript
+    
+    // Get page URLs using base class helper
+    var myWorkoutsUrl = GetPageUrl("myWorkoutsPage", "/workouts/my-workouts");
+    var workoutGeneratorUrl = GetPageUrl("workoutGeneratorPage", "/workouts/workout-generator");
+    
+    // Localized texts from Dictionary
+    var exercisesText = Umbraco.GetDictionaryValue("workoutCard.Exercises") ?? "Exercises";
+    var addToMyWorkoutsText = GetTextOrFallback(Model.AddToMyWorkoutsText, "Add to My Workouts");
+    var inMyWorkoutsText = GetTextOrFallback(Model.InMyWorkoutsText, "In My Workouts");
+    var favoriteText = GetTextOrFallback(Model.FavoriteText, "Favorite");
+    var favoritedText = GetTextOrFallback(Model.FavoritedText, "Favorited");
+    
+    var visualizationTitle = Umbraco.GetDictionaryValue("workoutExerciseCard.Visualization") ?? "Targeted Muscles Visualization"; 
+    var instructionsLabel = Umbraco.GetDictionaryValue("workoutExerciseCard.Instructions") ?? "Instructions:";
+    var setsRepsLabel = Umbraco.GetDictionaryValue("workoutExerciseCard.SetsReps") ?? "Sets & Reps:";
+    var setsText = Umbraco.GetDictionaryValue("workoutExerciseCard.Sets") ?? "Sets";
+    var repsText = Umbraco.GetDictionaryValue("workoutExerciseCard.Reps") ?? "Reps";
+    var musclesLabel = Umbraco.GetDictionaryValue("workoutExerciseCard.Muscles") ?? "Muscles:";
+    var equipmentsLabel = Umbraco.GetDictionaryValue("workoutExerciseCard.Equipment") ?? "Equipment:";
+}
+
+@if (!isAuthenticated || loadFromSessionStorage)
+{
+    <!-- Unauthenticated user OR authenticated user without workout in DB: Load from sessionStorage via JavaScript -->
+    <div id="unauthWorkoutContainer" 
+         class="container mx-auto px-4 sm:px-6 lg:px-8 py-10" 
+         style="display: none;"
+         data-instructions-label="@instructionsLabel"
+         data-sets-reps-label="@setsRepsLabel"
+         data-muscles-label="@musclesLabel"
+         data-equipments-label="@equipmentsLabel"
+         data-sets-text="@setsText"
+         data-reps-text="@repsText"
+         data-visualization-title="@visualizationTitle">
+        <div class="mb-8 flex flex-col items-center justify-center">
+            <p id="unauthWorkoutDescription" class="text-gray-600 text-lg"></p>
+        </div>
+        <div id="unauthExercisesContainer">
+            <!-- Exercises will be rendered here by JavaScript using data from sessionStorage -->
+        </div>
+    </div>
+    
+    <div id="noWorkoutMessage" class="container mx-auto px-4 py-10" style="display: none;">
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+            <p class="text-yellow-700">No workout found. Please generate a workout first.</p>
+            <a href="@workoutGeneratorUrl" class="text-primary hover:underline mt-2 inline-block">← Back to Workout Generator</a>
+        </div>
+    </div>
+    
+    <!-- Hidden template for entire workout structure (used by JavaScript for unauthenticated users) -->
+    <template id="workoutStructureTemplate">
+        <div class="mt-8">
+            <!-- Exercise Count with Buttons -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2 text-gray-600">
+                    <i class="fa-solid fa-dumbbell text-xl"></i>
+                    <span class="text-lg font-medium"><span class="exercise-count"></span> @exercisesText</span>
+                </div>
+                <div class="flex gap-2 sm:gap-3">
+                    <button type="button"
+                            class="flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 rounded-lg transition-colors bg-primary text-white hover:bg-primaryHover"
+                            data-text-add="@addToMyWorkoutsText"
+                            data-text-added="@inMyWorkoutsText"
+                            onclick="showLoginModal()"
+                            title="@addToMyWorkoutsText">
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="hidden md:inline">@addToMyWorkoutsText</span>
+                    </button>
+                    <button type="button"
+                            class="flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 border border-gray-300 hover:bg-red-500 rounded-lg transition-colors text-black"
+                            data-text-favorite="@favoriteText"
+                            data-text-favorited="@favoritedText"
+                            onclick="showLoginModal()"
+                            title="@favoriteText">
+                        <i class="fa-solid fa-heart"></i>
+                        <span class="hidden md:inline">@favoriteText</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Slider Container -->
+            <div class="relative">
+                <!-- Slider -->
+                <div class="overflow-x-auto scrollbar-hide" id="exerciseSlider">
+                    <div class="flex gap-6 py-2 px-1" id="exerciseCardsContainer">
+                        <!-- Exercise cards will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Pagination Dots -->
+                <div class="flex justify-center gap-4 mt-6" id="paginationDotsContainer">
+                    <!-- Pagination dots will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- Hidden template for individual exercise cards (used by JavaScript) -->
+    <template id="exerciseCardTemplate">
+        <div class="flex-none w-[calc(33.333%-1rem)] min-w-[400px] h-[800px]">
+            <div class="bg-white shadow-sm rounded-lg flex flex-col h-full overflow-hidden">
+                <div class="relative p-6 bg-neutral-100 h-32 flex flex-col">
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <h1 class="exercise-name text-xl font-bold text-gray-900 line-clamp-1 flex-1"></h1>
+                        <span class="exercise-number flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm"></span>
+                    </div>
+                    <p class="exercise-description text-gray-600 text-sm line-clamp-2"></p>
+                </div>
+                
+                <div class="p-6 flex flex-col flex-1">
+                    <div class="exercise-image-container p-4"></div>
+                    
+                    <div class="exercise-instructions mb-4"></div>
+                    
+                    <div class="space-y-3 mt-auto">
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 block mb-2">@setsRepsLabel</span>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="exercise-sets px-3 py-1 bg-primary/20 text-primaryText rounded-full text-xs font-medium"></span>
+                                <span class="exercise-reps px-3 py-1 bg-primary/20 text-primaryText rounded-full text-xs font-medium"></span>
+                            </div>
+                        </div>
+                        <div class="exercise-muscles"></div>
+                        <div class="exercise-equipment"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+}
+else if (workout == null)
+{
+    <!-- Authenticated user but workout not found -->
+    <div class="container mx-auto px-4 py-10">
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+            <p class="text-yellow-700">Workout not found. Please select a workout from My Workouts.</p>
+            <a href="@myWorkoutsUrl" class="text-primary hover:underline mt-2 inline-block">← Back to My Workouts</a>
+        </div>
+    </div>
+}
+else
+{
+    <!-- Authenticated user with workout -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <!-- Header -->
+        <div class="mb-8 flex flex-col items-center justify-center">
+            @* <h1 class="text-3xl font-bold text-gray-900 mb-2">@workout.Name</h1> *@
+            <p class="text-gray-600 text-lg">@workout.Description</p>
+        </div>
+        
+        @if (workout.Exercises.Any())
+        {
+            <div class="mt-8">
+                <!-- Exercise Count with Buttons -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-2 text-gray-600">
+                        <i class="fa-solid fa-dumbbell text-xl"></i>
+                        <span class="text-lg font-medium">@workout.Exercises.Count @exercisesText</span>
+                    </div>
+                    <div class="flex gap-2 sm:gap-3">
+                        <button type="button"
+                                class="add-to-my-workouts-btn flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 rounded-lg transition-colors @(workout.IsInMyWorkouts ? "bg-green-500 text-black hover:bg-green-400" : "bg-primary text-white hover:bg-primaryHover")"
+                                data-workout-id="@workout.WorkoutId"
+                                data-workout-name="@workout.Name"
+                                data-workout-description="@workout.Description"
+                                data-workout-muscles="@string.Join(",", workout.Muscles)"
+                                data-workout-equipment="@string.Join(",", workout.Equipment)"
+                                data-workout-exercises='@System.Text.Json.JsonSerializer.Serialize(workout.Exercises)'
+                                data-text-add="@addToMyWorkoutsText"
+                                data-text-added="@inMyWorkoutsText"
+                                onclick="@(workout.IsInMyWorkouts ? "removeFromMyWorkoutsDetails(event, this)" : "addToMyWorkoutsDetails(event, this)")"
+                                title="@(workout.IsInMyWorkouts ? inMyWorkoutsText : addToMyWorkoutsText)">
+                            <i class="fa-solid @(workout.IsInMyWorkouts ? "fa-check" : "fa-plus")"></i>
+                            <span class="hidden md:inline">@(workout.IsInMyWorkouts ? inMyWorkoutsText : addToMyWorkoutsText)</span>
+                        </button>
+                        <button type="button"
+                                class="favorite-workout-btn flex items-center gap-2 sm:px-4 sm:py-2 px-3 py-2 border border-gray-300 rounded-lg transition-colors @(workout.IsSaved ? "bg-red-500 text-black hover:bg-red-400" : "text-black hover:bg-red-500")"
+                                data-workout-id="@workout.WorkoutId"
+                                data-workout-name="@workout.Name"
+                                data-workout-description="@workout.Description"
+                                data-workout-muscles="@string.Join(",", workout.Muscles)"
+                                data-workout-equipment="@string.Join(",", workout.Equipment)"
+                                data-workout-exercises='@System.Text.Json.JsonSerializer.Serialize(workout.Exercises)'
+                                data-text-favorite="@favoriteText"
+                                data-text-favorited="@favoritedText"
+                                onclick="toggleWorkoutFavoriteDetails(event, this)"
+                                title="@(workout.IsSaved ? favoritedText : favoriteText)">
+                            <i class="fa-solid fa-heart"></i>
+                            <span class="hidden md:inline">@(workout.IsSaved ? favoritedText : favoriteText)</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Slider Container -->
+                <div class="relative">
+                    <!-- Slider -->
+                    <div class="overflow-x-auto scrollbar-hide" id="exerciseSlider">
+                        <div class="flex gap-6 py-2 px-1">
+                            @for (int i = 0; i < workout.Exercises.Count; i++)
+                            {
+                                @await Html.PartialAsync("_WorkoutExerciseCard", new WorkoutExerciseCardViewModel
+                                {
+                                    Exercise = workout.Exercises[i],
+                                    ExerciseNumber = i + 1,
+                                    VisualizationTitle = visualizationTitle,
+                                    InstructionsLabel = instructionsLabel,
+                                    SetsRepsLabel = setsRepsLabel,
+                                    SetsText = setsText,
+                                    RepsText = repsText,
+                                    MusclesLabel = musclesLabel,
+                                    EquipmentsLabel = equipmentsLabel
+                                })
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Pagination Dots -->
+                    <div class="flex justify-center gap-4 mt-6">
+                        @for (int i = 0; i < workout.Exercises.Count; i++)
+                        {
+                            <button onclick="scrollToExercise(@i)" 
+                                    class="exercise-dot w-3 h-3 rounded-full transition-all duration-300 @(i == 0 ? "bg-primary w-8" : "bg-gray-300 hover:bg-gray-400")"
+                                    data-index="@i"
+                                    aria-label="Go to exercise @(i + 1)">
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+
+<script src="/js/workoutCard.js"></script>
+<script src="/js/workoutDetails.js"></script>

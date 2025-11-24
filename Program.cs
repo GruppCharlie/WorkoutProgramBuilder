@@ -1,8 +1,16 @@
 using WorkoutProgramBuilder.Business.Services;
+using WorkoutProgramBuilder.Business.Configuration;
+using WorkoutProgramBuilder.Business.Options;
+using WorkoutProgramBuilder.Business.ScheduledJobs;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpClient<IMuscleGroupApiService, MuscleGroupApiService>();
+builder.Services.AddRapidApiHttpClient<IMuscleGroupApiService, MuscleGroupApiService>(timeoutSeconds: 10);
+builder.Services.AddRapidApiHttpClient<IRapidApiService, GenerateWorkoutApiService>();
+builder.Services.Configure<InactiveMemberCleanupOptions>(builder.Configuration.GetSection("InactiveMemberCleanup"));
+builder.Services.AddTransient<InactiveMemberCleanupJob>();
+
+builder.Services.AddResponseCaching();
 builder.Services.AddControllers();
 
 builder.CreateUmbracoBuilder()
@@ -18,6 +26,7 @@ WebApplication app = builder.Build();
 await app.BootUmbracoAsync();
 
 app.UseHttpsRedirection();
+app.UseResponseCaching();
 
 app.UseUmbraco()
     .WithMiddleware(u =>
