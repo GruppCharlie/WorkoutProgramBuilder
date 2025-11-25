@@ -79,10 +79,11 @@
         {
             <div class="p-6 bg-white border-t border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700 mb-3">@Model.VisualizationTitle</h2>
-                <div class="flex justify-center">
+                <div class="relative w-full gif-wrapper flex justify-center">
+                    <div class="gif-skeleton absolute inset-0 bg-gray-200 animate-pulse rounded"></div>
                     <img src="@imageUrl" 
                          alt="Targeted muscles visualization" 
-                         class="w-full h-auto mx-auto"
+                         class="gif-image w-full h-auto mx-auto object-contain opacity-0 transition-opacity duration-300"
                          style="max-width: 200px;" />
                 </div>
             </div>
