@@ -36,6 +36,12 @@
     var repsText = Umbraco.GetDictionaryValue("workoutExerciseCard.Reps") ?? "Reps";
     var musclesLabel = Umbraco.GetDictionaryValue("workoutExerciseCard.Muscles") ?? "Muscles:";
     var equipmentsLabel = Umbraco.GetDictionaryValue("workoutExerciseCard.Equipment") ?? "Equipment:";
+    
+    // Toast texts
+    var toastAddToFavorites = Umbraco.GetDictionaryValue("toast.message.AddToFavorites") ?? "Added To Favorites";
+    var toastRemoveFromFavorites = Umbraco.GetDictionaryValue("toast.message.RemoveFromFavorites") ?? "Removed From Favorites";
+    var toastAddToMyWorkouts = Umbraco.GetDictionaryValue("toast.message.AddToMyWorkouts") ?? "Added To My Workouts";
+    var toastRemoveFromMyWorkouts = Umbraco.GetDictionaryValue("toast.message.RemoveFromMyWorkouts") ?? "Removed From My Workouts";
 }
 
 @if (!isAuthenticated || loadFromSessionStorage)
@@ -187,6 +193,8 @@ else
                                 data-workout-exercises='@System.Text.Json.JsonSerializer.Serialize(workout.Exercises)'
                                 data-text-add="@addToMyWorkoutsText"
                                 data-text-added="@inMyWorkoutsText"
+                                data-toast-add-to-my-workouts="@toastAddToMyWorkouts"
+                                data-toast-remove-from-my-workouts="@toastRemoveFromMyWorkouts"
                                 onclick="@(workout.IsInMyWorkouts ? "removeFromMyWorkoutsDetails(event, this)" : "addToMyWorkoutsDetails(event, this)")"
                                 title="@(workout.IsInMyWorkouts ? inMyWorkoutsText : addToMyWorkoutsText)">
                             <i class="fa-solid @(workout.IsInMyWorkouts ? "fa-check" : "fa-plus")"></i>
@@ -202,6 +210,8 @@ else
                                 data-workout-exercises='@System.Text.Json.JsonSerializer.Serialize(workout.Exercises)'
                                 data-text-favorite="@favoriteText"
                                 data-text-favorited="@favoritedText"
+                                data-toast-add-to-favorites="@toastAddToFavorites"
+                                data-toast-remove-from-favorites="@toastRemoveFromFavorites"
                                 onclick="toggleWorkoutFavoriteDetails(event, this)"
                                 title="@(workout.IsSaved ? favoritedText : favoriteText)">
                             <i class="fa-solid fa-heart"></i>

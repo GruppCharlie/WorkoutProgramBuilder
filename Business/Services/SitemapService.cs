@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Xml;
 using Examine;
@@ -6,7 +7,6 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common;
-using WorkoutProgramBuilder.Business.Interface;
 
 namespace WorkoutProgramBuilder.Business.Services;
 
@@ -124,7 +124,8 @@ public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbr
         writer.WriteElementString("loc", url);
         writer.WriteElementString("lastmod", FormatLastModified(page.UpdateDate));
         writer.WriteElementString("changefreq", GetChangeFrequency(page));
-        writer.WriteElementString("priority", GetPriority(page).ToString("0.0"));
+        writer.WriteElementString("priority", GetPriority(page).ToString("0.0", CultureInfo.InvariantCulture));
+
 
         writer.WriteEndElement();
     }

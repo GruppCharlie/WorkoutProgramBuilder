@@ -29,7 +29,10 @@ public class RobotsTxtController(IUmbracoContextAccessor umbracoContextAccessor,
     {
         var sitemapUrl = GetSitemapUrl();
 
-        return $"User-agent: * Allow: / Sitemap: {sitemapUrl}";
+        return $"User-agent: *\n" +
+               $"Allow: /\n" +
+               $"Disallow: /umbraco/\n" +
+               $"Sitemap: {sitemapUrl}";
     }
 
     private string GetSitemapUrl()

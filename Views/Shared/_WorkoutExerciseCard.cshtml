@@ -4,7 +4,7 @@
 @using WorkoutProgramBuilder.Business.Helpers
 @using WorkoutProgramBuilder.ViewModels
 @inject WorkoutProgramBuilder.Business.Interface.IExerciseDbService _exerciseDbService
-@model WorkoutExerciseCardViewModel
+@inherits UmbracoViewPage<WorkoutExerciseCardViewModel>
 
 
 @{
@@ -38,8 +38,7 @@
 
     var showMuscleVisualization = workoutDetailsNode?.Value<string>("showMuscleVisualization") ?? "Show Muscle Visualization";
     var showGif = workoutDetailsNode?.Value<string>("showGif") ?? "Show GIF";
-
-
+    
 }
 
 
@@ -58,7 +57,6 @@
         </div>
 
         <div class="p-6 flex flex-col flex-1 space-y-4 overflow-hidden">
-            @* <h2 class="text-sm font-semibold text-gray-700 mb-3">@Model.VisualizationTitle</h2> *@
             <div class="gif-wrapper pb-4 w-full flex flex-col items-center">
                 <div class="flex justify-center mb-2">
                     @if (!string.IsNullOrWhiteSpace(gifUrl) && exerciseMuscles!.Any())

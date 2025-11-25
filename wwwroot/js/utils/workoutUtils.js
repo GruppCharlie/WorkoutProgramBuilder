@@ -47,6 +47,10 @@ function extractWorkoutDataFromButton(button) {
       .split(",")
       .filter(Boolean),
     Exercises: exercises,
+    ToastAddToFavorites: button.getAttribute("data-toast-add-to-favorites"),
+    ToastRemoveFromFavorites: button.getAttribute("data-toast-remove-from-favorites"),
+    ToastAddToMyWorkouts: button.getAttribute("data-toast-add-to-my-workouts"),
+    ToastRemoveFromMyWorkouts: button.getAttribute("data-toast-remove-from-my-workouts"),
   };
 }
 

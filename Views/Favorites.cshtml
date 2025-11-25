@@ -33,9 +33,13 @@
     var generatorText = Umbraco.GetDictionaryValue("favorites.emptyState.generator") ?? "AI Workout Generator";
     var descriptionText = Umbraco.GetDictionaryValue("favorites.emptyState.descriptionText") ?? "Add from {0} or try our {1} to create custom workouts!";
     var filterEmptyText = Umbraco.GetDictionaryValue("filters.emptyState.message") ?? "match your filters. Try adjusting your selection.";
+    
+    // Toast texts
+    var toastTitle = Umbraco.GetDictionaryValue("toast.message.AddToFavorites") ?? "Added To Favorites";
+    var toastRemoveFromFavorites = Umbraco.GetDictionaryValue("toast.message.RemoveFromFavorites") ?? "Removed From Favorites";
 }
 
-<section class="container px-6 mx-auto py-10" 
+<section class="container px-6 mx-auto py-10"
          data-page-type="favorites"
          data-empty-title="@emptyStateTitle"
          data-my-workouts-text="@myWorkoutsText"
@@ -43,7 +47,8 @@
          data-description-text="@descriptionText"
          data-my-workouts-url="@myWorkoutsUrl"
          data-generator-url="@workoutGeneratorUrl"
-         data-filter-empty-text="@filterEmptyText">
+         data-filter-empty-text="@filterEmptyText"
+         data-toast-title="@toastTitle">
     <h1 class="text-2xl font-semibold mb-6">@favoritesHeadline</h1>
 
     @* Filter Bar - Always show *@

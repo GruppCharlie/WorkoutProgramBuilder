@@ -24,7 +24,7 @@ async function addToMyWorkoutsDetails(event, button) {
 
       updateMyWorkoutsButtonState(button, true);
       button.onclick = (e) => removeFromMyWorkoutsDetails(e, button);
-      showSuccessToast("Added to My Workouts!");
+      showSuccessToast(workoutData.ToastAddToMyWorkouts);
     }
   } catch (error) {
     console.error("Error saving to My Workouts:", error);
@@ -39,6 +39,7 @@ async function removeFromMyWorkoutsDetails(event, button) {
   event.stopPropagation();
 
   const workoutId = button.getAttribute("data-workout-id");
+  const workoutData = extractWorkoutDataFromButton(button);
 
   try {
     const response = await fetch(API_ENDPOINTS.WORKOUT_REMOVE(workoutId), {
@@ -53,7 +54,7 @@ async function removeFromMyWorkoutsDetails(event, button) {
     if (response.ok) {
       updateMyWorkoutsButtonState(button, false);
       button.onclick = (e) => addToMyWorkoutsDetails(e, button);
-      showInfoToast("Removed from My Workouts");
+      showInfoToast(workoutData.ToastRemoveFromMyWorkouts);
     }
   } catch (error) {
     console.error("Error removing from My Workouts:", error);
@@ -87,9 +88,9 @@ async function toggleWorkoutFavoriteDetails(event, button) {
       updateFavoriteButtonState(button, isFavorited);
 
       if (isFavorited) {
-        showSuccessToast("Added to Favorites!");
+        showSuccessToast(workoutData.ToastAddToFavorites);
       } else {
-        showInfoToast("Removed from Favorites");
+        showInfoToast(workoutData.ToastRemoveFromFavorites);
       }
 
       window.dispatchEvent(
