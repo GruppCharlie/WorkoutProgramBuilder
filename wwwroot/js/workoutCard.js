@@ -9,6 +9,7 @@ async function navigateToWorkoutDetail(workoutId) {
     
     // Find the workout card to get all data
     const workoutCard = document.querySelector(`[data-workout-id="${workoutId}"]`);
+    
     if (!workoutCard) {
         console.error('Workout card not found');
         return;
@@ -52,9 +53,9 @@ async function toggleWorkoutFavorite(event, button) {
             const isFavorited = heartIcon.classList.toggle('text-red-500');
             
             if (isFavorited) {
-                showSuccessToast('Added to Favorites!');
+                showSuccessToast(workoutData.ToastAddToFavorites);
             } else {
-                showInfoToast('Removed from Favorites');
+                showInfoToast(workoutData.ToastRemoveFromFavorites);
             }
             
             window.dispatchEvent(new CustomEvent('workoutFavoriteToggled', {
@@ -98,7 +99,7 @@ async function addToMyWorkouts(event, button) {
             button.title = 'Remove from My Workouts';
             button.onclick = (e) => removeFromMyWorkouts(e, button);
             
-            showSuccessToast('Added to My Workouts!');
+            showSuccessToast(workoutData.ToastAddToMyWorkouts);
         }
     } catch (error) {
         console.error('Error saving to My Workouts:', error);
@@ -113,6 +114,7 @@ async function removeFromMyWorkouts(event, button) {
     event.stopPropagation();
     
     const workoutId = button.getAttribute('data-workout-id');
+    const workoutData = extractWorkoutDataFromButton(button);
     
     try {
         const response = await fetch(API_ENDPOINTS.WORKOUT_REMOVE(workoutId), {
@@ -133,7 +135,7 @@ async function removeFromMyWorkouts(event, button) {
             button.title = 'Add to My Workouts';
             button.onclick = (e) => addToMyWorkouts(e, button);
             
-            showInfoToast('Removed from My Workouts');
+            showInfoToast(workoutData.ToastRemoveFromMyWorkouts);
             
             
             window.dispatchEvent(new CustomEvent('workoutRemovedFromMyWorkouts', {

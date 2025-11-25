@@ -1,7 +1,8 @@
 @using WorkoutProgramBuilder.Business.Helpers
 @using WorkoutProgramBuilder.ViewModels
 @using System.Text.Json
-@model WorkoutCardViewModel
+@inherits UmbracoViewPage<WorkoutCardViewModel>
+
 
 @foreach (var workout in Model.Workouts)
 {
@@ -13,6 +14,14 @@
     //MuscleMapper helper to get mapped muscles and image URL
     var mappedMuscles = MuscleMapper.MapToApiMuscleGroups(muscleGroups);
     var imageUrl = MuscleMapper.GenerateMuscleVisualizationUrl(muscleGroups);
+    
+    var toastAddToFavorites = Umbraco.GetDictionaryValue("toast.message.AddToFavorites") ?? "Added To Favorites";
+    var toastRemoveFromFavorites = Umbraco.GetDictionaryValue("toast.message.RemoveFromFavorites") ?? "Removed From Favorites";
+    var toastAddToMyWorkouts = Umbraco.GetDictionaryValue("toast.message.AddToMyWorkouts") ?? "Added To My Workouts";
+    var toastRemoveFromMyWorkouts = Umbraco.GetDictionaryValue("toast.message.RemoveFromMyWorkouts") ?? "Removed From My Workouts";
+    
+    
+    
     
     <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm transition-shadow duration-300 cursor-pointer hover:shadow-md workout-card w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]" 
          data-workout-id="@workout.WorkoutId"
@@ -42,6 +51,8 @@
                         data-workout-muscles="@string.Join(",", muscleGroups)"
                         data-workout-equipment="@string.Join(",", equipment)"
                         data-workout-exercises='@exercisesJson'
+                        data-toast-add-to-my-workouts="@toastAddToMyWorkouts"
+                        data-toast-remove-from-my-workouts="@toastRemoveFromMyWorkouts"
                         onclick="@(workout.IsInMyWorkouts ? "removeFromMyWorkouts(event, this)" : "addToMyWorkouts(event, this)")"
                         title="@(workout.IsInMyWorkouts ? "Remove from My Workouts" : "Add to My Workouts")">
                     <i class="fa-solid @(workout.IsInMyWorkouts ? "fa-check" : "fa-plus")"></i>
@@ -54,6 +65,8 @@
                         data-workout-muscles="@string.Join(",", muscleGroups)"
                         data-workout-equipment="@string.Join(",", equipment)"
                         data-workout-exercises='@exercisesJson'
+                        data-toast-add-to-favorites="@toastAddToFavorites"
+                        data-toast-remove-from-favorites="@toastRemoveFromFavorites"
                         onclick="toggleWorkoutFavorite(event, this)"
                         title="@(workout.IsSaved ? "Remove from Favorites" : "Add to Favorites")">
                     <i class="fa-solid fa-heart @(workout.IsSaved ? "text-red-500" : "")"></i>

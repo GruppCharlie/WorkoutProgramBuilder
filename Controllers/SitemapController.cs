@@ -6,7 +6,6 @@ using WorkoutProgramBuilder.Business.Services;
 
 namespace WorkoutProgramBuilder.Controllers;
 
-[Route("sitemap.xml")]
 public class SitemapController( ISitemapService sitemapService, IMemoryCache cache, ILogger<SitemapController> logger) : Controller
 {
     private readonly ISitemapService _sitemapService = sitemapService;
@@ -16,6 +15,7 @@ public class SitemapController( ISitemapService sitemapService, IMemoryCache cac
     private static readonly TimeSpan CacheDuration = TimeSpan.FromHours(1);
 
     [HttpGet]
+    [Route("sitemap.xml")]
     public IActionResult Index()
     {
         try
@@ -27,15 +27,27 @@ public class SitemapController( ISitemapService sitemapService, IMemoryCache cac
                 return _sitemapService.GenerateSitemap();
             });
 
-            if (sitemap != null) 
-                return Content(sitemap, "application/xml", Encoding.UTF8);
+            if (string.IsNullOrEmpty(sitemap))
+            {
+                _logger.LogWarning("Sitemap generation returned empty result");
+                return NotFound("No content available for sitemap");
+            }
+
+            return Content(sitemap, "application/xml", Encoding.UTF8);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error generating sitemap");
             return StatusCode(500);
         }
-        
-        return StatusCode(500);
+    }
+
+    [HttpGet]
+    [Route("sitemap-clear-cache")]
+    public IActionResult ClearCache()
+    {
+        _cache.Remove(CacheKey);
+        _logger.LogInformation("Sitemap cache cleared");
+        return Redirect("/sitemap.xml");
     }
 }

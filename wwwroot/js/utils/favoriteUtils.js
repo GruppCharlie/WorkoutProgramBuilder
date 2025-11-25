@@ -10,6 +10,7 @@ async function toggleFavorite(event, button) {
     event.preventDefault();
 
     const exerciseData = getExerciseDataFromButton(button);
+    
 
     try {
         const response = await toggleExerciseFavorite(exerciseData);
@@ -26,7 +27,7 @@ async function toggleFavorite(event, button) {
                 
                 // Show toast based on action
                 if (isFavorite) {
-                    showSuccessToast('Added to Favorites!');
+                    showSuccessToast(exerciseData.ToastTitle);
                 } else {
                     showInfoToast('Removed from Favorites');
                 }
@@ -62,6 +63,7 @@ function getExerciseDataFromButton(button) {
         TargetMuscles: button.getAttribute("data-targetmuscles").split(",").filter(Boolean),
         Equipments: button.getAttribute("data-equipments").split(",").filter(Boolean),
         SecondaryMuscles: button.getAttribute("data-secondarymuscles").split(",").filter(Boolean),
-        GifUrl: button.getAttribute("data-gifurl")
+        GifUrl: button.getAttribute("data-gifurl"),
+        ToastTitle: button.getAttribute("data-toast-title")
     };
 }
