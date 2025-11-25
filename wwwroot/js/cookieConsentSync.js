@@ -5,20 +5,31 @@
             return null;
         }
 
-        if (Cookiebot.consent.declined) {
-            return 2;
+        var c = Cookiebot.consent;
+
+        if (!c.given) {
+            return 0; 
         }
 
-        if (Cookiebot.consent.consented) {
-            return 1;
+        if (c.statistics || c.preferences || c.marketing) {
+            return 1; 
         }
 
-        return 0;
+        return 2; 
     }
 
-    function syncCookieConsentToMember() {
-        var status = getStatusFromCookiebot();
-        if (status === null) {
+    function syncCookieConsentToMember(event) {
+        var status = null;
+
+        if (event && event.type === 'CookiebotOnAccept') {
+            status = 1; 
+        } else if (event && event.type === 'CookiebotOnDecline') {
+            status = 2; 
+        } else {
+            status = getStatusFromCookiebot();
+        }
+
+        if (status === null || status === undefined) {
             return;
         }
 
