@@ -23,8 +23,8 @@
 
 @if (isHero && !string.IsNullOrEmpty(sectionBackgroundImage))
 {
-  <section id="@sectionId" class="relative h-[70vh] w-full overflow-visible">
-    <img class="absolute inset-0 w-full h-full object-cover object-top" src="@sectionBackgroundImage" alt="@($"{sectionTitle} background image")"/>
+  <section id="@sectionId" class="relative h-[95dvh] w-full overflow-hidden">
+    <img class="absolute inset-0 w-full h-full object-cover object-left scale-[550%] md:scale-[100%] overflow-x-hidden md:object-top" src="@sectionBackgroundImage" alt="@($"{sectionTitle} background image")"/>
     
     <div class="relative z-10 container mx-auto px-6 h-full flex items-center">
       @await Html.GetBlockGridItemAreasHtmlAsync(Model)
