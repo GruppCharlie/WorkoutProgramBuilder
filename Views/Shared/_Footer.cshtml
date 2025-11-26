@@ -10,6 +10,8 @@
 
     var FooterItems = settingsNode?.Value<IEnumerable<CoreLink>>("footerItems") ?? new List<CoreLink>();
 
+    var formId = settingsNode?.Value<Guid>("formsContainer");
+
     var FooterSocialMedia = settingsNode?.Value<IEnumerable<Umbraco.Cms.Core.Models.Blocks.BlockListItem>>("socialMediaIcons") ?? null;
 
 }
@@ -43,22 +45,73 @@
 
         <hr class="border-primaryBorder my-8" />
 
-        <div class="flex justify-center md:justify-start items-center text-sm text-primaryText gap-4">
-            @foreach (var social in FooterSocialMedia!)
-            {
-                var platformLink = social?.Content.Value<string>("socialMediaUrl");
-                var platformIcon = social?.Content.Value<IPublishedContent>("socialMediaIcon")?.Url();
+        <div class="flex flex-col md:flex-row justify-between items-center md:items-start">
 
-                if (string.IsNullOrEmpty(platformLink) || string.IsNullOrEmpty(platformIcon))
+            <div class="flex justify-center items-start md:items-center text-sm text-primaryText gap-4 pb-10">
+                @foreach (var social in FooterSocialMedia!)
                 {
-                    continue;
+                    var platformLink = social?.Content.Value<string>("socialMediaUrl");
+                    var platformIcon = social?.Content.Value<IPublishedContent>("socialMediaIcon")?.Url();
+
+                    if (string.IsNullOrEmpty(platformLink) || string.IsNullOrEmpty(platformIcon))
+                    {
+                        continue;
+                    }
+
+                    <a href="@platformLink" class="hover:opacity-70 transition-colors duration-200" target="_blank">
+                        <img src="@platformIcon" alt="Social Media Icon" class="w-6 h-6" />
+                    </a>
                 }
+            </div>
+            <div id="myFormContainer">
+            <div class="items-start max-w-[400px]">
+                @if (formId.HasValue)
+                {
+                    @await Component.InvokeAsync("RenderForm", new { formId = formId.Value })
 
-                <a href="@platformLink" class="hover:opacity-70 transition-colors duration-200" target="_blank">
-                    <img src="@platformIcon" alt="Social Media Icon" class="w-6 h-6" />
-                </a>
-            }
+                }
+            </div>
+            </div>
         </div>
-
     </div>
 </footer>
+
+
+<style>
+    .umbraco-forms-form fieldset {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .umbraco-forms-form {
+        padding: 0px
+    }
+
+    .umbraco-forms-container{
+        display: flex;
+        flex-direction: column;
+        row-gap: 1rem;
+    }
+
+    .umbraco-forms-field-wrapper span{
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; 
+    }
+
+    .btn {
+        background-color: #166079;
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+        .btn:hover {
+            background-color: #0f4c5c;
+        }
+
+</style>
