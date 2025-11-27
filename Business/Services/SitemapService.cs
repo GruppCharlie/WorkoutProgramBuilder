@@ -255,7 +255,6 @@ public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbr
             
             var cultureSlug = culture.ToLowerInvariant();
             writer.WriteElementString("loc", SitemapNamespace, $"{baseUrl}/{cultureSlug}/sitemap.xml");
-            // writer.WriteElementString("lastmod", SitemapNamespace, FormatLastModified(DateTime.UtcNow));
             
             writer.WriteEndElement();
         }
@@ -267,6 +266,7 @@ public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbr
         return stringWriter.ToString();
     }
 
+    // Build a sitemap for a specific culture
     private string BuildCultureSitemap(IEnumerable<IPublishedContent> pages, string culture)
     {
         var pagesList = pages.Where(p => p.IsPublished(culture)).ToList();
@@ -289,6 +289,7 @@ public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbr
         return stringWriter.ToString();
     }
 
+    // Write a single URL entry for a culture
     private void WriteCultureUrlEntry(XmlWriter writer, IPublishedContent page, string culture)
     {
         writer.WriteStartElement("url", SitemapNamespace);
