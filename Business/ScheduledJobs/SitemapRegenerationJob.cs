@@ -1,23 +1,16 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Memory;
 using WorkoutProgramBuilder.Business.Services;
 
 namespace WorkoutProgramBuilder.Business.ScheduledJobs;
 
-public class SitemapRegenerationJob
+public class SitemapRegenerationJob( ISitemapService sitemapService, IMemoryCache cache, ILogger<SitemapRegenerationJob> logger)
 {
-    private readonly ISitemapService _sitemapService;
-    private readonly IMemoryCache _cache;
-    private readonly ILogger<SitemapRegenerationJob> _logger;
+    private readonly ISitemapService _sitemapService = sitemapService;
+    private readonly IMemoryCache _cache = cache;
+    private readonly ILogger<SitemapRegenerationJob> _logger = logger;
 
     private const string CacheKey = "sitemap_xml";
     private static readonly TimeSpan CacheDuration = TimeSpan.FromHours(1);
-
-    public SitemapRegenerationJob(ISitemapService sitemapService, IMemoryCache cache, ILogger<SitemapRegenerationJob> logger)
-    {
-        _sitemapService = sitemapService;
-        _cache = cache;
-        _logger = logger;
-    }
 
     public Task RunAsync()
     {

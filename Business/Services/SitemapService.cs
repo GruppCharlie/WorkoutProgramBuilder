@@ -13,18 +13,34 @@ namespace WorkoutProgramBuilder.Business.Services;
 public interface ISitemapService
 {
     string GenerateSitemap();
+    string GenerateSitemapIndex();
+    string GenerateSitemapForCulture(string culture);
     IEnumerable<IPublishedContent> GetSitemapPages();
 }
 
-public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbracoContextFactory umbracoContextFactory, IPublishedUrlProvider publishedUrlProvider, IExamineManager examineManager, ILogger<SitemapService> logger) : ISitemapService
+public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbracoContextFactory umbracoContextFactory, IPublishedUrlProvider publishedUrlProvider, IExamineManager examineManager, 
+    ILogger<SitemapService> logger, IHttpContextAccessor httpContextAccessor) : ISitemapService
 {
     private readonly IUmbracoHelperAccessor _umbracoHelperAccessor = umbracoHelperAccessor;
     private readonly IUmbracoContextFactory _umbracoContextFactory = umbracoContextFactory;
     private readonly IPublishedUrlProvider _publishedUrlProvider = publishedUrlProvider;
     private readonly IExamineManager _examineManager = examineManager;
     private readonly ILogger<SitemapService> _logger = logger;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    
     private const string DefaultChangeFrequency = "weekly";
     private const decimal DefaultPriority = 0.5m;
+    private const string SitemapNamespace = "https://www.sitemaps.org/schemas/sitemap/0.9";
+    private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
+    
+    private static readonly XmlWriterSettings XmlSettings = new()
+    {
+        Indent = true,
+        Encoding = Encoding.UTF8,
+        NewLineOnAttributes = false,
+        IndentChars = "  ",
+        NewLineHandling = NewLineHandling.Replace
+    };
 
     public string GenerateSitemap()
     {
@@ -91,19 +107,13 @@ public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbr
     private string BuildXmlSitemap(IEnumerable<IPublishedContent> pages, IUmbracoContext umbracoContext)
     {
         var pagesList = pages.ToList();
-        
-        var settings = new XmlWriterSettings
-        {
-            Indent = true,
-            Encoding = Encoding.UTF8
-        };
 
         using var stringWriter = new StringWriter();
-        using var writer = XmlWriter.Create(stringWriter, settings);
+        using var writer = XmlWriter.Create(stringWriter, XmlSettings);
 
         writer.WriteStartDocument();
-        writer.WriteStartElement("urlset", "https://www.sitemaps.org/schemas/sitemap/0.9");
-        writer.WriteAttributeString("xmlns", "xhtml", null, "http://www.w3.org/1999/xhtml");
+        writer.WriteStartElement("urlset", SitemapNamespace);
+        writer.WriteAttributeString("xmlns", "xhtml", null, XhtmlNamespace);
 
         foreach (var page in pagesList)
         {
@@ -140,13 +150,13 @@ public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbr
 
     private void WriteSingleUrlEntry(XmlWriter writer, IPublishedContent page, string? culture)
     {
-        writer.WriteStartElement("url");
+        writer.WriteStartElement("url", SitemapNamespace);
 
         var url = page.Url(_publishedUrlProvider, culture, mode: UrlMode.Absolute);
-        writer.WriteElementString("loc", url);
-        writer.WriteElementString("lastmod", FormatLastModified(page.UpdateDate));
-        writer.WriteElementString("changefreq", GetChangeFrequency(page));
-        writer.WriteElementString("priority", GetPriority(page).ToString("0.0", CultureInfo.InvariantCulture));
+        writer.WriteElementString("loc", SitemapNamespace, url);
+        writer.WriteElementString("lastmod", SitemapNamespace, FormatLastModified(page.UpdateDate));
+        writer.WriteElementString("changefreq", SitemapNamespace, GetChangeFrequency(page));
+        writer.WriteElementString("priority", SitemapNamespace, GetPriority(page).ToString("0.0", CultureInfo.InvariantCulture));
 
         writer.WriteEndElement();
     }
@@ -194,5 +204,126 @@ public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbr
             .FirstOrDefault(x => x.ContentType.Alias == "settings");
 
         return settingsNode?.Value<decimal>("sitemapDefaultPriority") ?? DefaultPriority;
+    }
+
+    public string GenerateSitemapIndex()
+    {
+        using var contextReference = _umbracoContextFactory.EnsureUmbracoContext();
+        
+        // Get all available cultures from the site
+        var cultures = GetAvailableCultures();
+        
+        return BuildSitemapIndex(cultures);
+    }
+
+    public string GenerateSitemapForCulture(string culture)
+    {
+        using var contextReference = _umbracoContextFactory.EnsureUmbracoContext();
+        var pages = GetSitemapPages();
+        
+        return BuildCultureSitemap(pages, culture);
+    }
+
+    private List<string> GetAvailableCultures()
+    {
+        if (!_umbracoHelperAccessor.TryGetUmbracoHelper(out var umbracoHelper))
+        {
+            _logger.LogWarning("Could not get Umbraco helper for cultures");
+            return [];
+        }
+
+        var homePage = umbracoHelper.ContentAtRoot().FirstOrDefault();
+        if (homePage == null)
+            return [];
+
+        return homePage.Cultures.Keys.ToList();
+    }
+
+    private string BuildSitemapIndex(List<string> cultures)
+    {
+        using var stringWriter = new StringWriter();
+        using var writer = XmlWriter.Create(stringWriter, XmlSettings);
+
+        writer.WriteStartDocument();
+        writer.WriteStartElement("sitemapindex", SitemapNamespace);
+
+        var baseUrl = GetBaseUrl();
+        
+        foreach (var culture in cultures)
+        {
+            writer.WriteStartElement("sitemap", SitemapNamespace);
+            
+            var cultureSlug = culture.ToLowerInvariant();
+            writer.WriteElementString("loc", SitemapNamespace, $"{baseUrl}/{cultureSlug}/sitemap.xml");
+            // writer.WriteElementString("lastmod", SitemapNamespace, FormatLastModified(DateTime.UtcNow));
+            
+            writer.WriteEndElement();
+        }
+
+        writer.WriteEndElement();
+        writer.WriteEndDocument();
+        writer.Flush();
+
+        return stringWriter.ToString();
+    }
+
+    private string BuildCultureSitemap(IEnumerable<IPublishedContent> pages, string culture)
+    {
+        var pagesList = pages.Where(p => p.IsPublished(culture)).ToList();
+
+        using var stringWriter = new StringWriter();
+        using var writer = XmlWriter.Create(stringWriter, XmlSettings);
+
+        writer.WriteStartDocument();
+        writer.WriteStartElement("urlset", SitemapNamespace);
+
+        foreach (var page in pagesList)
+        {
+            WriteCultureUrlEntry(writer, page, culture);
+        }
+
+        writer.WriteEndElement();
+        writer.WriteEndDocument();
+        writer.Flush();
+
+        return stringWriter.ToString();
+    }
+
+    private void WriteCultureUrlEntry(XmlWriter writer, IPublishedContent page, string culture)
+    {
+        writer.WriteStartElement("url", SitemapNamespace);
+
+        var url = page.Url(_publishedUrlProvider, culture, mode: UrlMode.Absolute);
+        writer.WriteElementString("loc", SitemapNamespace, url);
+        writer.WriteElementString("lastmod", SitemapNamespace, FormatLastModified(page.UpdateDate));
+        writer.WriteElementString("changefreq", SitemapNamespace, GetChangeFrequency(page));
+        writer.WriteElementString("priority", SitemapNamespace, GetPriority(page).ToString("0.0", CultureInfo.InvariantCulture));
+
+        writer.WriteEndElement();
+    }
+
+    private string GetBaseUrl()
+    {
+        // Try to get base URL from current HTTP request
+        var request = _httpContextAccessor.HttpContext?.Request;
+        if (request != null)
+        {
+            var scheme = request.Scheme;
+            var host = request.Host.Value;
+            return $"{scheme}://{host}";
+        }
+
+        // Fallback to Umbraco's absolute URL
+        if (_umbracoHelperAccessor.TryGetUmbracoHelper(out var umbracoHelper))
+        {
+            var homePage = umbracoHelper.ContentAtRoot().FirstOrDefault();
+            if (homePage != null)
+            {
+                var url = homePage.Url(_publishedUrlProvider, mode: UrlMode.Absolute);
+                return url.TrimEnd('/');
+            }
+        }
+
+        throw new InvalidOperationException("Could not determine base URL for sitemap generation");
     }
 }

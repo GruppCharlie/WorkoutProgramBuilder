@@ -9,6 +9,7 @@ public class ServiceComposer : IComposer
 {
     public void Compose(IUmbracoBuilder builder)
     {
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddHttpClient<IExerciseDbService, ExerciseDbService>();
         builder.Services.AddScoped<ISitemapService, SitemapService>();
         builder.Services.AddScoped<IMemberFavoritesService, MemberFavoritesService>();
