@@ -27,9 +27,9 @@ async function toggleFavorite(event, button) {
                 
                 // Show toast based on action
                 if (isFavorite) {
-                    showSuccessToast(exerciseData.ToastTitle);
+                    showSuccessToast(exerciseData.AddFromFavoritesToast);
                 } else {
-                    showInfoToast('Removed from Favorites');
+                    showInfoToast(exerciseData.RemoveFromFavoritesToast);
                 }
                 
                 // Dispatch event to update the workout catalog and favorites page
@@ -64,6 +64,7 @@ function getExerciseDataFromButton(button) {
         Equipments: button.getAttribute("data-equipments").split(",").filter(Boolean),
         SecondaryMuscles: button.getAttribute("data-secondarymuscles").split(",").filter(Boolean),
         GifUrl: button.getAttribute("data-gifurl"),
-        ToastTitle: button.getAttribute("data-toast-title")
+        AddFromFavoritesToast: button.getAttribute("data-toast-add-to-favorites"),
+        RemoveFromFavoritesToast: button.getAttribute("data-toast-remove-from-favorites")
     };
 }
