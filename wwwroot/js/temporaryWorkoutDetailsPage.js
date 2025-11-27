@@ -22,7 +22,12 @@ async function loadUnauthenticatedWorkout() {
   }
 
   // Show container and set description
-  container.style.display = "block";
+  //container.style.display = "block";
+
+  setTimeout(() => {
+    container.style.display = "block";
+  }, 1000);
+
   const descElement = document.getElementById("unauthWorkoutDescription");
   if (descElement) descElement.textContent = workout.Description;
 
