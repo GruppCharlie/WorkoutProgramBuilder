@@ -15,6 +15,7 @@
     var mappedMuscles = MuscleMapper.MapToApiMuscleGroups(muscleGroups);
     var imageUrl = MuscleMapper.GenerateMuscleVisualizationUrl(muscleGroups);
     
+    // Toast messages
     var toastAddToFavorites = Umbraco.GetDictionaryValue("toast.message.AddToFavorites") ?? "Added To Favorites";
     var toastRemoveFromFavorites = Umbraco.GetDictionaryValue("toast.message.RemoveFromFavorites") ?? "Removed From Favorites";
     var toastAddToMyWorkouts = Umbraco.GetDictionaryValue("toast.message.AddToMyWorkouts") ?? "Added To My Workouts";

@@ -186,6 +186,10 @@ class MuscleGroupVisualizer {
     const visualizationTitle = section?.dataset.visualizationTitle;
     const musclesLabel = section?.dataset.musclesLabel;
     const equipmentLabel = section?.dataset.equipmentLabel;
+    const toastAddToFavorites = section?.dataset.toastAddToFavorites;
+    const toastRemoveFromFavorites = section?.dataset.toastRemoveFromFavorites;
+    const toastAddToMyWorkouts = section?.dataset.toastAddToMyWorkouts;
+    const toastRemoveFromMyWorkouts = section?.dataset.toastRemoveFromMyWorkouts;
 
     // Collect all unique muscles and equipment from all exercises
     const allMuscles = [
@@ -226,6 +230,8 @@ class MuscleGroupVisualizer {
                         data-workout-muscles="${allMuscles.join(",")}"
                         data-workout-equipment="${allEquipment.join(",")}"
                         data-workout-exercises="${exercisesJson}"
+                        data-toast-add-to-my-workouts="${toastAddToMyWorkouts}"
+                        data-toast-remove-from-my-workouts="${toastRemoveFromMyWorkouts}"
                         onclick="addToMyWorkouts(event, this)"
                         title="Add to My Workouts">
                     <i class="fa-solid fa-plus"></i>
@@ -238,6 +244,8 @@ class MuscleGroupVisualizer {
                         data-workout-muscles="${allMuscles.join(",")}"
                         data-workout-equipment="${allEquipment.join(",")}"
                         data-workout-exercises="${exercisesJson}"
+                        data-toast-add-to-favorites="${toastAddToFavorites}"
+                        data-toast-remove-from-favorites="${toastRemoveFromFavorites}"
                         onclick="toggleWorkoutFavorite(event, this)"
                         title="Add to Favorites">
                     <i class="fa-solid fa-heart"></i>
