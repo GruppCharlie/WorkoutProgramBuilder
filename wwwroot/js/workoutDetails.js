@@ -83,7 +83,7 @@ async function toggleWorkoutFavoriteDetails(event, button) {
 
       // Toggle the red color on the icon to determine current state
       //const isFavorited = icon.classList.toggle("text-red-500");
-        const isFavorited = button.classList.toggle("bg-red-500");
+      const isFavorited = button.classList.toggle("bg-red-500");
 
       updateFavoriteButtonState(button, isFavorited);
 
@@ -177,26 +177,25 @@ function initializePagination() {
   }
 
   slider.addEventListener("scroll", updateActiveDot);
-    updateActiveDot(); // Initial update
-    toggleVisualization();
+  updateActiveDot(); // Initial update
+  toggleVisualization();
 }
 
 function toggleVisualization(gifUrl, muscleUrl, imageId, button) {
-    const img = document.getElementById(imageId);
-    if (!img) return;
+  const img = document.getElementById(imageId);
+  if (!img) return;
 
-    const textGif = button.dataset.textGif || 'Show GIF';
-    const textMuscle = button.dataset.textMuscle || 'Show Muscle Visualization';
+  const textGif = button.dataset.textGif || "Show GIF";
+  const textMuscle = button.dataset.textMuscle || "Show Muscle Visualization";
 
-    if (img.src.endsWith(gifUrl)) {
-        img.src = muscleUrl;
-        button.innerText = textGif;
-    } else {
-        img.src = gifUrl || muscleUrl;
-        button.innerText = textMuscle;
-    }
+  if (img.src.endsWith(gifUrl)) {
+    img.src = muscleUrl;
+    button.innerText = textGif;
+  } else {
+    img.src = gifUrl || muscleUrl;
+    button.innerText = textMuscle;
+  }
 }
-
 
 /**
  * Initialize on page load
@@ -204,6 +203,21 @@ function toggleVisualization(gifUrl, muscleUrl, imageId, button) {
 document.addEventListener("DOMContentLoaded", async () => {
   // Load workout data for unauthenticated users
   await loadUnauthenticatedWorkout();
+
+  setTimeout(() => {
+    const workoutContainer = document.querySelector(
+      ".workout-detail-container"
+    );
+    const loadingSpinner = document.querySelector(".loading-spinner");
+
+    if (workoutContainer) {
+      workoutContainer.classList.remove("hidden");
+    }
+
+    if (loadingSpinner) {
+      loadingSpinner.classList.add("hidden");
+    }
+  }, 1000);
 
   // Initialize pagination for authenticated users (already rendered by Razor)
   initializePagination();
