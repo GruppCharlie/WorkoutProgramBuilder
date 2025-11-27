@@ -3,12 +3,16 @@ using System.Net.Mail;
 using Umbraco.Forms.Core;
 using Umbraco.Forms.Core.Attributes;
 using Umbraco.Forms.Core.Enums;
+using WorkoutProgramBuilder.Business.Dto;
+using WorkoutProgramBuilder.Business.Services;
 
 namespace WorkoutProgramBuilder.Workflows;
 
 public class MailJetWorkflow : WorkflowType
 {
     private readonly ILogger<MailJetWorkflow> _logger;
+    private readonly UserEmailService _emailService;
+
 
     [Setting(
         "E-mail Subject",
@@ -33,9 +37,12 @@ public class MailJetWorkflow : WorkflowType
     public string SenderEmail { get; set; }
 
 
-    public MailJetWorkflow(ILogger<MailJetWorkflow> logger)
+    public MailJetWorkflow(
+        ILogger<MailJetWorkflow> logger,
+        UserEmailService emailService)
     {
         _logger = logger;
+        _emailService = emailService;
 
         Id = new Guid("B9C2B6FD-AD96-457C-970F-F1A088C4C6FB");
         Name = "MailJet Workflow";
@@ -43,29 +50,6 @@ public class MailJetWorkflow : WorkflowType
         Icon = "icon-chat-active";
         Group = "Services";
     }
-
-    public override Task<WorkflowExecutionStatus> ExecuteAsync(WorkflowExecutionContext context)
-    {
-        if (context.Record.RecordFields.Values.Count > 1)
-        {
-            var emailField = context.Record.RecordFields.Values.ElementAt(0);
-
-            string recipientEmail = emailField.Values.FirstOrDefault()?.ToString();
-
-            if (!string.IsNullOrWhiteSpace(recipientEmail))
-            {
-                context.Record.State = FormState.Approved;
-
-                SendTestMail(recipientEmail);
-
-                return Task.FromResult(WorkflowExecutionStatus.Completed);
-            }
-        }
-
-        _logger.LogWarning("Recipient email not found in the expected field.");
-        return Task.FromResult(WorkflowExecutionStatus.Failed);
-    }
-
 
 
     public override List<Exception> ValidateSettings()
@@ -77,10 +61,32 @@ public class MailJetWorkflow : WorkflowType
             exceptions.Add(new Exception("Mail subjet is required"));
         }
 
-        return exceptions; 
+        return exceptions;
     }
 
-    private void SendTestMail(string recipientEmail)
+    public override async Task<WorkflowExecutionStatus> ExecuteAsync(WorkflowExecutionContext context)
+    {
+        if (context.Record.RecordFields.Values.Count > 1)
+        {
+            var emailField = context.Record.RecordFields.Values.ElementAt(0);
+
+            string recipientEmail = emailField.Values.FirstOrDefault()?.ToString();
+
+            if (!string.IsNullOrWhiteSpace(recipientEmail))
+            {
+                context.Record.State = FormState.Approved;
+
+                await SendTestMail(recipientEmail);
+
+                return WorkflowExecutionStatus.Completed;
+            }
+        }
+
+        _logger.LogWarning("Recipient email not found in the expected field.");
+        return WorkflowExecutionStatus.Failed;
+    }
+
+    private async Task SendTestMail(string recipientEmail)
     {
         try
         {
@@ -101,18 +107,20 @@ public class MailJetWorkflow : WorkflowType
                 IsBodyHtml = true
             };
 
-             mail.To.Add(recipientEmail);
+            mail.To.Add(recipientEmail);
 
             smtpClient.Send(mail);
+
+            await _emailService.SaveAsync(new UserEmail
+            {
+                Email = recipientEmail
+            });
         }
         catch (Exception e)
         {
-            _logger.LogError(e.Message);
+            _logger.LogError(e, "Error sending email");
             throw;
         }
     }
-
-
-
 }
 

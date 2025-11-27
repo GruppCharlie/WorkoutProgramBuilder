@@ -42,7 +42,7 @@
         <div class="overflow-x-auto">
             <table class="min-w-full text-left text-primaryText">
                 <thead>
-                    <tr class="border-b border-gray-200">
+                    <tr class="border-b border-gray-200 whitespace-nowrap">
                         <th class="py-3 px-4">@leaderboardRank</th>
                         <th class="py-3 px-4">@leaderboardUser</th>
                         <th class="py-3 px-4">@leaderboardSavedWorkouts</th>
@@ -71,7 +71,7 @@
                             _ => ""
                         };
 
-                        <tr class="border-b border-gray-100 transition @rowClass">
+                        <tr class="border-b border-gray-100 transition whitespace-nowrap @rowClass">
                             <td class="py-3 px-4 font-semibold">@medal @rank</td>
                             <td class="py-3 px-4">@entry.Username</td>
                             <td class="py-3 px-4">@entry.SavedWorkouts</td>

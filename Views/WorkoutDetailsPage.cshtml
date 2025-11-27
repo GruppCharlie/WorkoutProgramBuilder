@@ -119,6 +119,14 @@
             </div>
         </div>
     </template>
+        <span class="loading-spinner py-14 pointer-events-none absolut inset-0 flex items-center justify-center">
+        <svg viewBox="0 0 50 50" class="h-14 w-14" aria-hidden="true">
+            <circle cx="25" cy="25" r="20" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="31.4 31.4">
+                <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.8s" repeatCount="indefinite"></animateTransform>
+            </circle>
+        </svg>
+    </span>
+    
     
     <!-- Hidden template for individual exercise cards (used by JavaScript) -->
     <template id="exerciseCardTemplate">
@@ -166,7 +174,17 @@ else if (workout == null)
 else
 {
     <!-- Authenticated user with workout -->
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    @if(workout != null) 
+{
+    <span class="loading-spinner py-14 pointer-events-none absolut inset-0 flex items-center justify-center">
+        <svg viewBox="0 0 50 50" class="h-14 w-14" aria-hidden="true">
+            <circle cx="25" cy="25" r="20" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="31.4 31.4">
+                <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.8s" repeatCount="indefinite"></animateTransform>
+            </circle>
+        </svg>
+    </span>
+}
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10 workout-detail-container hidden">
         <!-- Header -->
         <div class="mb-8 flex flex-col items-center justify-center">
             @* <h1 class="text-3xl font-bold text-gray-900 mb-2">@workout.Name</h1> *@
