@@ -34,12 +34,22 @@
     var visualizationTitle = Umbraco.GetDictionaryValue("workoutCard.Visualization") ?? "Targeted Muscles Visualization";
     var musclesLabel = Umbraco.GetDictionaryValue("workoutCard.Muscles") ?? "Muscles:";
     var equipmentLabel = Umbraco.GetDictionaryValue("workoutCard.Equipment") ?? "Equipment:";
+    
+    // Toast messages
+    var toastAddToFavorites = Umbraco.GetDictionaryValue("toast.message.AddToFavorites") ?? "Added To Favorites";
+    var toastRemoveFromFavorites = Umbraco.GetDictionaryValue("toast.message.RemoveFromFavorites") ?? "Removed From Favorites";
+    var toastAddToMyWorkouts = Umbraco.GetDictionaryValue("toast.message.AddToMyWorkouts") ?? "Added To My Workouts";
+    var toastRemoveFromMyWorkouts = Umbraco.GetDictionaryValue("toast.message.RemoveFromMyWorkouts") ?? "Removed From My Workouts";
 }
 
 <section data-exercises-text="@exercisesText"
          data-visualization-title="@visualizationTitle"
          data-muscles-label="@musclesLabel"
-         data-equipment-label="@equipmentLabel">
+         data-equipment-label="@equipmentLabel"
+         data-toast-add-to-favorites="@toastAddToFavorites"
+         data-toast-remove-from-favorites="@toastRemoveFromFavorites"
+         data-toast-add-to-my-workouts="@toastAddToMyWorkouts"
+         data-toast-remove-from-my-workouts="@toastRemoveFromMyWorkouts">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 mb-16">
 
         @if (needsUserInput)
