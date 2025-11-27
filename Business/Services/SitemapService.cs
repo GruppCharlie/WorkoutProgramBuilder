@@ -103,6 +103,7 @@ public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbr
 
         writer.WriteStartDocument();
         writer.WriteStartElement("urlset", "https://www.sitemaps.org/schemas/sitemap/0.9");
+        writer.WriteAttributeString("xmlns", "xhtml", null, "http://www.w3.org/1999/xhtml");
 
         foreach (var page in pagesList)
         {
@@ -118,14 +119,34 @@ public class SitemapService( IUmbracoHelperAccessor umbracoHelperAccessor, IUmbr
 
     private void WriteUrlEntry(XmlWriter writer, IPublishedContent page, IUmbracoContext _)
     {
+        var cultures = page.Cultures.Keys.ToList();
+        
+        if (cultures.Count == 0)
+        {
+            // No cultures, write single entry
+            WriteSingleUrlEntry(writer, page, null);
+            return;
+        }
+
+        // Write entry for each published culture
+        foreach (var culture in cultures)
+        {
+            if (page.IsPublished(culture))
+            {
+                WriteSingleUrlEntry(writer, page, culture);
+            }
+        }
+    }
+
+    private void WriteSingleUrlEntry(XmlWriter writer, IPublishedContent page, string? culture)
+    {
         writer.WriteStartElement("url");
 
-        var url = page.Url(_publishedUrlProvider, mode: UrlMode.Absolute);
+        var url = page.Url(_publishedUrlProvider, culture, mode: UrlMode.Absolute);
         writer.WriteElementString("loc", url);
         writer.WriteElementString("lastmod", FormatLastModified(page.UpdateDate));
         writer.WriteElementString("changefreq", GetChangeFrequency(page));
         writer.WriteElementString("priority", GetPriority(page).ToString("0.0", CultureInfo.InvariantCulture));
-
 
         writer.WriteEndElement();
     }
