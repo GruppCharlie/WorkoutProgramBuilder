@@ -51,6 +51,6 @@ public class RobotsTxtController(IUmbracoContextAccessor umbracoContextAccessor,
             }
         }
 
-        return $"{baseUrl}/sitemap.xml";
+        return $"{baseUrl}/sitemapindex.xml";
     }
 }
